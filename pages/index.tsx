@@ -39,11 +39,9 @@ type SearchResultProps = {
 }
 
 const PageHit = ({ hit }: PageHitProps) => {
-  const to = hit.url ? `http://localhost:8001/${hit.slug}` : `https://til.swfz.io/${hit.slug}`
-
   return(
     <div className={styles.card}>
-      <a href={to} target="_blank" rel="noreferer">
+      <a href={hit.url} target="_blank" rel="noreferer">
         <p>
           <Highlight attribute="title" hit={hit} />
         </p>
@@ -58,14 +56,7 @@ const PageHit = ({ hit }: PageHitProps) => {
 }
 
 const Search: NextPage = () => {
-  const indices = [
-    {
-      name: 'blog'
-    },
-    {
-      name: 'til'
-    }
-  ]
+  const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || '').split(',')
   const timerId = useRef<ReturnType<typeof setTimeout>>()
 
   const algoliaClient = algoliasearch(
@@ -111,15 +102,15 @@ const Search: NextPage = () => {
   }
 
   return (
-    <InstantSearch searchClient={searchClient} indexName={indices[0].name}>
+    <InstantSearch searchClient={searchClient} indexName={indices[0]}>
       <SearchBox
         placeholder="Search"
         queryHook={queryHook}>
       </SearchBox>
       {indices.map(index => {
         return(
-          <Index key={index.name} indexName={index.name}>
-            <h2>{index.name}</h2>
+          <Index key={index} indexName={index}>
+            <h2>{index}</h2>
             <Hits
               classNames={{ list: 'search-result-list'}}
               hitComponent={PageHit}

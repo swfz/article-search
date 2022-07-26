@@ -9,3 +9,10 @@ til.swfz.ioの記事データとはてなブログの記事のデータをAlgoli
 本リポジトリのデータは今のところ検索のUIのみ
 
 また対象のインデックスなども決め打ちしている…
+
+
+
+name,remark
+NEXT_PUBLIC_ALGOLIA_APP_ID,AlgoliaのAPP_ID
+NEXT_PUBLIC_ALGOLIA_SEARCH_KEY,AlgoliaのSEARCH KEY
+NEXT_PUBLIC_ALGOLIA_INDICES,検索対象のインデックスのリスト、カンマ区切り
