@@ -64,8 +64,6 @@ const Search: NextPage = () => {
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || ""
   )
 
-  console.log(process.env.ALGOLIA_APP_ID);
-
   const searchClient: SearchClient = {
     ...algoliaClient,
     // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
