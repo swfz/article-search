@@ -67,10 +67,11 @@
 
 .grid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  max-width: 2000px;
+  flex-direction: row;
 }
 
 .card {
@@ -82,7 +83,7 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-  max-width: 1200px;
+  max-width: 600px;
 }
 
 .card:hover,
@@ -94,9 +95,10 @@
 
 .search-result-list {
   list-style-type: none;
+  padding-left: 0;
 }
 
-.card span.ais-Snippet {
+.snippet {
   font-size: 0.7rem;
 }
 
@@ -106,9 +108,69 @@
   font-size: 1.25rem;
 }
 
+.powered {
+  width: 120px;
+}
+
 .logo {
   height: 1em;
   margin-left: 0.5rem;
+}
+
+.count {
+  border-radius: 10px;
+  font-family: monospace;
+  width: 2em;
+  padding: 0px 3px;
+  border: 1px solid #0070f3;
+  background: white;
+  color: #0070f3;
+}
+
+.label {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1.2;
+  padding: 0.1em 1em;
+  background-color: #eee;
+  color: #444;
+  border: 1px solid;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.tags-list {
+  list-style-type: none;
+}
+
+.button {
+  border-color: #666;
+  border-radius: 5px;
+  padding: 5px;
+  width: 600px;
+}
+
+.button:hover {
+  color: #0070f3;
+  border-color: #0070f3;
+}
+
+.hidden {
+  display: none;
+}
+
+
+.index {
+  display: flex;
+}
+
+.tag {
+  display: inline-block;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  padding: 2px 1em;
+  margin: 2px;
+  color: #FFFFFF;
+  background: #6699f3;
 }
 
 @media (max-width: 600px) {

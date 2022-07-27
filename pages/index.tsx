@@ -1,12 +1,12 @@
-import type { NextPage } from 'next'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from "next";
+import styles from "../styles/Home.module.css";
 
 import {
   MultipleQueriesResponse,
   MultipleQueriesQuery,
-} from "@algolia/client-search"
-import algoliasearch from "algoliasearch/lite"
-import { default as React, useState, useRef } from "react"
+} from "@algolia/client-search";
+import algoliasearch from "algoliasearch/lite";
+import { default as React, useState, useRef } from "react";
 import {
   InstantSearch,
   SearchBox,
@@ -14,55 +14,63 @@ import {
   Highlight,
   Snippet,
   Hits,
-} from "react-instantsearch-hooks-web"
+  RefinementList,
+  PoweredBy,
+  DynamicWidgets,
+  Menu,
+  InfiniteHits,
+} from "react-instantsearch-hooks-web";
 
-import type { Hit, SearchClient } from "instantsearch.js"
+import type { Hit, SearchClient } from "instantsearch.js";
 
 type PageHitProps = {
-  hit: Hit
-}
+  hit: Hit;
+};
 
 type Indices = {
-  name: string
-  title?: string
-}
+  name: string;
+  title?: string;
+};
 
 // NOTE: queryHookはSearchBoxConnectorParamsを持ってきたかったが持ってくる方法がわからなかったのでコピーしている
 type CustomSearchProps = {
-  indices: Indices[]
-  queryHook: (query: string, hook: (value: string) => void) => void
-}
-
-type SearchResultProps = {
-  indices: Indices[]
-  className?: string
-}
+  indices: Indices[];
+  queryHook: (query: string, hook: (value: string) => void) => void;
+};
 
 const PageHit = ({ hit }: PageHitProps) => {
-  return(
+  console.log(hit);
+  return (
     <div className={styles.card}>
       <a href={hit.url} target="_blank" rel="noreferer">
         <p>
           <Highlight attribute="title" hit={hit} />
         </p>
       </a>
+      {hit.tags.map((tag: string) => {
+        return <span className={styles.tag}>{tag}</span>;
+      })}
       <br />
       <Snippet
         attribute="rawMarkdownBody"
+        separator="..."
+        classNames={{
+          root: styles.snippet,
+        }}
         hit={hit}
       />
     </div>
-  )
-}
+  );
+};
 
 const Search: NextPage = () => {
-  const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || '').split(',')
-  const timerId = useRef<ReturnType<typeof setTimeout>>()
+  const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || "").split(",");
+  const timerId = useRef<ReturnType<typeof setTimeout>>();
 
   const algoliaClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "",
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || ""
-  )
+  );
 
   const searchClient: SearchClient = {
     ...algoliaClient,
@@ -82,43 +90,74 @@ const Search: NextPage = () => {
             query: "",
             params: "",
           })),
-        }) as Readonly<Promise<MultipleQueriesResponse<SearchResponse>>>
+        }) as Readonly<Promise<MultipleQueriesResponse<SearchResponse>>>;
       }
 
-      return algoliaClient.search(requests)
+      return algoliaClient.search(requests);
     },
-  }
+  };
 
   // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/improve-performance/react-hooks/#disabling-as-you-type
   // 入力確定判断まで1秒待つ
   const queryHook: CustomSearchProps["queryHook"] = (query, search) => {
     if (timerId.current) {
-      clearTimeout(timerId.current)
+      clearTimeout(timerId.current);
     }
 
-    timerId.current = setTimeout(() => search(query), 1000)
-  }
+    timerId.current = setTimeout(() => search(query), 1000);
+  };
 
   return (
-    <InstantSearch searchClient={searchClient} indexName={indices[0]}>
-      <SearchBox
-        placeholder="Search"
-        queryHook={queryHook}>
-      </SearchBox>
-      {indices.map(index => {
-        return(
-          <Index key={index} indexName={index}>
-            <h2>{index}</h2>
-            <Hits
-              classNames={{ list: 'search-result-list'}}
-              hitComponent={PageHit}
-            >
-            </Hits>
-          </Index>
-        )
-      })}
-    </InstantSearch>
-  )
-}
+    <InstantSearch searchClient={searchClient} indexName={indices[1]}>
+      <SearchBox placeholder="Search" queryHook={queryHook}></SearchBox>
+      {/* <div className={styles.grid}>
+        {indices.map(index => {
+          return(
+            <div className={styles.card}>
+              <Index key={index} indexName={index}>
+                <div>
+                  <h2>{index}</h2>
+                  <RefinementList
+                    attribute='tags'
+                    operator='and'
+                    showMore={true}
+                    classNames={{
+                      count: styles.count,
+                      item: styles.label,
+                      list: styles['tags-list']
+                    }}>
+                  </RefinementList>
+                </div>
+              </Index>
+            </div>
+          )
+        })}
+      </div> */}
 
-export default Search
+      <div className={styles.grid}>
+        {indices.map((index) => {
+          return (
+            <div>
+              <Index key={index} indexName={index}>
+                <h2>{index}</h2>
+                <InfiniteHits
+                  classNames={{
+                    list: styles["search-result-list"],
+                    loadMore: styles.button,
+                    disabledLoadMore: styles.button,
+                    disabledLoadPrevious: styles.hidden,
+                  }}
+                  hitComponent={PageHit}
+                ></InfiniteHits>
+              </Index>
+            </div>
+          );
+        })}
+      </div>
+      <br />
+      <PoweredBy classNames={{ root: styles.powered }} />
+    </InstantSearch>
+  );
+};
+
+export default Search;
