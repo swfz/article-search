@@ -1,18 +1,34 @@
 # article-search
 
-主に自分用
+複数サイトの記事データをAlgoliaに入れて全文検索を可能にするための検索UI
 
-til.swfz.ioの記事データとはてなブログの記事のデータをAlgoliaに入れて全文検索を可能にするためのもの
+サイト毎にAlgoliaのインデックスを作成し記事データを保存する
 
-データの入れ込みは本リポジトリとは別で行っている
+本リポジトリは今のところ検索のUIのみ
 
-本リポジトリのデータは今のところ検索のUIのみ
+記事のレコードを作成する処理は別途行う必要がある
 
-また対象のインデックスなども決め打ちしている…
+## 環境変数
 
+|name|remark|
+|---|---|
+|NEXT_PUBLIC_ALGOLIA_APP_ID|AlgoliaのAPP_ID|
+|NEXT_PUBLIC_ALGOLIA_SEARCH_KEY|AlgoliaのSEARCH KEY|
+|NEXT_PUBLIC_ALGOLIA_INDICES|検索対象のインデックスのリスト、カンマ区切り eg) `indexA,indexB,indexC` |
 
+## インデックスに必要なattribute
 
-name,remark
-NEXT_PUBLIC_ALGOLIA_APP_ID,AlgoliaのAPP_ID
-NEXT_PUBLIC_ALGOLIA_SEARCH_KEY,AlgoliaのSEARCH KEY
-NEXT_PUBLIC_ALGOLIA_INDICES,検索対象のインデックスのリスト、カンマ区切り
+検索UIで使用しているattribute
+
+|name|remark|
+|---|---|
+|title|タイトル|
+|url|記事のリンク(url)|
+|tags|タグの配列|
+|rawMarkdownBody|記事本文|
+
+## dev
+
+```shell
+yarn dev
+```

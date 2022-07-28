@@ -6,7 +6,7 @@ import {
   MultipleQueriesQuery,
 } from "@algolia/client-search";
 import algoliasearch from "algoliasearch/lite";
-import { default as React, useState, useRef } from "react";
+import { default as React, useRef } from "react";
 import {
   InstantSearch,
   SearchBox,
@@ -16,8 +16,6 @@ import {
   Hits,
   RefinementList,
   PoweredBy,
-  DynamicWidgets,
-  Menu,
   InfiniteHits,
 } from "react-instantsearch-hooks-web";
 
@@ -39,7 +37,6 @@ type CustomSearchProps = {
 };
 
 const PageHit = ({ hit }: PageHitProps) => {
-  console.log(hit);
   return (
     <div className={styles.card}>
       <a href={hit.url} target="_blank" rel="noreferer">
@@ -137,7 +134,7 @@ const Search: NextPage = () => {
       <div className={styles.grid}>
         {indices.map((index) => {
           return (
-            <div>
+            <div key={index}>
               <Index key={index} indexName={index}>
                 <h2>{index}</h2>
                 <InfiniteHits
