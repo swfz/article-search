@@ -49,7 +49,7 @@ const PageHit = ({ hit }: PageHitProps) => {
       })}
       <br />
       <Snippet
-        attribute="rawMarkdownBody"
+        attribute="text"
         separator="..."
         classNames={{
           root: styles.snippet,
@@ -87,7 +87,7 @@ const Search: NextPage = () => {
             query: "",
             params: "",
           })),
-        }) as Readonly<Promise<MultipleQueriesResponse<SearchResponse>>>;
+        });
       }
 
       return algoliaClient.search(requests);

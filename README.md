@@ -25,7 +25,7 @@
 |title|タイトル|
 |url|記事のリンク(url)|
 |tags|タグの配列|
-|rawMarkdownBody|記事本文|
+|text|記事本文|
 
 ## dev
 
