@@ -18,22 +18,12 @@ import {
   PoweredBy,
   InfiniteHits,
 } from "react-instantsearch-hooks-web";
+import type { UseSearchBoxProps } from "react-instantsearch-hooks-web";
 
 import type { Hit, SearchClient } from "instantsearch.js";
 
 type PageHitProps = {
   hit: Hit;
-};
-
-type Indices = {
-  name: string;
-  title?: string;
-};
-
-// NOTE: queryHookはSearchBoxConnectorParamsを持ってきたかったが持ってくる方法がわからなかったのでコピーしている
-type CustomSearchProps = {
-  indices: Indices[];
-  queryHook: (query: string, hook: (value: string) => void) => void;
 };
 
 const PageHit = ({ hit }: PageHitProps) => {
@@ -96,7 +86,7 @@ const Search: NextPage = () => {
 
   // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/improve-performance/react-hooks/#disabling-as-you-type
   // 入力確定判断まで1秒待つ
-  const queryHook: CustomSearchProps["queryHook"] = (query, search) => {
+  const queryHook: UseSearchBoxProps["queryHook"] = (query, search) => {
     if (timerId.current) {
       clearTimeout(timerId.current);
     }
