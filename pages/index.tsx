@@ -29,13 +29,13 @@ type PageHitProps = {
 const PageHit = ({ hit }: PageHitProps) => {
   return (
     <div className={styles.card}>
-      <a href={hit.url} target="_blank" rel="noreferer">
+      <a href={hit.url} target="_blank" rel="noreferrer">
         <p>
           <Highlight attribute="title" hit={hit} />
         </p>
       </a>
       {hit.tags.map((tag: string) => {
-        return <span className={styles.tag}>{tag}</span>;
+        return <span key={tag} className={styles.tag}>{tag}</span>;
       })}
       <br />
       <Snippet
