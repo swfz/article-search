@@ -1,0 +1,51 @@
+name: ci
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+      - uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - name: build
+        # dummy ID
+        env:
+          NEXT_PUBLIC_ALGOLIA_APP_ID: dummy
+          NEXT_PUBLIC_ALGOLIA_INDICES: a,b,c
+        run: |
+          yarn
+          yarn build
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+      - uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - name: typecheck
+        run: |
+          yarn
+          yarn typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+      - uses: actions/setup-node@v3.4.1
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - name: test
+        # dummy ID
+        env:
+          NEXT_PUBLIC_ALGOLIA_APP_ID: dummy
+          NEXT_PUBLIC_ALGOLIA_INDICES: a,b,c
+        run: |
+          yarn
+          yarn test
