@@ -35,7 +35,11 @@ const PageHit = ({ hit }: PageHitProps) => {
         </p>
       </a>
       {hit.tags.map((tag: string) => {
-        return <span key={tag} className={styles.tag}>{tag}</span>;
+        return (
+          <span key={tag} className={styles.tag}>
+            {tag}
+          </span>
+        );
       })}
       <br />
       <Snippet
@@ -95,9 +99,12 @@ const Search: NextPage = () => {
   };
 
   return (
-    <InstantSearch searchClient={searchClient} indexName={indices[1]}>
-      <SearchBox placeholder="Search" queryHook={queryHook}></SearchBox>
-      {/* <div className={styles.grid}>
+    <>
+      <h1>Article Search</h1>
+
+      <InstantSearch searchClient={searchClient} indexName={indices[1]}>
+        <SearchBox placeholder="Search" queryHook={queryHook}></SearchBox>
+        {/* <div className={styles.grid}>
         {indices.map(index => {
           return(
             <div className={styles.card}>
@@ -121,29 +128,30 @@ const Search: NextPage = () => {
         })}
       </div> */}
 
-      <div className={styles.grid}>
-        {indices.map((index) => {
-          return (
-            <div key={index}>
-              <Index key={index} indexName={index}>
-                <h2>{index}</h2>
-                <InfiniteHits
-                  classNames={{
-                    list: styles["search-result-list"],
-                    loadMore: styles.button,
-                    disabledLoadMore: styles.button,
-                    disabledLoadPrevious: styles.hidden,
-                  }}
-                  hitComponent={PageHit}
-                ></InfiniteHits>
-              </Index>
-            </div>
-          );
-        })}
-      </div>
-      <br />
-      <PoweredBy classNames={{ root: styles.powered }} />
-    </InstantSearch>
+        <div className={styles.grid}>
+          {indices.map((index) => {
+            return (
+              <div key={index}>
+                <Index key={index} indexName={index}>
+                  <h2>{index}</h2>
+                  <InfiniteHits
+                    classNames={{
+                      list: styles["search-result-list"],
+                      loadMore: styles.button,
+                      disabledLoadMore: styles.button,
+                      disabledLoadPrevious: styles.hidden,
+                    }}
+                    hitComponent={PageHit}
+                  ></InfiniteHits>
+                </Index>
+              </div>
+            );
+          })}
+        </div>
+        <br />
+        <PoweredBy classNames={{ root: styles.powered }} />
+      </InstantSearch>
+    </>
   );
 };
 
