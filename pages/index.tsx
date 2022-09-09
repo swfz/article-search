@@ -131,9 +131,9 @@ const Search: NextPage = () => {
         <div className={styles.grid}>
           {indices.map((index) => {
             return (
-              <div key={index}>
+              <div key={index} data-testid={index}>
                 <Index key={index} indexName={index}>
-                  <h2>{index}</h2>
+                  <h2 data-testid="algolia-index">{index}</h2>
                   <InfiniteHits
                     classNames={{
                       list: styles["search-result-list"],
