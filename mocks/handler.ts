@@ -7,12 +7,6 @@ import queryWordsMsw from "./json/search-response-msw.json";
 export const handlers = [
   rest.post("https://*.algolia.net/1/indexes/*/queries", (req, res, ctx) => {
 
-    const wordCountResponseMap = [
-      queryWordsM, // m
-      queryWordsMs, // ms
-      queryWordsMsw, // msw
-    ];
-
     const bodyString = req.body as string;
 
     const body = JSON.parse(bodyString);
