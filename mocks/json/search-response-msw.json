@@ -1,0 +1,568 @@
+{
+  "results": [
+    {
+      "hits": [
+        {
+          "url": "https://til.swfz.io//entries/msw_mock_svg/",
+          "text": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\nmswを使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということでmswを使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://mswjs.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev msw\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx msw init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from 'msw'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from 'msw'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · mswjs/msw](https://github.com/mswjs/msw/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\nmswを使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
+          "date": "2021-12-29",
+          "title": "mswでSVGをモックする",
+          "tags": ["JavaScript", "TypeScript", "Gatsby", "msw"],
+          "description": "Pixelaを題材としてモックしてみた",
+          "slug": "/entries/msw_mock_svg/",
+          "timeToRead": 3,
+          "objectID": "75a9abd2-0b34-54b0-b919-36e1513da0ed",
+          "_snippetResult": {
+            "text": {
+              "value": "ような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · <em>msw</em>js/<em>msw</em>](https://github.com/<em>msw</em>js/<em>msw</em>/issues/461)\n\nモックできているかどうかの確認は",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/<em>msw</em>_mock_svg/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "text": {
+              "value": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\n<em>msw</em>を使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということで<em>msw</em>を使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://<em>msw</em>js.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev <em>msw</em>\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx <em>msw</em> init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from '<em>msw</em>'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from '<em>msw</em>'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · <em>msw</em>js/<em>msw</em>](https://github.com/<em>msw</em>js/<em>msw</em>/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\n<em>msw</em>を使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "date": {
+              "value": "2021-12-29",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "<em>msw</em>でSVGをモックする",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "tags": [
+              {
+                "value": "JavaScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              { "value": "Gatsby", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "<em>msw</em>",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": ["msw"]
+              }
+            ],
+            "description": {
+              "value": "Pixelaを題材としてモックしてみた",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/<em>msw</em>_mock_svg/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "timeToRead": {
+              "value": "3",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/jest_with_msw/",
+          "text": "\n開発用に定義したmswの設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // mswでのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"msw\"\nimport { setupServer } from \"msw/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + mswのtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
+          "date": "2022-08-19",
+          "title": "mswのモックをjestのテストでも使う",
+          "tags": ["Jest", "msw", "TypeScript"],
+          "description": "開発時と同様",
+          "slug": "/entries/jest_with_msw/",
+          "timeToRead": 1,
+          "objectID": "3cb05eab-dd49-525f-9761-98eaccf45fa7",
+          "_snippetResult": {
+            "text": {
+              "value": "ト\", async () => {\n    // <em>msw</em>でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"<em>msw</em>\"\nimport { setupServer } from \"<em>msw</em>/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/jest_with_<em>msw</em>/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "text": {
+              "value": "\n開発用に定義した<em>msw</em>の設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // <em>msw</em>でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"<em>msw</em>\"\nimport { setupServer } from \"<em>msw</em>/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + <em>msw</em>のtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "date": {
+              "value": "2022-08-19",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "<em>msw</em>のモックをjestのテストでも使う",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "tags": [
+              { "value": "Jest", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "<em>msw</em>",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": ["msw"]
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "開発時と同様",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/jest_with_<em>msw</em>/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "timeToRead": {
+              "value": "1",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/algolia_mock_with_msw/",
+          "text": "\nAlgoliaの検索リクエストをmswでモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、mswで解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONをmswを用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスがmsw経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"msw\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
+          "date": "2022-08-12",
+          "title": "Algoliaのレスポンスをmswでモックして開発ではダミーレスポンスを扱う",
+          "tags": ["Algolia", "msw", "TypeScript"],
+          "description": "実際のJSONを用意する",
+          "slug": "/entries/algolia_mock_with_msw/",
+          "timeToRead": 3,
+          "objectID": "c8728ebf-22ac-5299-ba20-c595cab71ff1",
+          "_snippetResult": {
+            "text": {
+              "value": "\nAlgoliaの検索リクエストを<em>msw</em>でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしな",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/algolia_mock_with_<em>msw</em>/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "text": {
+              "value": "\nAlgoliaの検索リクエストを<em>msw</em>でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、<em>msw</em>で解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONを<em>msw</em>を用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスが<em>msw</em>経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"<em>msw</em>\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "date": {
+              "value": "2022-08-12",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "Algoliaのレスポンスを<em>msw</em>でモックして開発ではダミーレスポンスを扱う",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "tags": [
+              { "value": "Algolia", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "<em>msw</em>",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": ["msw"]
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "実際のJSONを用意する",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/algolia_mock_with_<em>msw</em>/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "timeToRead": {
+              "value": "3",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        }
+      ],
+      "nbHits": 3,
+      "page": 0,
+      "nbPages": 1,
+      "hitsPerPage": 20,
+      "exhaustiveNbHits": true,
+      "exhaustiveTypo": true,
+      "exhaustive": { "nbHits": true, "typo": true },
+      "query": "msw",
+      "params": "facets=%5B%5D&query=msw&tagFilters=",
+      "index": "til",
+      "renderingContent": {},
+      "processingTimeMS": 4,
+      "processingTimingsMS": {
+        "afterFetch": {
+          "format": { "highlighting": 1, "snippeting": 1, "total": 3 },
+          "total": 3
+        },
+        "getIdx": 1,
+        "total": 4
+      }
+    },
+    {
+      "hits": [
+        {
+          "title": "PixelaのグラフをGatsby製のブログに埋め込む",
+          "date": "2021-10-15",
+          "slug": "react/gatsby_pixela_direct_execution",
+          "url": "http://localhost:8001/react/gatsby_pixela_direct_execution",
+          "section": "react/gatsby_pixela_direct_execution",
+          "tags": ["React", "Gatsby", "Pixela"],
+          "text": "# PixelaのグラフをGatsby製のブログに埋め込む\n\nPixelaのグラフをGatsby(React)で表示させたい\n\n素直にsvgをobjectタグで読み込むだけだとツールチップが表示されないのでせっかくなら表示させたい\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\n（※前提の参考リンクをよく読めばiframeで良くないか?という話になるが、今回はmswを使って開発しているときはローカルだけで完結させたい、がiframeはmswではモックできないという事情により色々面倒なことをやっている）\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n\nなので完全な自分用のメモである\n\n## 前提知識\n\n[はてなブログに Pixela グラフを埋め込んで、さらにツールチップを表示させる方法 - えいのうにっき](https://blog.a-know.me/entry/2018/11/20/220257)\n\n[https://blog.a-know.me/entry/2018/11/20/220257:embed:cite]\n\nはてなブログへの埋め込み方法は上記\n\npopoverを表示するためのライブラリとして`tippyjs`を使うことを前提としている\n\nPixelaが返すSVGの中のrectタグ中に`data-tippy-content`というプロパティがありその中にpopoverで表示されるコンテンツが入っている\n\ntippyjs側では特定の属性の内容をツールチップの内容とする仕様になっている\n\n- popoverの中身\n\n頑張って一瞬でコピーした\n\n```html\n<div class=\"tippy-popper\" role=\"tooltip\" id=\"tippy-92\" x-placement=\"top\" style=\"z-index: 9999; visibility: hidden; transition-duration: 0ms; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(542px, 6020px, 0px);\"><div class=\"tippy-tooltip dark-theme\" data-size=\"regular\" data-animation=\"shift-away\" data-state=\"hidden\" style=\"transition-duration: 275ms; top: 0px;\"><div class=\"tippy-arrow\" style=\"left: 77px;\"></div><div class=\"tippy-content\" data-state=\"hidden\" style=\"transition-duration: 275ms;\"><div>143 views on 2021-09-19</div></div></div></div>\n```\n\n- rect(当日)\n\n```html\n<rect class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"0\" y=\"0\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-19\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210919\" data-index=\"1\" tabindex=\"0\"></rect>\n```\n\n一個不具合というかわからないが当日のデータは`data-tippy-content`にデータが入ってこないっぽい\n\n- rect(昨日以前)\n\n```html\n<rect data-tippy-content=\"6 view(s) on 2021-09-18\" class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"1\" y=\"72\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-18\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210918\" data-index=\"2\" tabindex=\"0\"></rect>\n```\n\nなるほど\n\n## Reactでどうやってツールチップを実現するか\n\ntippyjsを前提としているならreactでtippyjsを使えるようなライブラリがあれば良さそう\n\ntippyjs作者と同じ方がReact用のライブラリも作っているようなのでそれを見にいってREADMEをいくつか試してみた\n\n[atomiks/tippyjs-react: React component for Tippy.js (official)](https://github.com/atomiks/tippyjs-react)\n\n[https://github.com/atomiks/tippyjs-react:embed:cite]\n\ntippyjs単体での使用方法は下記\n\n[Constructor | Tippy.js](https://atomiks.github.io/tippyjs/v6/constructor/)\n\n[https://atomiks.github.io/tippyjs/v6/constructor/:embed:cite]\n\n色々試してみたが力不足のためtippyjs-reactを用いてPixelaのグラフの中のデータをツールチップに表示させるところまで実装できなかった\n\n下記読んで見たissue\n\n[Question - Programmatically create tippies on spans inserted with 'dangerouslySetInnerHTML' · Issue #98 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/98)\n\n[Is there a way to use css selectors like with tippy.js? · Issue #170 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/170)\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\n`tippy`を呼び出して直接実行することはできそう\n\nということで、useEffect内でtippyを実行するよう試してみたが\n\n```tsx\nimport {tippy} from '@tippyjs/react'\n.....\n.....\n\n  useEffect(() => {\n    tippy('.each-day', {arrow: true})\n  })\n\n.....\n.....\n\nreturn (\n    <>\n      <div>\n        <div className=\"each-day\" data-tippy-content=\"aaaa 1\">a</div>\n        <div className=\"each-day\" data-tippy-content=\"bbbb 1\">b</div>\n        <div className=\"each-day\" data-tippy-content=\"cccc 1\">c</div>\n      </div>\n      <object\n        type=\"image/svg+xml\"\n        data=\"https://pixe.la/v1/users/swfz/graphs/til-pv-dev?mode=short\"\n      ></object>\n    </>\n)\n```\n\nSVGで呼び出した各rectには`each-day`クラスが存在するはずだが反応せず…\n\n同様のCSSクラス名を設定した子要素には反応した\n\nこれはobjectで読み込んだSVGがiframeなどと同様に子コンテンツ扱いされているからのよう\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\nCSSセレクタで中身を取得したい場合次のような感じで取得できる\n\n```javascript\nconst element = document.querySelector('.selector-in-parent-content').contentWindow.document.querySelector('.selector-in-child-content');\n```\n\nこれをCSSセレクタ一発で取得できるか少し調べたが見つからなかったので断念\n\nということでどうしたもんかなと考えたが次の案くらいしか思い浮かばなかった\n\n## 案1 fetchとdangerouslySetInnerHTMLでSVGのレスポンスをそのまま突っ込む\n- fetchでSVGデータを取得する\n- dangerouslySetInnerHTMLでHTMLを入れ込む\n- jQueryなどでの使用法と同様に`tippy`を実行する\n\nツールチップの要素などは`tippy`が実行してDOM操作する形になるのでReactの管理対象外になるはず\n\nなので正直気持ちの良いものではない\n\n## 案2 fetchとcloneElementなどを使ってDOMを書き換えツールチップを動作させる\n- fetchでSVGデータを取得する\n- cloneElementなどを駆使し、Tippyタグが動作するようにDOMを書き換える\n\n工夫すればできそうだけどsvgの中身まで把握しておかないといけないし結構たいへんそう…\n\n## 案3 objectタグでレンダリングしているSVGの中でtippyjsを実行する\n- そもそもできるのか不明\n\nこのへんまで調べてそんなに時間使えないし案1で良いか…ということで\n\nまずは動かすところまで持っていく!!\n\n結局次のような感じになった\n\n## 案1でやってみた\n\n```typescript\nimport React, { useState, useEffect } from \"react\"\nimport fetch from \"node-fetch\"\nimport { tippy } from \"@tippyjs/react\"\nimport \"tippy.js/dist/tippy.css\"\nimport DOMPurify from \"dompurify\"\n\nconst Pixela = () => {\n  const [pixelaSvg, setPixelaSvg] = useState(\"\")\n\n  useEffect(() => {\n    const fetchPixelaSvg = async () => {\n      const res = await fetch(\n        \"https://pixe.la/v1/users/swfz/graphs/til-pageviews?mode=short\"\n      )\n      const html: string = await res.text()\n\n      setPixelaSvg(DOMPurify.sanitize(html))\n      tippy(\".each-day\", { arrow: true })\n    }\n    fetchPixelaSvg()\n  }, [])\n\n  return (\n    <>\n      <div\n        dangerouslySetInnerHTML={{\n          __html: pixelaSvg,\n        }}\n      ></div>\n      <div\n        style={{\n          textAlign: `right`,\n        }}\n      >\n        Powered by{\" \"}\n        <a href=\"https://pixe.la/\" target=\"_blank\">\n          Pixela\n        </a>\n      </div>\n    </>\n  )\n}\n```\n\n![alt](gatsby_pixela_direct_execution01.png)\n\n### まとめ\n- PixelaのグラフをGatsby(React)で表示してツールチップまで表示できるようにした\n- Reactの中の世界でツールチップを管理することを断念した\n- 他案はまた別な機会で挑戦したい",
+          "objectID": "react/gatsby_pixela_direct_execution",
+          "_snippetResult": {
+            "text": {
+              "value": "クをよく読めばiframeで良くないか?という話になるが、今回は__ais-highlight__msw__/ais-highlight__を使って開発しているときはローカルだけで完結させ",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "PixelaのグラフをGatsby製のブログに埋め込む",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "date": {
+              "value": "2021-10-15",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "react/gatsby_pixela_direct_execution",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "http://localhost:8001/react/gatsby_pixela_direct_execution",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "react/gatsby_pixela_direct_execution",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              { "value": "React", "matchLevel": "none", "matchedWords": [] },
+              { "value": "Gatsby", "matchLevel": "none", "matchedWords": [] },
+              { "value": "Pixela", "matchLevel": "none", "matchedWords": [] }
+            ],
+            "text": {
+              "value": "# PixelaのグラフをGatsby製のブログに埋め込む\n\nPixelaのグラフをGatsby(React)で表示させたい\n\n素直にsvgをobjectタグで読み込むだけだとツールチップが表示されないのでせっかくなら表示させたい\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\n（※前提の参考リンクをよく読めばiframeで良くないか?という話になるが、今回は__ais-highlight__msw__/ais-highlight__を使って開発しているときはローカルだけで完結させたい、がiframeは__ais-highlight__msw__/ais-highlight__ではモックできないという事情により色々面倒なことをやっている）\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n\nなので完全な自分用のメモである\n\n## 前提知識\n\n[はてなブログに Pixela グラフを埋め込んで、さらにツールチップを表示させる方法 - えいのうにっき](https://blog.a-know.me/entry/2018/11/20/220257)\n\n[https://blog.a-know.me/entry/2018/11/20/220257:embed:cite]\n\nはてなブログへの埋め込み方法は上記\n\npopoverを表示するためのライブラリとして`tippyjs`を使うことを前提としている\n\nPixelaが返すSVGの中のrectタグ中に`data-tippy-content`というプロパティがありその中にpopoverで表示されるコンテンツが入っている\n\ntippyjs側では特定の属性の内容をツールチップの内容とする仕様になっている\n\n- popoverの中身\n\n頑張って一瞬でコピーした\n\n```html\n<div class=\"tippy-popper\" role=\"tooltip\" id=\"tippy-92\" x-placement=\"top\" style=\"z-index: 9999; visibility: hidden; transition-duration: 0ms; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(542px, 6020px, 0px);\"><div class=\"tippy-tooltip dark-theme\" data-size=\"regular\" data-animation=\"shift-away\" data-state=\"hidden\" style=\"transition-duration: 275ms; top: 0px;\"><div class=\"tippy-arrow\" style=\"left: 77px;\"></div><div class=\"tippy-content\" data-state=\"hidden\" style=\"transition-duration: 275ms;\"><div>143 views on 2021-09-19</div></div></div></div>\n```\n\n- rect(当日)\n\n```html\n<rect class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"0\" y=\"0\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-19\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210919\" data-index=\"1\" tabindex=\"0\"></rect>\n```\n\n一個不具合というかわからないが当日のデータは`data-tippy-content`にデータが入ってこないっぽい\n\n- rect(昨日以前)\n\n```html\n<rect data-tippy-content=\"6 view(s) on 2021-09-18\" class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"1\" y=\"72\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-18\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210918\" data-index=\"2\" tabindex=\"0\"></rect>\n```\n\nなるほど\n\n## Reactでどうやってツールチップを実現するか\n\ntippyjsを前提としているならreactでtippyjsを使えるようなライブラリがあれば良さそう\n\ntippyjs作者と同じ方がReact用のライブラリも作っているようなのでそれを見にいってREADMEをいくつか試してみた\n\n[atomiks/tippyjs-react: React component for Tippy.js (official)](https://github.com/atomiks/tippyjs-react)\n\n[https://github.com/atomiks/tippyjs-react:embed:cite]\n\ntippyjs単体での使用方法は下記\n\n[Constructor | Tippy.js](https://atomiks.github.io/tippyjs/v6/constructor/)\n\n[https://atomiks.github.io/tippyjs/v6/constructor/:embed:cite]\n\n色々試してみたが力不足のためtippyjs-reactを用いてPixelaのグラフの中のデータをツールチップに表示させるところまで実装できなかった\n\n下記読んで見たissue\n\n[Question - Programmatically create tippies on spans inserted with 'dangerouslySetInnerHTML' · Issue #98 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/98)\n\n[Is there a way to use css selectors like with tippy.js? · Issue #170 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/170)\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\n`tippy`を呼び出して直接実行することはできそう\n\nということで、useEffect内でtippyを実行するよう試してみたが\n\n```tsx\nimport {tippy} from '@tippyjs/react'\n.....\n.....\n\n  useEffect(() => {\n    tippy('.each-day', {arrow: true})\n  })\n\n.....\n.....\n\nreturn (\n    <>\n      <div>\n        <div className=\"each-day\" data-tippy-content=\"aaaa 1\">a</div>\n        <div className=\"each-day\" data-tippy-content=\"bbbb 1\">b</div>\n        <div className=\"each-day\" data-tippy-content=\"cccc 1\">c</div>\n      </div>\n      <object\n        type=\"image/svg+xml\"\n        data=\"https://pixe.la/v1/users/swfz/graphs/til-pv-dev?mode=short\"\n      ></object>\n    </>\n)\n```\n\nSVGで呼び出した各rectには`each-day`クラスが存在するはずだが反応せず…\n\n同様のCSSクラス名を設定した子要素には反応した\n\nこれはobjectで読み込んだSVGがiframeなどと同様に子コンテンツ扱いされているからのよう\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\nCSSセレクタで中身を取得したい場合次のような感じで取得できる\n\n```javascript\nconst element = document.querySelector('.selector-in-parent-content').contentWindow.document.querySelector('.selector-in-child-content');\n```\n\nこれをCSSセレクタ一発で取得できるか少し調べたが見つからなかったので断念\n\nということでどうしたもんかなと考えたが次の案くらいしか思い浮かばなかった\n\n## 案1 fetchとdangerouslySetInnerHTMLでSVGのレスポンスをそのまま突っ込む\n- fetchでSVGデータを取得する\n- dangerouslySetInnerHTMLでHTMLを入れ込む\n- jQueryなどでの使用法と同様に`tippy`を実行する\n\nツールチップの要素などは`tippy`が実行してDOM操作する形になるのでReactの管理対象外になるはず\n\nなので正直気持ちの良いものではない\n\n## 案2 fetchとcloneElementなどを使ってDOMを書き換えツールチップを動作させる\n- fetchでSVGデータを取得する\n- cloneElementなどを駆使し、Tippyタグが動作するようにDOMを書き換える\n\n工夫すればできそうだけどsvgの中身まで把握しておかないといけないし結構たいへんそう…\n\n## 案3 objectタグでレンダリングしているSVGの中でtippyjsを実行する\n- そもそもできるのか不明\n\nこのへんまで調べてそんなに時間使えないし案1で良いか…ということで\n\nまずは動かすところまで持っていく!!\n\n結局次のような感じになった\n\n## 案1でやってみた\n\n```typescript\nimport React, { useState, useEffect } from \"react\"\nimport fetch from \"node-fetch\"\nimport { tippy } from \"@tippyjs/react\"\nimport \"tippy.js/dist/tippy.css\"\nimport DOMPurify from \"dompurify\"\n\nconst Pixela = () => {\n  const [pixelaSvg, setPixelaSvg] = useState(\"\")\n\n  useEffect(() => {\n    const fetchPixelaSvg = async () => {\n      const res = await fetch(\n        \"https://pixe.la/v1/users/swfz/graphs/til-pageviews?mode=short\"\n      )\n      const html: string = await res.text()\n\n      setPixelaSvg(DOMPurify.sanitize(html))\n      tippy(\".each-day\", { arrow: true })\n    }\n    fetchPixelaSvg()\n  }, [])\n\n  return (\n    <>\n      <div\n        dangerouslySetInnerHTML={{\n          __html: pixelaSvg,\n        }}\n      ></div>\n      <div\n        style={{\n          textAlign: `right`,\n        }}\n      >\n        Powered by{\" \"}\n        <a href=\"https://pixe.la/\" target=\"_blank\">\n          Pixela\n        </a>\n      </div>\n    </>\n  )\n}\n```\n\n![alt](gatsby_pixela_direct_execution01.png)\n\n### まとめ\n- PixelaのグラフをGatsby(React)で表示してツールチップまで表示できるようにした\n- Reactの中の世界でツールチップを管理することを断念した\n- 他案はまた別な機会で挑戦したい",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            }
+          }
+        }
+      ],
+      "nbHits": 1,
+      "page": 0,
+      "nbPages": 1,
+      "hitsPerPage": 20,
+      "exhaustiveNbHits": true,
+      "exhaustiveTypo": true,
+      "exhaustive": { "nbHits": true, "typo": true },
+      "query": "msw",
+      "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw&tagFilters=",
+      "index": "hatenablog",
+      "renderingContent": {},
+      "processingTimeMS": 4,
+      "processingTimingsMS": {
+        "afterFetch": {
+          "format": { "highlighting": 1, "snippeting": 1, "total": 2 },
+          "total": 2
+        },
+        "getIdx": 1,
+        "total": 4
+      }
+    },
+    {
+      "hits": [
+        {
+          "url": "https://til.swfz.io//entries/msw_mock_svg/",
+          "text": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\nmswを使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということでmswを使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://mswjs.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev msw\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx msw init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from 'msw'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from 'msw'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · mswjs/msw](https://github.com/mswjs/msw/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\nmswを使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
+          "date": "2021-12-29",
+          "title": "mswでSVGをモックする",
+          "tags": ["JavaScript", "TypeScript", "Gatsby", "msw"],
+          "description": "Pixelaを題材としてモックしてみた",
+          "slug": "/entries/msw_mock_svg/",
+          "timeToRead": 3,
+          "objectID": "75a9abd2-0b34-54b0-b919-36e1513da0ed",
+          "_snippetResult": {
+            "text": {
+              "value": "ような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__/issues/461)\n\nモックできているかどうかの確認は",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/__ais-highlight__msw__/ais-highlight___mock_svg/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "text": {
+              "value": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\n__ais-highlight__msw__/ais-highlight__を使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということで__ais-highlight__msw__/ais-highlight__を使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://__ais-highlight__msw__/ais-highlight__js.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev __ais-highlight__msw__/ais-highlight__\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx __ais-highlight__msw__/ais-highlight__ init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from '__ais-highlight__msw__/ais-highlight__'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from '__ais-highlight__msw__/ais-highlight__'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\n__ais-highlight__msw__/ais-highlight__を使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "date": {
+              "value": "2021-12-29",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "__ais-highlight__msw__/ais-highlight__でSVGをモックする",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "tags": [
+              {
+                "value": "JavaScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              { "value": "Gatsby", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "__ais-highlight__msw__/ais-highlight__",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": ["msw"]
+              }
+            ],
+            "description": {
+              "value": "Pixelaを題材としてモックしてみた",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/__ais-highlight__msw__/ais-highlight___mock_svg/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "timeToRead": {
+              "value": "3",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/jest_with_msw/",
+          "text": "\n開発用に定義したmswの設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // mswでのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"msw\"\nimport { setupServer } from \"msw/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + mswのtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
+          "date": "2022-08-19",
+          "title": "mswのモックをjestのテストでも使う",
+          "tags": ["Jest", "msw", "TypeScript"],
+          "description": "開発時と同様",
+          "slug": "/entries/jest_with_msw/",
+          "timeToRead": 1,
+          "objectID": "3cb05eab-dd49-525f-9761-98eaccf45fa7",
+          "_snippetResult": {
+            "text": {
+              "value": "ト\", async () => {\n    // __ais-highlight__msw__/ais-highlight__でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport { setupServer } from \"__ais-highlight__msw__/ais-highlight__/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/jest_with___ais-highlight__msw__/ais-highlight__/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "text": {
+              "value": "\n開発用に定義した__ais-highlight__msw__/ais-highlight__の設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // __ais-highlight__msw__/ais-highlight__でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport { setupServer } from \"__ais-highlight__msw__/ais-highlight__/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + __ais-highlight__msw__/ais-highlight__のtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "date": {
+              "value": "2022-08-19",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "__ais-highlight__msw__/ais-highlight__のモックをjestのテストでも使う",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "tags": [
+              { "value": "Jest", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "__ais-highlight__msw__/ais-highlight__",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": ["msw"]
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "開発時と同様",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/jest_with___ais-highlight__msw__/ais-highlight__/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "timeToRead": {
+              "value": "1",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/algolia_mock_with_msw/",
+          "text": "\nAlgoliaの検索リクエストをmswでモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、mswで解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONをmswを用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスがmsw経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"msw\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
+          "date": "2022-08-12",
+          "title": "Algoliaのレスポンスをmswでモックして開発ではダミーレスポンスを扱う",
+          "tags": ["Algolia", "msw", "TypeScript"],
+          "description": "実際のJSONを用意する",
+          "slug": "/entries/algolia_mock_with_msw/",
+          "timeToRead": 3,
+          "objectID": "c8728ebf-22ac-5299-ba20-c595cab71ff1",
+          "_snippetResult": {
+            "text": {
+              "value": "\nAlgoliaの検索リクエストを__ais-highlight__msw__/ais-highlight__でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしな",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/algolia_mock_with___ais-highlight__msw__/ais-highlight__/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "text": {
+              "value": "\nAlgoliaの検索リクエストを__ais-highlight__msw__/ais-highlight__でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、__ais-highlight__msw__/ais-highlight__で解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONを__ais-highlight__msw__/ais-highlight__を用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスが__ais-highlight__msw__/ais-highlight__経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "date": {
+              "value": "2022-08-12",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "Algoliaのレスポンスを__ais-highlight__msw__/ais-highlight__でモックして開発ではダミーレスポンスを扱う",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "tags": [
+              { "value": "Algolia", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "__ais-highlight__msw__/ais-highlight__",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": ["msw"]
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "実際のJSONを用意する",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/algolia_mock_with___ais-highlight__msw__/ais-highlight__/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            },
+            "timeToRead": {
+              "value": "3",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        }
+      ],
+      "nbHits": 3,
+      "page": 0,
+      "nbPages": 1,
+      "hitsPerPage": 20,
+      "exhaustiveNbHits": true,
+      "exhaustiveTypo": true,
+      "exhaustive": { "nbHits": true, "typo": true },
+      "query": "msw",
+      "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw&tagFilters=",
+      "index": "til",
+      "renderingContent": {},
+      "processingTimeMS": 2,
+      "processingTimingsMS": {
+        "afterFetch": { "format": { "snippeting": 1, "total": 2 }, "total": 2 },
+        "total": 2
+      }
+    }
+  ]
+}
