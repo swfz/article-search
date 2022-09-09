@@ -45,7 +45,8 @@ jobs:
         # dummy ID
         env:
           NEXT_PUBLIC_ALGOLIA_APP_ID: dummy
-          NEXT_PUBLIC_ALGOLIA_INDICES: a,b,c
+          NEXT_PUBLIC_ALGOLIA_INDICES: hatenablog,til
+          NEXT_PUBLIC_API_MOCKING: enabled
         run: |
           yarn
           yarn test
