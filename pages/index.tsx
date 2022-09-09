@@ -28,7 +28,7 @@ type PageHitProps = {
 
 const PageHit = ({ hit }: PageHitProps) => {
   return (
-    <div className={styles.card}>
+    <div data-testid="hit-card" className={styles.card}>
       <a href={hit.url} target="_blank" rel="noreferrer">
         <p>
           <Highlight attribute="title" hit={hit} />
