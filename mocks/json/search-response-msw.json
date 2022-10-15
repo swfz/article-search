@@ -235,14 +235,10 @@
       "params": "facets=%5B%5D&query=msw&tagFilters=",
       "index": "til",
       "renderingContent": {},
-      "processingTimeMS": 4,
+      "processingTimeMS": 2,
       "processingTimingsMS": {
-        "afterFetch": {
-          "format": { "highlighting": 1, "snippeting": 1, "total": 3 },
-          "total": 3
-        },
-        "getIdx": 1,
-        "total": 4
+        "afterFetch": { "format": { "snippeting": 1, "total": 1 }, "total": 1 },
+        "total": 2
       }
     },
     {
@@ -300,9 +296,65 @@
               "matchedWords": ["msw"]
             }
           }
+        },
+        {
+          "title": "じぶん Release Notes (ver 0.35.0)",
+          "date": "2022-10-09",
+          "slug": "release_notes/2022_10-0_35_0",
+          "url": "http://localhost:8001/release_notes/2022_10-0_35_0",
+          "section": "release_notes/2022_10-0_35_0",
+          "tags": ["じぶんリリースノート"],
+          "text": "# じぶん Release Notes (ver 0.35.0)\n\nswfz (ver 0.35.0) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n- プライベートのブログ環境のmkdocs更新\n- [kusa](https://tools.swfz.io/kusa)関連\n    - Renovate,dependabot系のアクティビティを除けるようにした\n    - octiconを入れた\n    - コメント系イベントを表示できるようにした\n- 既存のprivateのActionsでGCP(bq, gsutil)を使っている箇所をOIDCで実行できるようにした\n- [article-search](https://github.com/swfz/article-search)\n    - テストコードを書いた\n    - mswを入れた\n    - Cloudflareにデプロイした\n    - CloudflareAccessで制限を掛けた\n\n## 読んだ本\n\n- インプット大全(Audible)\n\n<iframe sandbox=\"allow-popups allow-scripts allow-modals allow-forms allow-same-origin\" style=\"width:120px;height:240px;\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\" frameborder=\"0\" src=\"//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=swfz-22&language=ja_JP&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B07SR28M94&linkId=92ee63e16420b14a37b1a8e77d74991d\"></iframe>\n\n## 勉強会\n\nなし\n\n## ブログ\n\nリリースノートを除き、次の3エントリを書いた\n\n- [BigQueryにAPIのデータを定期的に同期して、削除されたレコードを検出する](https://swfz.hatenablog.com/entry/2022/09/09/203039)\n- [CloudFlare Access + Pagesで自分のみアクセスできるようにする](https://swfz.hatenablog.com/entry/2022/09/30/193552)\n- [VS Code Markdown CheckboxプラグインでToDo管理](https://swfz.hatenablog.com/entry/2022/09/21/190153)\n\n### 指標\n\n購読者数： 76(`+0`)\n\n月間PV： 8482(`-108`)\n\nはてなブックマーク： 1108(`+1`)\n\nいつも通りって感じ\n\n## 生活\n\n色々でかけた\n\n<!-- textlint-disable jtf-style/2.1.2.漢字 -->\n黒たまごを食べるためだけに大涌谷へいったり\n<!-- textlint-enable prh -->\n\nソラマチでプラネタリウム見たり\n\nあとは、まだ歯の治療が終わらない…\n\n担当が日曜だけしかいないようで予定合わないと平気で1ヵ月空いたりするので全然進まない\n\nそろそろ焼肉を何も気にせず食べたい…\n\n## 仕事\n\nQの末なので目標振り返りやら金額の話だったり締め的な仕事が多かった\n\n組織の目標の金額の集計だったりレポートだったりを自分で作業したので状況把握という意味だと今まで以上に解像度は上がった\n\nそして実際にやってみるとコスト意識は高まる?かなと感じた\n\n今までふんわり認識していた部分が具体的数値として認識でき「この金額ってこんなに掛かっているのか！」という気付きが多かった\n\n恥ずかしい話あんまりそういうところ意識してこなかったなというのが正直なところだったのでやってよかった\n\nただ、あまり整備されているわけではないのでかなり手作業が多くたいへんだった\n\n今後は効率化する予定\n\n### 有給消化した\n\n9月終わったら消えてしまう有給が残り1.5日というところまで消化した\n\n今までかなりの日数のこしてしまっていて結局使わず消滅させてしまっていたが今回はなるべく消化することにした\n\n結果かなり消化できたが仕事は進まなかった\n\nそのぶんプライベートでコードを結構書けたのでそれはそれで良かった\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2022-04-01 | 2.35h | +0.16 |\n| 2022-05-01 |  3.0h | +0.65 |\n| 2022-06-01 | 2.55h | -0.46 |\n| 2022-07-01 | 3.98h | +1.43 |\n| 2022-08-01 | 3.56h | -0.42 |\n| 2022-09-01 | 3.18h | -0.37 |\n\n直近3ヵ月くらいは有給消化があったためある程度時間確保できたが10月以降もこのペースで行けるか不安が残る…\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2022-04-01 | 6.61h | -0.23 | 1.65 |\n| 2022-05-01 | 6.13h | -0.48 | 2.01 |\n| 2022-06-01 | 6.28h | +0.15 | 1.68 |\n| 2022-07-01 | 6.24h | -0.04 | 1.89 |\n| 2022-08-01 | 6.33h | +0.09 | 1.61 |\n| 2022-09-01 | 6.26h | -0.07 |  1.9 |\n\n## 振り返り\n\n### K\n- コード書く時間はそれなりに取れた\n- ステッパーは引き続き続けられている\n- ある程度有給消化できた\n- GitHubの草継続して毎日生やすことができている\n- 毎日の振り返り週間はできているかどうかをいったん可視化した\n\n### P\n- 引き続き気持ちがのらずぐだっている\n- 筋トレできていない\n- やろうとしてタスクに積んだあと崩せていない\n- Pocketに積むだけ積んだ後読んでいない\n- 毎日その日中に振り返りできていない(56%)\n\n### T\n- 筋トレの習慣化再考\n- 本読む時間を増やす\n- 新しい刺激になることをやる\n- 何か1つ決めてタスクを崩す機会と時間を作る\n- Pocket積読は目標決めて取り組む\n",
+          "objectID": "release_notes/2022_10-0_35_0",
+          "_snippetResult": {
+            "text": {
+              "value": "きるようにした\n- [article-search](https://github.com/swfz/article-search)\n    - テストコードを書いた\n    - __ais-highlight__msw__/ais-highlight__を入れた\n    - Cloudflareにデプロイした\n    - CloudflareAccessで制限を掛けた\n\n## 読んだ本",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "じぶん Release Notes (ver 0.35.0)",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "date": {
+              "value": "2022-10-09",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "release_notes/2022_10-0_35_0",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "http://localhost:8001/release_notes/2022_10-0_35_0",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "release_notes/2022_10-0_35_0",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "じぶんリリースノート",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "text": {
+              "value": "# じぶん Release Notes (ver 0.35.0)\n\nswfz (ver 0.35.0) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n- プライベートのブログ環境のmkdocs更新\n- [kusa](https://tools.swfz.io/kusa)関連\n    - Renovate,dependabot系のアクティビティを除けるようにした\n    - octiconを入れた\n    - コメント系イベントを表示できるようにした\n- 既存のprivateのActionsでGCP(bq, gsutil)を使っている箇所をOIDCで実行できるようにした\n- [article-search](https://github.com/swfz/article-search)\n    - テストコードを書いた\n    - __ais-highlight__msw__/ais-highlight__を入れた\n    - Cloudflareにデプロイした\n    - CloudflareAccessで制限を掛けた\n\n## 読んだ本\n\n- インプット大全(Audible)\n\n<iframe sandbox=\"allow-popups allow-scripts allow-modals allow-forms allow-same-origin\" style=\"width:120px;height:240px;\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\" frameborder=\"0\" src=\"//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=swfz-22&language=ja_JP&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B07SR28M94&linkId=92ee63e16420b14a37b1a8e77d74991d\"></iframe>\n\n## 勉強会\n\nなし\n\n## ブログ\n\nリリースノートを除き、次の3エントリを書いた\n\n- [BigQueryにAPIのデータを定期的に同期して、削除されたレコードを検出する](https://swfz.hatenablog.com/entry/2022/09/09/203039)\n- [CloudFlare Access + Pagesで自分のみアクセスできるようにする](https://swfz.hatenablog.com/entry/2022/09/30/193552)\n- [VS Code Markdown CheckboxプラグインでToDo管理](https://swfz.hatenablog.com/entry/2022/09/21/190153)\n\n### 指標\n\n購読者数： 76(`+0`)\n\n月間PV： 8482(`-108`)\n\nはてなブックマーク： 1108(`+1`)\n\nいつも通りって感じ\n\n## 生活\n\n色々でかけた\n\n<!-- textlint-disable jtf-style/2.1.2.漢字 -->\n黒たまごを食べるためだけに大涌谷へいったり\n<!-- textlint-enable prh -->\n\nソラマチでプラネタリウム見たり\n\nあとは、まだ歯の治療が終わらない…\n\n担当が日曜だけしかいないようで予定合わないと平気で1ヵ月空いたりするので全然進まない\n\nそろそろ焼肉を何も気にせず食べたい…\n\n## 仕事\n\nQの末なので目標振り返りやら金額の話だったり締め的な仕事が多かった\n\n組織の目標の金額の集計だったりレポートだったりを自分で作業したので状況把握という意味だと今まで以上に解像度は上がった\n\nそして実際にやってみるとコスト意識は高まる?かなと感じた\n\n今までふんわり認識していた部分が具体的数値として認識でき「この金額ってこんなに掛かっているのか！」という気付きが多かった\n\n恥ずかしい話あんまりそういうところ意識してこなかったなというのが正直なところだったのでやってよかった\n\nただ、あまり整備されているわけではないのでかなり手作業が多くたいへんだった\n\n今後は効率化する予定\n\n### 有給消化した\n\n9月終わったら消えてしまう有給が残り1.5日というところまで消化した\n\n今までかなりの日数のこしてしまっていて結局使わず消滅させてしまっていたが今回はなるべく消化することにした\n\n結果かなり消化できたが仕事は進まなかった\n\nそのぶんプライベートでコードを結構書けたのでそれはそれで良かった\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2022-04-01 | 2.35h | +0.16 |\n| 2022-05-01 |  3.0h | +0.65 |\n| 2022-06-01 | 2.55h | -0.46 |\n| 2022-07-01 | 3.98h | +1.43 |\n| 2022-08-01 | 3.56h | -0.42 |\n| 2022-09-01 | 3.18h | -0.37 |\n\n直近3ヵ月くらいは有給消化があったためある程度時間確保できたが10月以降もこのペースで行けるか不安が残る…\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2022-04-01 | 6.61h | -0.23 | 1.65 |\n| 2022-05-01 | 6.13h | -0.48 | 2.01 |\n| 2022-06-01 | 6.28h | +0.15 | 1.68 |\n| 2022-07-01 | 6.24h | -0.04 | 1.89 |\n| 2022-08-01 | 6.33h | +0.09 | 1.61 |\n| 2022-09-01 | 6.26h | -0.07 |  1.9 |\n\n## 振り返り\n\n### K\n- コード書く時間はそれなりに取れた\n- ステッパーは引き続き続けられている\n- ある程度有給消化できた\n- GitHubの草継続して毎日生やすことができている\n- 毎日の振り返り週間はできているかどうかをいったん可視化した\n\n### P\n- 引き続き気持ちがのらずぐだっている\n- 筋トレできていない\n- やろうとしてタスクに積んだあと崩せていない\n- Pocketに積むだけ積んだ後読んでいない\n- 毎日その日中に振り返りできていない(56%)\n\n### T\n- 筋トレの習慣化再考\n- 本読む時間を増やす\n- 新しい刺激になることをやる\n- 何か1つ決めてタスクを崩す機会と時間を作る\n- Pocket積読は目標決めて取り組む\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["msw"]
+            }
+          }
         }
       ],
-      "nbHits": 1,
+      "nbHits": 2,
       "page": 0,
       "nbPages": 1,
       "hitsPerPage": 20,
@@ -313,14 +365,10 @@
       "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw&tagFilters=",
       "index": "hatenablog",
       "renderingContent": {},
-      "processingTimeMS": 4,
+      "processingTimeMS": 2,
       "processingTimingsMS": {
-        "afterFetch": {
-          "format": { "highlighting": 1, "snippeting": 1, "total": 2 },
-          "total": 2
-        },
-        "getIdx": 1,
-        "total": 4
+        "afterFetch": { "format": { "snippeting": 1, "total": 2 }, "total": 2 },
+        "total": 2
       }
     },
     {
@@ -558,10 +606,10 @@
       "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw&tagFilters=",
       "index": "til",
       "renderingContent": {},
-      "processingTimeMS": 2,
+      "processingTimeMS": 1,
       "processingTimingsMS": {
-        "afterFetch": { "format": { "snippeting": 1, "total": 2 }, "total": 2 },
-        "total": 2
+        "afterFetch": { "format": { "total": 1 }, "total": 1 },
+        "total": 1
       }
     }
   ]

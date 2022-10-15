@@ -26,7 +26,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -43,7 +43,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       <button
         class="ais-SearchBox-reset"
         hidden=""
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -211,7 +211,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -227,7 +227,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       </button>
       <button
         class="ais-SearchBox-reset"
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -2335,6 +2335,126 @@ Apacheのworkerでバランサ、backendにサーバが何台かある状態で�
               data-testid="hit-card"
             >
               <a
+                href="http://localhost:8001/other/vscode_checkbox_extension"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <p>
+                  <span
+                    class="ais-Highlight"
+                  >
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      VS Code 
+                    </span>
+                    <mark
+                      class="ais-Highlight-highlighted"
+                    >
+                      M
+                    </mark>
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      arkdown CheckboxプラグインでToDo管理
+                    </span>
+                  </span>
+                </p>
+              </a>
+              <span
+                class="tag"
+              >
+                other
+              </span>
+              <span
+                class="tag"
+              >
+                VSCode
+              </span>
+              <br />
+              <span
+                class="ais-Snippet snippet"
+              >
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  あった+使ってみたら良さそうだったので運用を開始した
+
+[
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown Checkbox - Visual Studio 
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace](https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox)
+
+[https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox:embed:cite
+                </span>
+              </span>
+            </div>
+          </li>
+          <li
+            class="ais-InfiniteHits-item"
+          >
+            <div
+              class="card"
+              data-testid="hit-card"
+            >
+              <a
                 href="http://localhost:8001/git/github_actions_dynamic_matrix"
                 rel="noreferrer"
                 target="_blank"
@@ -2838,106 +2958,6 @@ ON(target.
                 >
                   anager_service/client.rb:792:in \`access_secret_version'
         ./app.rb:21:in
-                </span>
-              </span>
-            </div>
-          </li>
-          <li
-            class="ais-InfiniteHits-item"
-          >
-            <div
-              class="card"
-              data-testid="hit-card"
-            >
-              <a
-                href="http://localhost:8001/embulk/20150707_embulk_elasticsearch_kibana"
-                rel="noreferrer"
-                target="_blank"
-              >
-                <p>
-                  <span
-                    class="ais-Highlight"
-                  >
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      [B] embulkで
-                    </span>
-                    <mark
-                      class="ais-Highlight-highlighted"
-                    >
-                      m
-                    </mark>
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      ysqlからelasticsearchに送ってグラフ化
-                    </span>
-                  </span>
-                </p>
-              </a>
-              <span
-                class="tag"
-              >
-                Embulk
-              </span>
-              <span
-                class="tag"
-              >
-                MySQL
-              </span>
-              <br />
-              <span
-                class="ais-Snippet snippet"
-              >
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 "alt")
-
-# pluginのインストール
-
-\`\`\`
-embulk gem install embulk-input-
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-\`\`\`
-
-# 設定
-* config.yml
-
-\`\`\`
-in:
-  type: 
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-  host: localhost
-  user: user
-  password: ""
-  database: service
-  query: |
-    SELECT
-      date,
-      SUM(c),
-      SUM(a)
-    FROM report
-    GROUP
                 </span>
               </span>
             </div>
@@ -4739,7 +4759,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -4755,7 +4775,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       </button>
       <button
         class="ais-SearchBox-reset"
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -4962,6 +4982,64 @@ db.setProfilingLevel(2,1)
                   class="ais-Snippet-nonHighlighted"
                 >
                   wを使って開発しているときはローカルだけで完結させ
+                </span>
+              </span>
+            </div>
+          </li>
+          <li
+            class="ais-InfiniteHits-item"
+          >
+            <div
+              class="card"
+              data-testid="hit-card"
+            >
+              <a
+                href="http://localhost:8001/release_notes/2022_10-0_35_0"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <p>
+                  <span
+                    class="ais-Highlight"
+                  >
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      じぶん Release Notes (ver 0.35.0)
+                    </span>
+                  </span>
+                </p>
+              </a>
+              <span
+                class="tag"
+              >
+                じぶんリリースノート
+              </span>
+              <br />
+              <span
+                class="ais-Snippet snippet"
+              >
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  きるようにした
+- [article-search](https://github.com/swfz/article-search)
+    - テストコードを書いた
+    - 
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  ms
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  wを入れた
+    - Cloudflareにデプロイした
+    - CloudflareAccessで制限を掛けた
+
+## 読んだ本
                 </span>
               </span>
             </div>
@@ -6017,7 +6095,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -6033,7 +6111,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       </button>
       <button
         class="ais-SearchBox-reset"
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -6170,6 +6248,64 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
                   class="ais-Snippet-nonHighlighted"
                 >
                   を使って開発しているときはローカルだけで完結させ
+                </span>
+              </span>
+            </div>
+          </li>
+          <li
+            class="ais-InfiniteHits-item"
+          >
+            <div
+              class="card"
+              data-testid="hit-card"
+            >
+              <a
+                href="http://localhost:8001/release_notes/2022_10-0_35_0"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <p>
+                  <span
+                    class="ais-Highlight"
+                  >
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      じぶん Release Notes (ver 0.35.0)
+                    </span>
+                  </span>
+                </p>
+              </a>
+              <span
+                class="tag"
+              >
+                じぶんリリースノート
+              </span>
+              <br />
+              <span
+                class="ais-Snippet snippet"
+              >
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  きるようにした
+- [article-search](https://github.com/swfz/article-search)
+    - テストコードを書いた
+    - 
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  msw
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  を入れた
+    - Cloudflareにデプロイした
+    - CloudflareAccessで制限を掛けた
+
+## 読んだ本
                 </span>
               </span>
             </div>
@@ -6567,7 +6703,7 @@ exports[`Search Search Show Moreのテスト 1`] = `
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -6584,7 +6720,7 @@ exports[`Search Search Show Moreのテスト 1`] = `
       <button
         class="ais-SearchBox-reset"
         hidden=""
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -6752,7 +6888,7 @@ exports[`Search Search Show Moreのテスト 2`] = `
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -6768,7 +6904,7 @@ exports[`Search Search Show Moreのテスト 2`] = `
       </button>
       <button
         class="ais-SearchBox-reset"
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -8876,6 +9012,126 @@ Apacheのworkerでバランサ、backendにサーバが何台かある状態で�
               data-testid="hit-card"
             >
               <a
+                href="http://localhost:8001/other/vscode_checkbox_extension"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <p>
+                  <span
+                    class="ais-Highlight"
+                  >
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      VS Code 
+                    </span>
+                    <mark
+                      class="ais-Highlight-highlighted"
+                    >
+                      M
+                    </mark>
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      arkdown CheckboxプラグインでToDo管理
+                    </span>
+                  </span>
+                </p>
+              </a>
+              <span
+                class="tag"
+              >
+                other
+              </span>
+              <span
+                class="tag"
+              >
+                VSCode
+              </span>
+              <br />
+              <span
+                class="ais-Snippet snippet"
+              >
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  あった+使ってみたら良さそうだったので運用を開始した
+
+[
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown Checkbox - Visual Studio 
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace](https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox)
+
+[https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox:embed:cite
+                </span>
+              </span>
+            </div>
+          </li>
+          <li
+            class="ais-InfiniteHits-item"
+          >
+            <div
+              class="card"
+              data-testid="hit-card"
+            >
+              <a
                 href="http://localhost:8001/git/github_actions_dynamic_matrix"
                 rel="noreferrer"
                 target="_blank"
@@ -9379,106 +9635,6 @@ ON(target.
                 >
                   anager_service/client.rb:792:in \`access_secret_version'
         ./app.rb:21:in
-                </span>
-              </span>
-            </div>
-          </li>
-          <li
-            class="ais-InfiniteHits-item"
-          >
-            <div
-              class="card"
-              data-testid="hit-card"
-            >
-              <a
-                href="http://localhost:8001/embulk/20150707_embulk_elasticsearch_kibana"
-                rel="noreferrer"
-                target="_blank"
-              >
-                <p>
-                  <span
-                    class="ais-Highlight"
-                  >
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      [B] embulkで
-                    </span>
-                    <mark
-                      class="ais-Highlight-highlighted"
-                    >
-                      m
-                    </mark>
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      ysqlからelasticsearchに送ってグラフ化
-                    </span>
-                  </span>
-                </p>
-              </a>
-              <span
-                class="tag"
-              >
-                Embulk
-              </span>
-              <span
-                class="tag"
-              >
-                MySQL
-              </span>
-              <br />
-              <span
-                class="ais-Snippet snippet"
-              >
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 "alt")
-
-# pluginのインストール
-
-\`\`\`
-embulk gem install embulk-input-
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-\`\`\`
-
-# 設定
-* config.yml
-
-\`\`\`
-in:
-  type: 
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-  host: localhost
-  user: user
-  password: ""
-  database: service
-  query: |
-    SELECT
-      date,
-      SUM(c),
-      SUM(a)
-    FROM report
-    GROUP
                 </span>
               </span>
             </div>
@@ -11280,7 +11436,7 @@ exports[`Search Search Show Moreのテスト 3`] = `
       />
       <button
         class="ais-SearchBox-submit"
-        title="Submit the search query."
+        title="Submit the search query"
         type="submit"
       >
         <svg
@@ -11296,7 +11452,7 @@ exports[`Search Search Show Moreのテスト 3`] = `
       </button>
       <button
         class="ais-SearchBox-reset"
-        title="Clear the search query."
+        title="Clear the search query"
         type="reset"
       >
         <svg
@@ -13404,6 +13560,126 @@ Apacheのworkerでバランサ、backendにサーバが何台かある状態で�
               data-testid="hit-card"
             >
               <a
+                href="http://localhost:8001/other/vscode_checkbox_extension"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <p>
+                  <span
+                    class="ais-Highlight"
+                  >
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      VS Code 
+                    </span>
+                    <mark
+                      class="ais-Highlight-highlighted"
+                    >
+                      M
+                    </mark>
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      arkdown CheckboxプラグインでToDo管理
+                    </span>
+                  </span>
+                </p>
+              </a>
+              <span
+                class="tag"
+              >
+                other
+              </span>
+              <span
+                class="tag"
+              >
+                VSCode
+              </span>
+              <br />
+              <span
+                class="ais-Snippet snippet"
+              >
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  あった+使ってみたら良さそうだったので運用を開始した
+
+[
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown Checkbox - Visual Studio 
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace](https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox)
+
+[https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox:embed:cite
+                </span>
+              </span>
+            </div>
+          </li>
+          <li
+            class="ais-InfiniteHits-item"
+          >
+            <div
+              class="card"
+              data-testid="hit-card"
+            >
+              <a
                 href="http://localhost:8001/git/github_actions_dynamic_matrix"
                 rel="noreferrer"
                 target="_blank"
@@ -13907,106 +14183,6 @@ ON(target.
                 >
                   anager_service/client.rb:792:in \`access_secret_version'
         ./app.rb:21:in
-                </span>
-              </span>
-            </div>
-          </li>
-          <li
-            class="ais-InfiniteHits-item"
-          >
-            <div
-              class="card"
-              data-testid="hit-card"
-            >
-              <a
-                href="http://localhost:8001/embulk/20150707_embulk_elasticsearch_kibana"
-                rel="noreferrer"
-                target="_blank"
-              >
-                <p>
-                  <span
-                    class="ais-Highlight"
-                  >
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      [B] embulkで
-                    </span>
-                    <mark
-                      class="ais-Highlight-highlighted"
-                    >
-                      m
-                    </mark>
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      ysqlからelasticsearchに送ってグラフ化
-                    </span>
-                  </span>
-                </p>
-              </a>
-              <span
-                class="tag"
-              >
-                Embulk
-              </span>
-              <span
-                class="tag"
-              >
-                MySQL
-              </span>
-              <br />
-              <span
-                class="ais-Snippet snippet"
-              >
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 "alt")
-
-# pluginのインストール
-
-\`\`\`
-embulk gem install embulk-input-
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-\`\`\`
-
-# 設定
-* config.yml
-
-\`\`\`
-in:
-  type: 
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-  host: localhost
-  user: user
-  password: ""
-  database: service
-  query: |
-    SELECT
-      date,
-      SUM(c),
-      SUM(a)
-    FROM report
-    GROUP
                 </span>
               </span>
             </div>
@@ -16039,6 +16215,126 @@ Apacheのworkerでバランサ、backendにサーバが何台かある状態で�
               data-testid="hit-card"
             >
               <a
+                href="http://localhost:8001/other/vscode_checkbox_extension"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <p>
+                  <span
+                    class="ais-Highlight"
+                  >
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      VS Code 
+                    </span>
+                    <mark
+                      class="ais-Highlight-highlighted"
+                    >
+                      M
+                    </mark>
+                    <span
+                      class="ais-Highlight-nonHighlighted"
+                    >
+                      arkdown CheckboxプラグインでToDo管理
+                    </span>
+                  </span>
+                </p>
+              </a>
+              <span
+                class="tag"
+              >
+                other
+              </span>
+              <span
+                class="tag"
+              >
+                VSCode
+              </span>
+              <br />
+              <span
+                class="ais-Snippet snippet"
+              >
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  あった+使ってみたら良さそうだったので運用を開始した
+
+[
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown Checkbox - Visual Studio 
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  M
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace](https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox)
+
+[https://
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arketplace.visualstudio.com/items?itemName=PKief.
+                </span>
+                <mark
+                  class="ais-Snippet-highlighted"
+                >
+                  m
+                </mark>
+                <span
+                  class="ais-Snippet-nonHighlighted"
+                >
+                  arkdown-checkbox:embed:cite
+                </span>
+              </span>
+            </div>
+          </li>
+          <li
+            class="ais-InfiniteHits-item"
+          >
+            <div
+              class="card"
+              data-testid="hit-card"
+            >
+              <a
                 href="http://localhost:8001/git/github_actions_dynamic_matrix"
                 rel="noreferrer"
                 target="_blank"
@@ -16542,106 +16838,6 @@ ON(target.
                 >
                   anager_service/client.rb:792:in \`access_secret_version'
         ./app.rb:21:in
-                </span>
-              </span>
-            </div>
-          </li>
-          <li
-            class="ais-InfiniteHits-item"
-          >
-            <div
-              class="card"
-              data-testid="hit-card"
-            >
-              <a
-                href="http://localhost:8001/embulk/20150707_embulk_elasticsearch_kibana"
-                rel="noreferrer"
-                target="_blank"
-              >
-                <p>
-                  <span
-                    class="ais-Highlight"
-                  >
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      [B] embulkで
-                    </span>
-                    <mark
-                      class="ais-Highlight-highlighted"
-                    >
-                      m
-                    </mark>
-                    <span
-                      class="ais-Highlight-nonHighlighted"
-                    >
-                      ysqlからelasticsearchに送ってグラフ化
-                    </span>
-                  </span>
-                </p>
-              </a>
-              <span
-                class="tag"
-              >
-                Embulk
-              </span>
-              <span
-                class="tag"
-              >
-                MySQL
-              </span>
-              <br />
-              <span
-                class="ais-Snippet snippet"
-              >
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 "alt")
-
-# pluginのインストール
-
-\`\`\`
-embulk gem install embulk-input-
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-\`\`\`
-
-# 設定
-* config.yml
-
-\`\`\`
-in:
-  type: 
-                </span>
-                <mark
-                  class="ais-Snippet-highlighted"
-                >
-                  m
-                </mark>
-                <span
-                  class="ais-Snippet-nonHighlighted"
-                >
-                  ysql
-  host: localhost
-  user: user
-  password: ""
-  database: service
-  query: |
-    SELECT
-      date,
-      SUM(c),
-      SUM(a)
-    FROM report
-    GROUP
                 </span>
               </span>
             </div>

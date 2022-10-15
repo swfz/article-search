@@ -1313,7 +1313,7 @@
           }
         }
       ],
-      "nbHits": 103,
+      "nbHits": 109,
       "page": 0,
       "nbPages": 6,
       "hitsPerPage": 20,
@@ -1324,13 +1324,13 @@
       "params": "facets=%5B%5D&query=m&tagFilters=",
       "index": "til",
       "renderingContent": {},
-      "processingTimeMS": 11,
+      "processingTimeMS": 9,
       "processingTimingsMS": {
         "afterFetch": {
-          "format": { "highlighting": 3, "snippeting": 5, "total": 10 },
-          "total": 10
+          "format": { "highlighting": 3, "snippeting": 4, "total": 8 },
+          "total": 8
         },
-        "total": 11
+        "total": 9
       }
     },
     {
@@ -2255,6 +2255,60 @@
           }
         },
         {
+          "title": "VS Code Markdown CheckboxプラグインでToDo管理",
+          "date": "2022-09-21",
+          "slug": "other/vscode_checkbox_extension",
+          "url": "http://localhost:8001/other/vscode_checkbox_extension",
+          "section": "other/vscode_checkbox_extension",
+          "tags": ["other", "VSCode"],
+          "text": "# VS Code Markdown CheckboxプラグインでToDo管理\n\n最近自分の中での仕事のToDo管理はまずVS Codeで開いたMarkdownファイルを見る習慣がついている\n\n<!-- TrelloやNotionなどさまざまなツールで管理したり共有したり試していたが、次の点でなじまなかった -->\n\n理由としては次のような感じ\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\n- すでに仕事中のメモ用途にVS Codeを開いていて、だいたいのことはMarkdownにメモとして残しているので常にVS Codeを開いている、開いているのでその流れでToDoリストもチェックする流れが自然\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n- 役割上いろんなところからタスクが降ってくるのでとりあえずすぐメモしておきたい場面でツール開いて色々入力して登録…というのが結構面倒に感じてまった\n\nもちろんチームやプロジェクトでツールを使って管理している部分もあるのでそちらは使っているが…\n\n結局自分の中では、単純なリストで一ヵ所に一覧が集まっているほうが意識しやすいのでMarkdownのチェックリスト形式で書いてこなしたらチェックを入れるという感じで落ち着いている\n\nまた、各種ツールで管理しているタスクよりタスクの粒度を細かくすることでチェックを入れやすくしてこなしている感を出したいのもある（`○○のスケジュールを取る`など）\n\n```markdown\n- [ ] TaskA\n- [ ] TaskB\n- [ ] TaskC\n```\n\n今までチェックリストは普通に編集していたのだがふとしたきっかけでチェックのショートカットはないのかな?と調べてみたらあった+使ってみたら良さそうだったので運用を開始した\n\n[Markdown Checkbox - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=PKief.markdown-checkbox)\n\n[https://marketplace.visualstudio.com/items?itemName=PKief.markdown-checkbox:embed:cite]\n\n`Ctrl`+`Shift`+`Enter`でチェック\n\n`Ctrl`+`Shift`+`C`でチェックボックスを生成\n\nその他設定できるオプションはドキュメントを見るのが一番早いがリストの文字(`-`,`*`)やチェックの文字など設定で選択できる\n\nまた、チェックしたら日付を入れる、チェックしたら取り消し線、イタリックにするなども設定できる\n\n自分はシンプルでよかったのでチェックしたら～系の設定はすべて外した\n\nチェックした後またチェック外すみたいなパターンはないがショートカットでチェックボックスをチェックできるのは便利\n\nただ、運用を変えたところでToDoの消化がはかどるわけではない…",
+          "objectID": "other/vscode_checkbox_extension",
+          "_snippetResult": {
+            "text": {
+              "value": "あった+使ってみたら良さそうだったので運用を開始した\n\n[__ais-highlight__M__/ais-highlight__arkdown Checkbox - Visual Studio __ais-highlight__M__/ais-highlight__arketplace](https://__ais-highlight__m__/ais-highlight__arketplace.visualstudio.com/items?itemName=PKief.__ais-highlight__m__/ais-highlight__arkdown-checkbox)\n\n[https://__ais-highlight__m__/ais-highlight__arketplace.visualstudio.com/items?itemName=PKief.__ais-highlight__m__/ais-highlight__arkdown-checkbox:embed:cite",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "VS Code __ais-highlight__M__/ais-highlight__arkdown CheckboxプラグインでToDo管理",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["m"]
+            },
+            "date": {
+              "value": "2022-09-21",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "other/vscode_checkbox_extension",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "http://localhost:8001/other/vscode_checkbox_extension",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "other/vscode_checkbox_extension",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              { "value": "other", "matchLevel": "none", "matchedWords": [] },
+              { "value": "VSCode", "matchLevel": "none", "matchedWords": [] }
+            ],
+            "text": {
+              "value": "# VS Code __ais-highlight__M__/ais-highlight__arkdown CheckboxプラグインでToDo管理\n\n最近自分の中での仕事のToDo管理はまずVS Codeで開いた__ais-highlight__M__/ais-highlight__arkdownファイルを見る習慣がついている\n\n<!-- TrelloやNotionなどさまざまなツールで管理したり共有したり試していたが、次の点でなじまなかった -->\n\n理由としては次のような感じ\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\n- すでに仕事中のメモ用途にVS Codeを開いていて、だいたいのことは__ais-highlight__M__/ais-highlight__arkdownにメモとして残しているので常にVS Codeを開いている、開いているのでその流れでToDoリストもチェックする流れが自然\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n- 役割上いろんなところからタスクが降ってくるのでとりあえずすぐメモしておきたい場面でツール開いて色々入力して登録…というのが結構面倒に感じてまった\n\nもちろんチームやプロジェクトでツールを使って管理している部分もあるのでそちらは使っているが…\n\n結局自分の中では、単純なリストで一ヵ所に一覧が集まっているほうが意識しやすいので__ais-highlight__M__/ais-highlight__arkdownのチェックリスト形式で書いてこなしたらチェックを入れるという感じで落ち着いている\n\nまた、各種ツールで管理しているタスクよりタスクの粒度を細かくすることでチェックを入れやすくしてこなしている感を出したいのもある（`○○のスケジュールを取る`など）\n\n```__ais-highlight__m__/ais-highlight__arkdown\n- [ ] TaskA\n- [ ] TaskB\n- [ ] TaskC\n```\n\n今までチェックリストは普通に編集していたのだがふとしたきっかけでチェックのショートカットはないのかな?と調べてみたらあった+使ってみたら良さそうだったので運用を開始した\n\n[__ais-highlight__M__/ais-highlight__arkdown Checkbox - Visual Studio __ais-highlight__M__/ais-highlight__arketplace](https://__ais-highlight__m__/ais-highlight__arketplace.visualstudio.com/items?itemName=PKief.__ais-highlight__m__/ais-highlight__arkdown-checkbox)\n\n[https://__ais-highlight__m__/ais-highlight__arketplace.visualstudio.com/items?itemName=PKief.__ais-highlight__m__/ais-highlight__arkdown-checkbox:embed:cite]\n\n`Ctrl`+`Shift`+`Enter`でチェック\n\n`Ctrl`+`Shift`+`C`でチェックボックスを生成\n\nその他設定できるオプションはドキュメントを見るのが一番早いがリストの文字(`-`,`*`)やチェックの文字など設定で選択できる\n\nまた、チェックしたら日付を入れる、チェックしたら取り消し線、イタリックにするなども設定できる\n\n自分はシンプルでよかったのでチェックしたら～系の設定はすべて外した\n\nチェックした後またチェック外すみたいなパターンはないがショートカットでチェックボックスをチェックできるのは便利\n\nただ、運用を変えたところでToDoの消化がはかどるわけではない…",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": ["m"]
+            }
+          }
+        },
+        {
           "title": "GitHubActionsでmatrixの値を動的に扱う",
           "date": "2021-06-29",
           "slug": "git/github_actions_dynamic_matrix",
@@ -2492,68 +2546,9 @@
               "matchedWords": ["m"]
             }
           }
-        },
-        {
-          "title": "[B] embulkでmysqlからelasticsearchに送ってグラフ化",
-          "date": "2015-07-07",
-          "slug": "embulk/20150707_embulk_elasticsearch_kibana",
-          "url": "http://localhost:8001/embulk/20150707_embulk_elasticsearch_kibana",
-          "section": "embulk/20150707_embulk_elasticsearch_kibana",
-          "tags": ["Embulk", "MySQL"],
-          "text": "# embulkでMySQLからElasticsearchに送ってグラフ化\n\n以前embulkでCSVからElasticsearchへというのをやってみました\n\nサービスのデータからグラフ作成したいとかそういった場合に、MySQLからデータ取ってきてElasticsearch+kibanaですぐ確認できるよねっていうことを思いついたためやってみた\n\n# embulkのインストール\n\n* 下記参照\n\n[embulkでelasticsearchへ過去ログを入れ込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 \"alt\")\n\n# pluginのインストール\n\n```\nembulk gem install embulk-input-mysql\n```\n\n# 設定\n* config.yml\n\n```\nin:\n  type: mysql\n  host: localhost\n  user: user\n  password: \"\"\n  database: service\n  query: |\n    SELECT\n      date,\n      SUM(c),\n      SUM(a)\n    FROM report\n    GROUP BY\n      date\n\nexec: {}\nout:\n  type: elasticsearch\n  nodes:\n  - {host: 192.168.20.20, port: 9300}\n  cluster_name: dev\n  index: report\n  index_type: production\n```\n\n「query」でjoin普通にクエリ書けるので複雑なSQLでも特に問題ない模様\n\n今回はサービスの売り上げとかそこらへんの長期的推移を見れたらなってところで、やってみました。\n\nグループ化を細かくしたりしたら簡単な分析とかはできそう\n\n<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->\ncronで定期的にデータ入れるようにしておけばすぐ見れるし、便利に使えそうなのでしばらく入れてみようかなと思います\n<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->\n\nわざわざデータからグラフを描画するところをコード書いたりしなくて良いのがお手軽で良いですね\n\n![text](20150707_embulk_elasticsearch_kibana.PNG \"alt\")\n\n",
-          "objectID": "embulk/20150707_embulk_elasticsearch_kibana",
-          "_snippetResult": {
-            "text": {
-              "value": "込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 \"alt\")\n\n# pluginのインストール\n\n```\nembulk gem install embulk-input-__ais-highlight__m__/ais-highlight__ysql\n```\n\n# 設定\n* config.yml\n\n```\nin:\n  type: __ais-highlight__m__/ais-highlight__ysql\n  host: localhost\n  user: user\n  password: \"\"\n  database: service\n  query: |\n    SELECT\n      date,\n      SUM(c),\n      SUM(a)\n    FROM report\n    GROUP",
-              "matchLevel": "full"
-            }
-          },
-          "_highlightResult": {
-            "title": {
-              "value": "[B] embulkで__ais-highlight__m__/ais-highlight__ysqlからelasticsearchに送ってグラフ化",
-              "matchLevel": "full",
-              "fullyHighlighted": false,
-              "matchedWords": ["m"]
-            },
-            "date": {
-              "value": "2015-07-07",
-              "matchLevel": "none",
-              "matchedWords": []
-            },
-            "slug": {
-              "value": "embulk/20150707_embulk_elasticsearch_kibana",
-              "matchLevel": "none",
-              "matchedWords": []
-            },
-            "url": {
-              "value": "http://localhost:8001/embulk/20150707_embulk_elasticsearch_kibana",
-              "matchLevel": "none",
-              "matchedWords": []
-            },
-            "section": {
-              "value": "embulk/20150707_embulk_elasticsearch_kibana",
-              "matchLevel": "none",
-              "matchedWords": []
-            },
-            "tags": [
-              { "value": "Embulk", "matchLevel": "none", "matchedWords": [] },
-              {
-                "value": "__ais-highlight__M__/ais-highlight__ySQL",
-                "matchLevel": "full",
-                "fullyHighlighted": false,
-                "matchedWords": ["m"]
-              }
-            ],
-            "text": {
-              "value": "# embulkで__ais-highlight__M__/ais-highlight__ySQLからElasticsearchに送ってグラフ化\n\n以前embulkでCSVからElasticsearchへというのをやってみました\n\nサービスのデータからグラフ作成したいとかそういった場合に、__ais-highlight__M__/ais-highlight__ySQLからデータ取ってきてElasticsearch+kibanaですぐ確認できるよねっていうことを思いついたためやってみた\n\n# embulkのインストール\n\n* 下記参照\n\n[embulkでelasticsearchへ過去ログを入れ込む](http://swfz.hatenablog.com/entry/2015/04/25/184339 \"alt\")\n\n# pluginのインストール\n\n```\nembulk gem install embulk-input-__ais-highlight__m__/ais-highlight__ysql\n```\n\n# 設定\n* config.yml\n\n```\nin:\n  type: __ais-highlight__m__/ais-highlight__ysql\n  host: localhost\n  user: user\n  password: \"\"\n  database: service\n  query: |\n    SELECT\n      date,\n      SUM(c),\n      SUM(a)\n    FROM report\n    GROUP BY\n      date\n\nexec: {}\nout:\n  type: elasticsearch\n  nodes:\n  - {host: 192.168.20.20, port: 9300}\n  cluster_name: dev\n  index: report\n  index_type: production\n```\n\n「query」でjoin普通にクエリ書けるので複雑なSQLでも特に問題ない模様\n\n今回はサービスの売り上げとかそこらへんの長期的推移を見れたらなってところで、やってみました。\n\nグループ化を細かくしたりしたら簡単な分析とかはできそう\n\n<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->\ncronで定期的にデータ入れるようにしておけばすぐ見れるし、便利に使えそうなのでしばらく入れてみようかなと思います\n<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->\n\nわざわざデータからグラフを描画するところをコード書いたりしなくて良いのがお手軽で良いですね\n\n![text](20150707_embulk_elasticsearch_kibana.PNG \"alt\")\n\n",
-              "matchLevel": "full",
-              "fullyHighlighted": false,
-              "matchedWords": ["m"]
-            }
-          }
         }
       ],
-      "nbHits": 302,
+      "nbHits": 305,
       "page": 0,
       "nbPages": 16,
       "hitsPerPage": 20,
@@ -2564,14 +2559,14 @@
       "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=m&tagFilters=",
       "index": "hatenablog",
       "renderingContent": {},
-      "processingTimeMS": 19,
+      "processingTimeMS": 18,
       "processingTimingsMS": {
         "afterFetch": {
           "format": { "highlighting": 6, "snippeting": 9, "total": 17 },
           "total": 17
         },
-        "getIdx": 1,
-        "total": 19
+        "getIdx": { "total": 1 },
+        "total": 18
       }
     },
     {
@@ -3887,7 +3882,7 @@
           }
         }
       ],
-      "nbHits": 103,
+      "nbHits": 109,
       "page": 0,
       "nbPages": 6,
       "hitsPerPage": 20,
@@ -3898,13 +3893,13 @@
       "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=m&tagFilters=",
       "index": "til",
       "renderingContent": {},
-      "processingTimeMS": 8,
+      "processingTimeMS": 7,
       "processingTimingsMS": {
         "afterFetch": {
-          "format": { "highlighting": 3, "snippeting": 4, "total": 8 },
-          "total": 8
+          "format": { "highlighting": 2, "snippeting": 3, "total": 6 },
+          "total": 6
         },
-        "total": 8
+        "total": 7
       }
     }
   ]
