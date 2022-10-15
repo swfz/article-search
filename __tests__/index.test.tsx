@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import { act } from "react-dom/test-utils";
 import { handlers } from "../mocks/handler";
 import { setupServer } from "msw/node";
-import {within} from '@testing-library/dom'
+import { within } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 describe("Search", () => {
@@ -58,9 +58,17 @@ describe("Search", () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
     expect(queryAllByTestId("hit-card")).toHaveLength(40);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(20)
-    expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(20)
-    expect(container).toMatchSnapshot()
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(20);
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="til"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(20);
+    expect(container).toMatchSnapshot();
 
     // Query内容が変わったとき、すぐにはリクエストが送信されないため変更なし
     user.type(searchInput, "s");
@@ -71,9 +79,17 @@ describe("Search", () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
     expect(queryAllByTestId("hit-card")).toHaveLength(16);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(8)
-    expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(8)
-    expect(container).toMatchSnapshot()
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(8);
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="til"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(8);
+    expect(container).toMatchSnapshot();
 
     // Query内容が変わったとき、すぐにはリクエストが送信されないため変更なし
     user.type(searchInput, "w");
@@ -84,9 +100,17 @@ describe("Search", () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
     expect(queryAllByTestId("hit-card")).toHaveLength(5);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(2)
-    expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(3)
-    expect(container).toMatchSnapshot()
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(2);
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="til"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(3);
+    expect(container).toMatchSnapshot();
   });
 
   it("Search Show Moreのテスト", async () => {
@@ -115,19 +139,35 @@ describe("Search", () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
     expect(queryAllByTestId("hit-card")).toHaveLength(40);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(20)
-    expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(20)
-    expect(container).toMatchSnapshot()
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(20);
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="til"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(20);
+    expect(container).toMatchSnapshot();
 
-    const showMore = getAllByText('Show more results')
-    user.click(showMore[0])
+    const showMore = getAllByText("Show more results");
+    user.click(showMore[0]);
 
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
     expect(queryAllByTestId("hit-card")).toHaveLength(60);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(40)
-    expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(20)
-    expect(container).toMatchSnapshot()
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(40);
+    expect(
+      document.querySelectorAll(
+        'div[data-testid="til"] div[data-testid="hit-card"]'
+      )
+    ).toHaveLength(20);
+    expect(container).toMatchSnapshot();
   });
 });
