@@ -32,3 +32,23 @@
 ```shell
 yarn dev
 ```
+
+### Algolia APIのモック
+
+```
+export NEXT_PUBLIC_API_MOCKING=enabled
+```
+
+下記キーワード入力時のみmswが反応する
+
+- m
+- ms
+- msw
+
+### test時
+
+サンプルの用意は下記2つのインデックス
+
+```
+export NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til
+```
