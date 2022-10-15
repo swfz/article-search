@@ -41,7 +41,7 @@ describe("Search", () => {
       getByTitle,
       getByPlaceholderText,
     } = render(<Search></Search>);
-    const searchButton = getByTitle("Submit the search query.");
+    const searchButton = getByTitle("Submit the search query");
 
     expect(container).toMatchSnapshot();
     expect(searchButton).toBeVisible();
@@ -70,21 +70,21 @@ describe("Search", () => {
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
-    expect(queryAllByTestId("hit-card")).toHaveLength(15);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(7)
+    expect(queryAllByTestId("hit-card")).toHaveLength(16);
+    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(8)
     expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(8)
     expect(container).toMatchSnapshot()
 
     // Query内容が変わったとき、すぐにはリクエストが送信されないため変更なし
     user.type(searchInput, "w");
-    expect(queryAllByTestId("hit-card")).toHaveLength(15);
+    expect(queryAllByTestId("hit-card")).toHaveLength(16);
 
     // 入力が終わったと判断され、新たにリクエスト送信。検索結果にも反映されているかの確認
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
-    expect(queryAllByTestId("hit-card")).toHaveLength(4);
-    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(1)
+    expect(queryAllByTestId("hit-card")).toHaveLength(5);
+    expect(document.querySelectorAll('div[data-testid="hatenablog"] div[data-testid="hit-card"]')).toHaveLength(2)
     expect(document.querySelectorAll('div[data-testid="til"] div[data-testid="hit-card"]')).toHaveLength(3)
     expect(container).toMatchSnapshot()
   });
@@ -98,7 +98,7 @@ describe("Search", () => {
       getByPlaceholderText,
       getAllByText,
     } = render(<Search></Search>);
-    const searchButton = getByTitle("Submit the search query.");
+    const searchButton = getByTitle("Submit the search query");
 
     expect(container).toMatchSnapshot();
     expect(searchButton).toBeVisible();
