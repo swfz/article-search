@@ -17,7 +17,7 @@
     "next": "13.0.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-instantsearch-hooks-web": "6.38.1"
+    "react-instantsearch-hooks-web": "6.38.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.16.5",
