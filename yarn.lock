@@ -1025,6 +1025,11 @@
   dependencies:
     "@types/ms" "*"
 
+"@types/dom-speech-recognition@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@types/dom-speech-recognition/-/dom-speech-recognition-0.0.1.tgz#e326761a04b4a49c0eec2ac7948afc1c6aa12baa"
+  integrity sha512-udCxb8DvjcDKfk1WTBzDsxFbLgYxmQGKrE/ricoMqHRNjSlSUCcamVTA5lIQqzY10mY5qCY0QDwBfFEwhfoDPw==
+
 "@types/google.maps@^3.45.3":
   version "3.49.2"
   resolved "https://registry.yarnpkg.com/@types/google.maps/-/google.maps-3.49.2.tgz#9640491ec3aa96c9de1466894117ce81c02588df"
@@ -1308,10 +1313,10 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-algoliasearch-helper@^3.11.2:
-  version "3.11.2"
-  resolved "https://registry.yarnpkg.com/algoliasearch-helper/-/algoliasearch-helper-3.11.2.tgz#f42db10433e6264f1d1ba503699cbdbff7b48dff"
-  integrity sha512-eKvSM5hz5w9RcUowu8LnQ5v0KRrFLCvF4K3KF/Ab3VwCT726rWgZUWUIQUPjr9qDENUMukQ/IHZ7bGUVYRGP0g==
+algoliasearch-helper@^3.11.3:
+  version "3.11.3"
+  resolved "https://registry.yarnpkg.com/algoliasearch-helper/-/algoliasearch-helper-3.11.3.tgz#6e7af8afe6f9a9e55186abffb7b6cf7ca8de3301"
+  integrity sha512-TbaEvLwiuGygHQIB8y+OsJKQQ40+JKUua5B91X66tMUHyyhbNHvqyr0lqd3wCoyKx7WybyQrC0WJvzoIeh24Aw==
   dependencies:
     "@algolia/events" "^4.0.1"
 
@@ -2851,18 +2856,19 @@ inquirer@^8.2.0:
     through "^2.3.6"
     wrap-ansi "^7.0.0"
 
-instantsearch.js@^4.49.4:
-  version "4.49.4"
-  resolved "https://registry.yarnpkg.com/instantsearch.js/-/instantsearch.js-4.49.4.tgz#fa87694683ce7b2c6fa3ef595f37ad48bf5fa69b"
-  integrity sha512-yrYdlX3wo8xqTTTapnfX+qF2FvNK2qFtvI0e8kMrATfFtMiIzX5zYLfbaYyOgOmMhIr2GD9cJEm/mJsHzjfG+w==
+instantsearch.js@4.50.2:
+  version "4.50.2"
+  resolved "https://registry.yarnpkg.com/instantsearch.js/-/instantsearch.js-4.50.2.tgz#f8cc7342ddfc9fa025f84cab43837fc456b1826c"
+  integrity sha512-7MqHwLPOb9LCe3HkFHGOZUfzzpFbM82qJabZSDJkIZPZT00nvgw4NLHL/A6Wnqj9WkRK1au+n17EQFVgk5nqww==
   dependencies:
     "@algolia/events" "^4.0.1"
     "@algolia/ui-components-highlight-vdom" "^1.2.1"
     "@algolia/ui-components-shared" "^1.2.1"
+    "@types/dom-speech-recognition" "^0.0.1"
     "@types/google.maps" "^3.45.3"
     "@types/hogan.js" "^3.0.0"
     "@types/qs" "^6.5.3"
-    algoliasearch-helper "^3.11.2"
+    algoliasearch-helper "^3.11.3"
     hogan.js "^3.0.2"
     htm "^3.0.0"
     preact "^10.10.0"
@@ -4327,23 +4333,23 @@ react-dom@18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-instantsearch-hooks-web@6.38.3:
-  version "6.38.3"
-  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks-web/-/react-instantsearch-hooks-web-6.38.3.tgz#09d34f5900e5bd9e3c0138d1d8dee2333f16ea3f"
-  integrity sha512-Q7D2x4DxP3jaWqEhUQ0nbqCPUo4EjNYkgDsB+sjATrxvcIYVsZze0q+Cbph/2rv8KBdbVtPq1tgWTH+krZcMdA==
+react-instantsearch-hooks-web@6.39.2:
+  version "6.39.2"
+  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks-web/-/react-instantsearch-hooks-web-6.39.2.tgz#554548d45086de4ce7eba253f7c32cb54e8b5057"
+  integrity sha512-rsJp7AkOlhtUXA2WjHMDVsKHRRPAoStTaw7bCXlGyCRHLjLDA28BkT5RnufO+/nFYSe5B8dB4Jpq22oIRSAyfw==
   dependencies:
     "@babel/runtime" "^7.1.2"
-    instantsearch.js "^4.49.4"
-    react-instantsearch-hooks "6.38.3"
+    instantsearch.js "4.50.2"
+    react-instantsearch-hooks "6.39.2"
 
-react-instantsearch-hooks@6.38.3:
-  version "6.38.3"
-  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks/-/react-instantsearch-hooks-6.38.3.tgz#07757be19871d5d088038d96674b574660c540c7"
-  integrity sha512-Sgdh9LripR/Xx3qeIsL+BA6hy0gBm+jgFPSi5leB4ypwUtijxDV24fEnZsRZJqIuYuA+n+KCxQEaDJKOWPymrg==
+react-instantsearch-hooks@6.39.2:
+  version "6.39.2"
+  resolved "https://registry.yarnpkg.com/react-instantsearch-hooks/-/react-instantsearch-hooks-6.39.2.tgz#5c00382d195721117a677ed4bccea4d6d82724be"
+  integrity sha512-K3oWmFvBfgBdtT4ZLXk1NDeozZO8kdAJMaY/PYq3OiwRLEaVjZoUKRuoZRUA0NLS3XYSGpst0QCq4u9nxE9Yeg==
   dependencies:
     "@babel/runtime" "^7.1.2"
-    algoliasearch-helper "^3.11.2"
-    instantsearch.js "^4.49.4"
+    algoliasearch-helper "^3.11.3"
+    instantsearch.js "4.50.2"
     use-sync-external-store "^1.0.0"
 
 react-is@^16.13.1:
