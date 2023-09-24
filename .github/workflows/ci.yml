@@ -20,6 +20,32 @@ jobs:
           yarn
           yarn build
 
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.0.0
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - name: eslint
+        run: |
+          yarn
+          yarn lint
+
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.0.0
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version-file: .node-version
+          cache: yarn
+      - name: prettier
+        run: |
+          yarn
+          yarn lint:format
+
   typecheck:
     runs-on: ubuntu-latest
     steps:
