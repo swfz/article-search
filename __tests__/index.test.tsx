@@ -60,13 +60,13 @@ describe("Search", () => {
     expect(queryAllByTestId("hit-card")).toHaveLength(40);
     expect(
       document.querySelectorAll(
-        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(20);
     expect(
       document.querySelectorAll(
-        'div[data-testid="til"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="til"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(20);
     expect(container).toMatchSnapshot();
 
@@ -81,13 +81,13 @@ describe("Search", () => {
     expect(queryAllByTestId("hit-card")).toHaveLength(16);
     expect(
       document.querySelectorAll(
-        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(8);
     expect(
       document.querySelectorAll(
-        'div[data-testid="til"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="til"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(8);
     expect(container).toMatchSnapshot();
 
@@ -102,13 +102,13 @@ describe("Search", () => {
     expect(queryAllByTestId("hit-card")).toHaveLength(5);
     expect(
       document.querySelectorAll(
-        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(2);
     expect(
       document.querySelectorAll(
-        'div[data-testid="til"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="til"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(3);
     expect(container).toMatchSnapshot();
   });
@@ -141,13 +141,13 @@ describe("Search", () => {
     expect(queryAllByTestId("hit-card")).toHaveLength(40);
     expect(
       document.querySelectorAll(
-        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(20);
     expect(
       document.querySelectorAll(
-        'div[data-testid="til"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="til"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(20);
     expect(container).toMatchSnapshot();
 
@@ -160,13 +160,13 @@ describe("Search", () => {
     expect(queryAllByTestId("hit-card")).toHaveLength(60);
     expect(
       document.querySelectorAll(
-        'div[data-testid="hatenablog"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(40);
     expect(
       document.querySelectorAll(
-        'div[data-testid="til"] div[data-testid="hit-card"]'
-      )
+        'div[data-testid="til"] div[data-testid="hit-card"]',
+      ),
     ).toHaveLength(20);
     expect(container).toMatchSnapshot();
   });
