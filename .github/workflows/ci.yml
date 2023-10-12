@@ -7,66 +7,77 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: true
       - uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .node-version
-          cache: yarn
+          cache: pnpm
       - name: build
         # dummy ID
         env:
           NEXT_PUBLIC_ALGOLIA_APP_ID: dummy
           NEXT_PUBLIC_ALGOLIA_INDICES: a,b,c
         run: |
-          yarn
-          yarn build
+          pnpm build
 
   eslint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: true
       - uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .node-version
-          cache: yarn
+          cache: pnpm
       - name: eslint
         run: |
-          yarn
-          yarn lint
+          pnpm lint
 
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: true
       - uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .node-version
-          cache: yarn
+          cache: pnpm
       - name: prettier
         run: |
-          yarn
-          yarn lint:format
+          pnpm lint:format
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: true
       - uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .node-version
-          cache: yarn
+          cache: pnpm
       - name: typecheck
         run: |
-          yarn
-          yarn typecheck
+          pnpm typecheck
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: true
       - uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .node-version
-          cache: yarn
+          cache: pnpm
       - name: test
         # dummy ID
         env:
@@ -74,5 +85,4 @@ jobs:
           NEXT_PUBLIC_ALGOLIA_INDICES: hatenablog,til
           NEXT_PUBLIC_API_MOCKING: enabled
         run: |
-          yarn
-          yarn test
+          pnpm test
