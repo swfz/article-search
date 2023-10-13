@@ -17,8 +17,8 @@ import {
   RefinementList,
   PoweredBy,
   InfiniteHits,
-} from "react-instantsearch-hooks-web";
-import type { UseSearchBoxProps } from "react-instantsearch-hooks-web";
+} from "react-instantsearch";
+import type { UseSearchBoxProps } from "react-instantsearch";
 
 import type { Hit, SearchClient } from "instantsearch.js";
 
