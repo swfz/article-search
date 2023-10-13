@@ -30,6 +30,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -47,6 +48,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -62,6 +64,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -207,6 +210,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -223,6 +227,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -238,6 +243,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -4747,6 +4753,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -4763,6 +4770,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -4778,6 +4786,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -6075,6 +6084,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -6091,6 +6101,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -6106,6 +6117,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -6675,6 +6687,7 @@ exports[`Search Search Show Moreのテスト 1`] = `
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -6692,6 +6705,7 @@ exports[`Search Search Show Moreのテスト 1`] = `
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -6707,6 +6721,7 @@ exports[`Search Search Show Moreのテスト 1`] = `
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -6852,6 +6867,7 @@ exports[`Search Search Show Moreのテスト 2`] = `
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -6868,6 +6884,7 @@ exports[`Search Search Show Moreのテスト 2`] = `
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -6883,6 +6900,7 @@ exports[`Search Search Show Moreのテスト 2`] = `
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -11392,6 +11410,7 @@ exports[`Search Search Show Moreのテスト 3`] = `
         type="submit"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-submitIcon"
           height="10"
           viewBox="0 0 40 40"
@@ -11408,6 +11427,7 @@ exports[`Search Search Show Moreのテスト 3`] = `
         type="reset"
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-resetIcon"
           height="10"
           viewBox="0 0 20 20"
@@ -11423,6 +11443,7 @@ exports[`Search Search Show Moreのテスト 3`] = `
         hidden=""
       >
         <svg
+          aria-hidden="true"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
