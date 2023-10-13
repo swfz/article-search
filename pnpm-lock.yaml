@@ -30,9 +30,6 @@ dependencies:
   react-instantsearch:
     specifier: ^7.2.0
     version: 7.2.0(algoliasearch@4.20.0)(react-dom@18.2.0)(react@18.2.0)
-  react-instantsearch-hooks-web:
-    specifier: 6.47.3
-    version: 6.47.3(algoliasearch@4.20.0)(react-dom@18.2.0)(react@18.2.0)
 
 devDependencies:
   '@testing-library/dom':
@@ -1378,15 +1375,6 @@ packages:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
     dev: true
-
-  /algoliasearch-helper@3.14.0(algoliasearch@4.20.0):
-    resolution: {integrity: sha512-gXDXzsSS0YANn5dHr71CUXOo84cN4azhHKUbg71vAWnH+1JBiR4jf7to3t3JHXknXkbV0F7f055vUSBKrltHLQ==}
-    peerDependencies:
-      algoliasearch: '>= 3.1 < 6'
-    dependencies:
-      '@algolia/events': 4.0.1
-      algoliasearch: 4.20.0
-    dev: false
 
   /algoliasearch-helper@3.14.2(algoliasearch@4.20.0):
     resolution: {integrity: sha512-FjDSrjvQvJT/SKMW74nPgFpsoPUwZCzGbCqbp8HhBFfSk/OvNFxzCaCmuO0p7AWeLy1gD+muFwQEkBwcl5H4pg==}
@@ -3052,27 +3040,6 @@ packages:
       wrap-ansi: 7.0.0
     dev: true
 
-  /instantsearch.js@4.56.8(algoliasearch@4.20.0):
-    resolution: {integrity: sha512-40DJ5l70ZzVzWPK3qrHTKlJLaHGq1PRZpzfL6281P2mz8G19WOHQHKAP4Zh6a4lOZaRtJQUiPjQwqCHSurXZ5g==}
-    peerDependencies:
-      algoliasearch: '>= 3.1 < 6'
-    dependencies:
-      '@algolia/events': 4.0.1
-      '@algolia/ui-components-highlight-vdom': 1.2.2
-      '@algolia/ui-components-shared': 1.2.2
-      '@types/dom-speech-recognition': 0.0.1
-      '@types/google.maps': 3.49.2
-      '@types/hogan.js': 3.0.1
-      '@types/qs': 6.9.7
-      algoliasearch: 4.20.0
-      algoliasearch-helper: 3.14.0(algoliasearch@4.20.0)
-      hogan.js: 3.0.2
-      htm: 3.1.1
-      preact: 10.11.0
-      qs: 6.9.7
-      search-insights: 2.9.0
-    dev: false
-
   /instantsearch.js@4.58.0(algoliasearch@4.20.0):
     resolution: {integrity: sha512-Y5vERyhoE1jEWew33OdsRbB24q2Pexft4/HK6a+QOO22C3qoGIkc3i4rP8RbB4kecDvkziFi/YCGE5t1B6J3eg==}
     peerDependencies:
@@ -4586,37 +4553,6 @@ packages:
       algoliasearch: 4.20.0
       algoliasearch-helper: 3.14.2(algoliasearch@4.20.0)
       instantsearch.js: 4.58.0(algoliasearch@4.20.0)
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
-
-  /react-instantsearch-hooks-web@6.47.3(algoliasearch@4.20.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-JTkPm11xwCX9eO4FgeeJ4v4O98wz1L7cAa2LkspgzDD1MPjMLtmiRVzvGxuYnOayQTtfC5+0GOBwuJEN8TDI8A==}
-    deprecated: package has moved to react-instantsearch
-    peerDependencies:
-      algoliasearch: '>= 3.1 < 5'
-      react: '>= 16.8.0 < 19'
-      react-dom: '>= 16.8.0 < 19'
-    dependencies:
-      '@babel/runtime': 7.23.1
-      algoliasearch: 4.20.0
-      instantsearch.js: 4.56.8(algoliasearch@4.20.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-instantsearch-hooks: 6.47.3(algoliasearch@4.20.0)(react@18.2.0)
-    dev: false
-
-  /react-instantsearch-hooks@6.47.3(algoliasearch@4.20.0)(react@18.2.0):
-    resolution: {integrity: sha512-QuGSwZ664MHrzvndXGnsyPhpKHywGqyDgqOVorYpEE24Y063OPv5XtmJaZqn27MIvvByUormTb6dbPgbjqkd8w==}
-    deprecated: package has moved to react-instantsearch-core
-    peerDependencies:
-      algoliasearch: '>= 3.1 < 5'
-      react: '>= 16.8.0 < 19'
-    dependencies:
-      '@babel/runtime': 7.23.1
-      algoliasearch: 4.20.0
-      algoliasearch-helper: 3.14.0(algoliasearch@4.20.0)
-      instantsearch.js: 4.56.8(algoliasearch@4.20.0)
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
