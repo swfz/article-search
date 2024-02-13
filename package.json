@@ -38,7 +38,7 @@
     "prettier": "3.2.5",
     "typescript": "5.3.3"
   },
-  "packageManager": "pnpm@8.15.1",
+  "packageManager": "pnpm@8.15.2",
   "resolutions": {
     "@types/react": "18.2.55",
     "@types/react-dom": "18.2.19"
