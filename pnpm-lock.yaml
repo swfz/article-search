@@ -6,7 +6,7 @@ settings:
 
 overrides:
   '@types/react': 18.2.65
-  '@types/react-dom': 18.2.21
+  '@types/react-dom': 18.2.22
 
 dependencies:
   '@algolia/client-search':
@@ -54,8 +54,8 @@ devDependencies:
     specifier: 18.2.65
     version: 18.2.65
   '@types/react-dom':
-    specifier: 18.2.21
-    version: 18.2.21
+    specifier: 18.2.22
+    version: 18.2.22
   eslint:
     specifier: 8.57.0
     version: 8.57.0
@@ -1117,7 +1117,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.1
       '@testing-library/dom': 9.3.4
-      '@types/react-dom': 18.2.21
+      '@types/react-dom': 18.2.22
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: true
@@ -1254,8 +1254,8 @@ packages:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
     dev: false
 
-  /@types/react-dom@18.2.21:
-    resolution: {integrity: sha512-gnvBA/21SA4xxqNXEwNiVcP0xSGHh/gi1VhWv9Bl46a0ItbTT5nFY+G9VSQpaG/8N/qdJpJ+vftQ4zflTtnjLw==}
+  /@types/react-dom@18.2.22:
+    resolution: {integrity: sha512-fHkBXPeNtfvri6gdsMYyW+dW7RXFo6Ad09nLFK0VQWR7yGLai/Cyvyj696gbwYvBnhGtevUG9cET0pmUbMtoPQ==}
     dependencies:
       '@types/react': 18.2.65
     dev: true
