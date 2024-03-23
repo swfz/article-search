@@ -12,8 +12,10 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -65,6 +67,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -192,8 +195,10 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -244,6 +249,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -4735,8 +4741,10 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -4787,6 +4795,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -6066,8 +6075,10 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -6118,6 +6129,7 @@ exports[`Search Search Queryの変化に伴い結果件数が変化するかの�
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -6669,8 +6681,10 @@ exports[`Search Search Show Moreのテスト 1`] = `
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -6722,6 +6736,7 @@ exports[`Search Search Show Moreのテスト 1`] = `
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -6849,8 +6864,10 @@ exports[`Search Search Show Moreのテスト 2`] = `
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -6901,6 +6918,7 @@ exports[`Search Search Show Moreのテスト 2`] = `
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
@@ -11392,8 +11410,10 @@ exports[`Search Search Show Moreのテスト 3`] = `
       action=""
       class="ais-SearchBox-form"
       novalidate=""
+      role="search"
     >
       <input
+        aria-label="Search"
         autocapitalize="off"
         autocomplete="off"
         autocorrect="off"
@@ -11444,6 +11464,7 @@ exports[`Search Search Show Moreのテスト 3`] = `
       >
         <svg
           aria-hidden="true"
+          aria-label="Results are loading"
           class="ais-SearchBox-loadingIcon"
           height="16"
           stroke="#444"
