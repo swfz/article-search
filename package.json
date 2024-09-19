@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til NEXT_PUBLIC_API_MOCKING=enabled next dev",
-    "build": "next build && next export",
+    "build": "next build",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint:format": "prettier --check \"**/*.{ts,tsx}\"",
