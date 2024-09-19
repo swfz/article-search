@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til NEXT_PUBLIC_API_MOCKING=enabled next dev",
-    "build": "next build && next export",
+    "build": "next build",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint:format": "prettier --check \"**/*.{ts,tsx}\"",
@@ -16,7 +16,7 @@
     "@algolia/client-search": "4.23.3",
     "algoliasearch": "4.23.3",
     "instantsearch.js": "4.74.1",
-    "next": "13.5.6",
+    "next": "14.1.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-instantsearch": "^7.2.0"
