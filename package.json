@@ -10,7 +10,7 @@
     "lint:format": "prettier --check \"**/*.{ts,tsx}\"",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til NEXT_PUBLIC_API_MOCKING=enabled jest"
+    "test": "NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til NEXT_PUBLIC_API_MOCKING=enabled vitest run"
   },
   "dependencies": {
     "@algolia/client-search": "4.24.0",
