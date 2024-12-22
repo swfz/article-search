@@ -4,17 +4,26 @@
       "hits": [
         {
           "url": "https://til.swfz.io//entries/msw_mock_svg/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/msw_mock_svg/index.md",
           "text": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\nmswを使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということでmswを使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://mswjs.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev msw\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx msw init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from 'msw'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from 'msw'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · mswjs/msw](https://github.com/mswjs/msw/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\nmswを使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
           "date": "2021-12-29",
           "title": "mswでSVGをモックする",
-          "tags": ["JavaScript", "TypeScript", "Gatsby", "msw"],
+          "tags": [
+            "JavaScript",
+            "TypeScript",
+            "Gatsby",
+            "msw"
+          ],
           "description": "Pixelaを題材としてモックしてみた",
           "slug": "/entries/msw_mock_svg/",
+          "internal": {
+            "contentDigest": "71397493f188ec4f06b2ff7879cacb1b"
+          },
           "timeToRead": 3,
-          "objectID": "75a9abd2-0b34-54b0-b919-36e1513da0ed",
+          "objectID": "93160714-a398-50c1-8c1a-bdbf52be4d8c",
           "_snippetResult": {
             "text": {
-              "value": "ような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · <em>msw</em>js/<em>msw</em>](https://github.com/<em>msw</em>js/<em>msw</em>/issues/461)\n\nモックできているかどうかの確認は",
+              "value": "… ような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · <em>msw</em>js/<em>msw</em>](https://github.com/<em>msw</em>js/<em>msw</em>/issues/461)\n\nモックできているかどうかの確認は …",
               "matchLevel": "full"
             }
           },
@@ -23,13 +32,25 @@
               "value": "https://til.swfz.io//entries/<em>msw</em>_mock_svg/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/<em>msw</em>_mock_svg/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             },
             "text": {
               "value": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\n<em>msw</em>を使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということで<em>msw</em>を使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://<em>msw</em>js.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev <em>msw</em>\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx <em>msw</em> init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from '<em>msw</em>'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from '<em>msw</em>'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · <em>msw</em>js/<em>msw</em>](https://github.com/<em>msw</em>js/<em>msw</em>/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\n<em>msw</em>を使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "date": {
               "value": "2021-12-29",
@@ -40,7 +61,9 @@
               "value": "<em>msw</em>でSVGをモックする",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "tags": [
               {
@@ -53,12 +76,18 @@
                 "matchLevel": "none",
                 "matchedWords": []
               },
-              { "value": "Gatsby", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "Gatsby",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
               {
                 "value": "<em>msw</em>",
                 "matchLevel": "full",
                 "fullyHighlighted": true,
-                "matchedWords": ["msw"]
+                "matchedWords": [
+                  "msw"
+                ]
               }
             ],
             "description": {
@@ -70,7 +99,16 @@
               "value": "/entries/<em>msw</em>_mock_svg/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "71397493f188ec4f06b2ff7879cacb1b",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             },
             "timeToRead": {
               "value": "3",
@@ -81,17 +119,25 @@
         },
         {
           "url": "https://til.swfz.io//entries/jest_with_msw/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/jest_with_msw/index.md",
           "text": "\n開発用に定義したmswの設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // mswでのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"msw\"\nimport { setupServer } from \"msw/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + mswのtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
           "date": "2022-08-19",
           "title": "mswのモックをjestのテストでも使う",
-          "tags": ["Jest", "msw", "TypeScript"],
+          "tags": [
+            "Jest",
+            "msw",
+            "TypeScript"
+          ],
           "description": "開発時と同様",
           "slug": "/entries/jest_with_msw/",
+          "internal": {
+            "contentDigest": "cb26c9401a09c7486cd06eff588ff7a7"
+          },
           "timeToRead": 1,
-          "objectID": "3cb05eab-dd49-525f-9761-98eaccf45fa7",
+          "objectID": "b42b1c17-8031-515a-b628-71a053c72bf4",
           "_snippetResult": {
             "text": {
-              "value": "ト\", async () => {\n    // <em>msw</em>でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"<em>msw</em>\"\nimport { setupServer } from \"<em>msw</em>/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer",
+              "value": "… ト\", async () => {\n    // <em>msw</em>でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"<em>msw</em>\"\nimport { setupServer } from \"<em>msw</em>/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer …",
               "matchLevel": "full"
             }
           },
@@ -100,13 +146,25 @@
               "value": "https://til.swfz.io//entries/jest_with_<em>msw</em>/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/jest_with_<em>msw</em>/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             },
             "text": {
               "value": "\n開発用に定義した<em>msw</em>の設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // <em>msw</em>でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"<em>msw</em>\"\nimport { setupServer } from \"<em>msw</em>/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + <em>msw</em>のtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "date": {
               "value": "2022-08-19",
@@ -117,15 +175,23 @@
               "value": "<em>msw</em>のモックをjestのテストでも使う",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "tags": [
-              { "value": "Jest", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "Jest",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
               {
                 "value": "<em>msw</em>",
                 "matchLevel": "full",
                 "fullyHighlighted": true,
-                "matchedWords": ["msw"]
+                "matchedWords": [
+                  "msw"
+                ]
               },
               {
                 "value": "TypeScript",
@@ -142,7 +208,16 @@
               "value": "/entries/jest_with_<em>msw</em>/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "cb26c9401a09c7486cd06eff588ff7a7",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             },
             "timeToRead": {
               "value": "1",
@@ -153,17 +228,25 @@
         },
         {
           "url": "https://til.swfz.io//entries/algolia_mock_with_msw/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/algolia_mock_with_msw/index.md",
           "text": "\nAlgoliaの検索リクエストをmswでモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、mswで解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONをmswを用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスがmsw経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"msw\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
           "date": "2022-08-12",
           "title": "Algoliaのレスポンスをmswでモックして開発ではダミーレスポンスを扱う",
-          "tags": ["Algolia", "msw", "TypeScript"],
+          "tags": [
+            "Algolia",
+            "msw",
+            "TypeScript"
+          ],
           "description": "実際のJSONを用意する",
           "slug": "/entries/algolia_mock_with_msw/",
+          "internal": {
+            "contentDigest": "7bd7f8494ba8c00196e1ea10d11e4c68"
+          },
           "timeToRead": 3,
-          "objectID": "c8728ebf-22ac-5299-ba20-c595cab71ff1",
+          "objectID": "f49a2a18-3ffc-5f6a-87b1-d66c7163e3b3",
           "_snippetResult": {
             "text": {
-              "value": "\nAlgoliaの検索リクエストを<em>msw</em>でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしな",
+              "value": "\nAlgoliaの検索リクエストを<em>msw</em>でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしな …",
               "matchLevel": "full"
             }
           },
@@ -172,13 +255,25 @@
               "value": "https://til.swfz.io//entries/algolia_mock_with_<em>msw</em>/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/algolia_mock_with_<em>msw</em>/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             },
             "text": {
               "value": "\nAlgoliaの検索リクエストを<em>msw</em>でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、<em>msw</em>で解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONを<em>msw</em>を用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスが<em>msw</em>経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"<em>msw</em>\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "date": {
               "value": "2022-08-12",
@@ -189,15 +284,23 @@
               "value": "Algoliaのレスポンスを<em>msw</em>でモックして開発ではダミーレスポンスを扱う",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "tags": [
-              { "value": "Algolia", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "Algolia",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
               {
                 "value": "<em>msw</em>",
                 "matchLevel": "full",
                 "fullyHighlighted": true,
-                "matchedWords": ["msw"]
+                "matchedWords": [
+                  "msw"
+                ]
               },
               {
                 "value": "TypeScript",
@@ -214,7 +317,16 @@
               "value": "/entries/algolia_mock_with_<em>msw</em>/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "7bd7f8494ba8c00196e1ea10d11e4c68",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             },
             "timeToRead": {
               "value": "3",
@@ -222,34 +334,484 @@
               "matchedWords": []
             }
           }
+        },
+        {
+          "url": "https://til.swfz.io//entries/zip_response_using_msw/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/zip_response_using_msw/index.md",
+          "text": "\nmswでモックする対象として`zip`や動画などバイナリファイルも扱える\n\n次の例はGitHub Actionsの各ジョブのログをあらかじめDLしておきそれを読み込みレスポンスとして返す処理\n\n- handlerの例\n\n```typescript\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*/logs', () => {\n    const buffer = fs.readFileSync(\n      path.resolve(process.cwd(), './src/mocks/responses/failed_log.zip')\n    )\n\n    return HttpResponse.arrayBuffer(buffer, {\n      status: 200,\n      headers: {\n        'Content-Type': 'application/zip'\n      }\n    })\n  })\n]\n```\n\n公式の例では`mp4`をバイナリとして返している\n\n基本的にはこの方法でバイナリファイルでもレスポンスをモックすることが可能\n\n- 公式\n\n[Responding with binary - Mock Service Worker](https://mswjs.io/docs/recipes/responding-with-binary/)\n",
+          "date": "2024-01-23",
+          "title": "mswでzipレスポンスを返す",
+          "tags": [
+            "msw",
+            "zip"
+          ],
+          "description": "HttpResponse.arrayBuffer",
+          "slug": "/entries/zip_response_using_msw/",
+          "internal": {
+            "contentDigest": "7f9b54300aa0d7b74023b091384b3ec7"
+          },
+          "timeToRead": 1,
+          "objectID": "48c1d237-66e6-5a93-aaa4-3b1026447702",
+          "_snippetResult": {
+            "text": {
+              "value": "\n<em>msw</em>でモックする対象として`zip`や動画などバイナリファイルも扱える\n\n次の例はGitHub Actionsの各ジョブのログをあらかじ …",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/zip_response_using_<em>msw</em>/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/zip_response_using_<em>msw</em>/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "text": {
+              "value": "\n<em>msw</em>でモックする対象として`zip`や動画などバイナリファイルも扱える\n\n次の例はGitHub Actionsの各ジョブのログをあらかじめDLしておきそれを読み込みレスポンスとして返す処理\n\n- handlerの例\n\n```typescript\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*/logs', () => {\n    const buffer = fs.readFileSync(\n      path.resolve(process.cwd(), './src/mocks/responses/failed_log.zip')\n    )\n\n    return HttpResponse.arrayBuffer(buffer, {\n      status: 200,\n      headers: {\n        'Content-Type': 'application/zip'\n      }\n    })\n  })\n]\n```\n\n公式の例では`mp4`をバイナリとして返している\n\n基本的にはこの方法でバイナリファイルでもレスポンスをモックすることが可能\n\n- 公式\n\n[Responding with binary - Mock Service Worker](https://<em>msw</em>js.io/docs/recipes/responding-with-binary/)\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "date": {
+              "value": "2024-01-23",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "<em>msw</em>でzipレスポンスを返す",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "tags": [
+              {
+                "value": "<em>msw</em>",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": [
+                  "msw"
+                ]
+              },
+              {
+                "value": "zip",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "HttpResponse.arrayBuffer",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/zip_response_using_<em>msw</em>/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "7f9b54300aa0d7b74023b091384b3ec7",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            },
+            "timeToRead": {
+              "value": "1",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/octokit_using_fetch/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/octokit_using_fetch/index.md",
+          "text": "\nGitHub Actionsのカスタムアクションの開発をしていてエラーに遭遇したのでメモ\n\n`@actions/github`の`getOctokit`を使ってoctokitを呼び出して使うと`msw`によるAPI通信のモックが行えない\n\n- 動作環境\n\n```\n@actions/github@6.0.0\nmsw@2.0.14\nnode@21.2.0\noctokit@3.1.2\n```\n\n- テスト対象コード\n\n```typescript\nexport async function getWorkflowRun(\n  octokit: Octokit,\n  runId: number\n): Promise<WorkflowRun> {\n  const { data } = await octokit.rest.actions.getWorkflowRun({\n    owner: context.repo.owner,\n    repo: context.repo.repo,\n    run_id: runId\n  })\n  core.debug('fetched workflow run')\n\n  return data\n}\n```\n\n- テストコード一部抜粋\n\n```typescript\nimport { getOctokit } from '@actions/github'\n\n  const octokit = getOctokit('dummy')\n  it('getWorkflowRun', async () => {\n    const workflowRun = await getWorkflowRun(octokit, 1)\n\n    expect(workflowRun.id).toEqual(30433642)\n  })\n```\n\n- mswのhandler一部抜粋\n\n```typescript\nimport workflowRun from './responses/workflow_run.json'\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*', () => {\n    return HttpResponse.json(workflowRun)\n  }),\n]\n```\n\nmswのモックの設定を行いテストを実行してみたが下記のようにエラーが発生する状態だった\n\n```shell\n> typescript-action@0.0.0 test\n> jest __tests__/main.test.ts\n\n  console.warn\n    Deprecation: [@octokit/request-error] `error.code` is deprecated, use `error.status`.\n        at RequestError.get (/home/user/gh/self/failed-log-to-slack-action/node_modules/@octokit/request-error/dist-node/index.js:70:11)\n        at isAssertionError (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:179:13)\n        at /home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:58:14\n        at Array.map (<anonymous>)\n        at formatNodeAssertErrors (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:39:43)\n        at dispatch (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/state.js:67:11)\n        at processTicksAndRejections (node:internal/process/task_queues:95:5)\n        at _runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:264:3)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:126:9)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:121:9)\n        at run (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:71:3)\n        at runAndTransformResultsToJestFormat (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n        at jestAdapter (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n        at runTestInternal (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:367:16)\n        at runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:444:34)\n\n      at node_modules/@octokit/request-error/dist-node/index.js:38:69\n      at f (node_modules/once/once.js:25:25)\n      at RequestError.get (node_modules/@octokit/request-error/dist-node/index.js:69:9)\n          at Array.map (<anonymous>)\n\n FAIL  __tests__/main.test.ts (5.021 s)\n  sample\n    ✓ hoge (17 ms)\n    ✕ github (269 ms)\n  action\n    ○ skipped sets the time output\n    ○ skipped sets a failed status\n\n  ● sample › github\n\n    HttpError: Bad credentials\n\n      34 |   runId: number\n      35 | ): Promise<WorkflowRun> {\n    > 36 |   const { data } = await octokit.rest.actions.getWorkflowRun({\n         |                    ^\n      37 |     owner: context.repo.owner,\n      38 |     repo: context.repo.repo,\n      39 |     run_id: runId\n\n      at node_modules/@octokit/request/dist-node/index.js:124:21\n      at getWorkflowRun (src/github.ts:36:20)\n      at Object.<anonymous> (__tests__/main.test.ts:48:20)\n```\n\n`Bad credentials`といわれていて、mswでモックしているはずなのにGitHubに通信が行ってしまっている\n\n調べてみると、下記の参考Issueが見つかった\n\n[Unit testing: Bad credentials error · Issue #1115 · actions/toolkit](https://github.com/actions/toolkit/issues/1115)\n\n<!-- textlint-disable prh -->\ndefaultではfetchやaxiosではないラッパーライブラリを使ってリクエストしているのでmswやnockなどはモックできない\n<!-- textlint-enable prh -->\n\nIssueに掲載されている例とは若干違うが次のようにしたらモックできた\n\n```typescript\n  it('github', async () => {\n    const octokit = getOctokit('dummy', {request: fetch})\n    const result = await getWorkflowRun(octokit, 1)\n    console.log(result);\n  })\n```\n\n`getOctokit('dummy', {request: fetch})`でrequestに使うモジュールを指定できる\n\nfetchでAPIへリクエストするようにOptionを渡すことでmswが通信をモックできるようになる\n",
+          "date": "2024-01-10",
+          "title": "GitHub ActionsのOctokitでfetchを使いリクエストする",
+          "tags": [
+            "GitHubActions",
+            "Octokit",
+            "TypeScript",
+            "msw"
+          ],
+          "description": "requestライブラリを指定する",
+          "slug": "/entries/octokit_using_fetch/",
+          "internal": {
+            "contentDigest": "816977561861d67064710795ab5beb40"
+          },
+          "timeToRead": 3,
+          "objectID": "f4c4ccfa-e867-564b-be95-3968b0aa83d7",
+          "_snippetResult": {
+            "text": {
+              "value": "… <em>msw</em>`によるAPI通信のモックが行えない\n\n- 動作環境\n\n```\n@actions/github@6.0.0\n<em>msw</em>@2.0.14\nnode@21.2.0\noctokit@3.1.2\n```\n\n- テスト対象コード\n\n```typescript\nexport async function getWorkflowRun …",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/octokit_using_fetch/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/octokit_using_fetch/index.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "text": {
+              "value": "\nGitHub Actionsのカスタムアクションの開発をしていてエラーに遭遇したのでメモ\n\n`@actions/github`の`getOctokit`を使ってoctokitを呼び出して使うと`<em>msw</em>`によるAPI通信のモックが行えない\n\n- 動作環境\n\n```\n@actions/github@6.0.0\n<em>msw</em>@2.0.14\nnode@21.2.0\noctokit@3.1.2\n```\n\n- テスト対象コード\n\n```typescript\nexport async function getWorkflowRun(\n  octokit: Octokit,\n  runId: number\n): Promise<WorkflowRun> {\n  const { data } = await octokit.rest.actions.getWorkflowRun({\n    owner: context.repo.owner,\n    repo: context.repo.repo,\n    run_id: runId\n  })\n  core.debug('fetched workflow run')\n\n  return data\n}\n```\n\n- テストコード一部抜粋\n\n```typescript\nimport { getOctokit } from '@actions/github'\n\n  const octokit = getOctokit('dummy')\n  it('getWorkflowRun', async () => {\n    const workflowRun = await getWorkflowRun(octokit, 1)\n\n    expect(workflowRun.id).toEqual(30433642)\n  })\n```\n\n- <em>msw</em>のhandler一部抜粋\n\n```typescript\nimport workflowRun from './responses/workflow_run.json'\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*', () => {\n    return HttpResponse.json(workflowRun)\n  }),\n]\n```\n\n<em>msw</em>のモックの設定を行いテストを実行してみたが下記のようにエラーが発生する状態だった\n\n```shell\n> typescript-action@0.0.0 test\n> jest __tests__/main.test.ts\n\n  console.warn\n    Deprecation: [@octokit/request-error] `error.code` is deprecated, use `error.status`.\n        at RequestError.get (/home/user/gh/self/failed-log-to-slack-action/node_modules/@octokit/request-error/dist-node/index.js:70:11)\n        at isAssertionError (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:179:13)\n        at /home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:58:14\n        at Array.map (<anonymous>)\n        at formatNodeAssertErrors (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:39:43)\n        at dispatch (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/state.js:67:11)\n        at processTicksAndRejections (node:internal/process/task_queues:95:5)\n        at _runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:264:3)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:126:9)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:121:9)\n        at run (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:71:3)\n        at runAndTransformResultsToJestFormat (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n        at jestAdapter (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n        at runTestInternal (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:367:16)\n        at runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:444:34)\n\n      at node_modules/@octokit/request-error/dist-node/index.js:38:69\n      at f (node_modules/once/once.js:25:25)\n      at RequestError.get (node_modules/@octokit/request-error/dist-node/index.js:69:9)\n          at Array.map (<anonymous>)\n\n FAIL  __tests__/main.test.ts (5.021 s)\n  sample\n    ✓ hoge (17 ms)\n    ✕ github (269 ms)\n  action\n    ○ skipped sets the time output\n    ○ skipped sets a failed status\n\n  ● sample › github\n\n    HttpError: Bad credentials\n\n      34 |   runId: number\n      35 | ): Promise<WorkflowRun> {\n    > 36 |   const { data } = await octokit.rest.actions.getWorkflowRun({\n         |                    ^\n      37 |     owner: context.repo.owner,\n      38 |     repo: context.repo.repo,\n      39 |     run_id: runId\n\n      at node_modules/@octokit/request/dist-node/index.js:124:21\n      at getWorkflowRun (src/github.ts:36:20)\n      at Object.<anonymous> (__tests__/main.test.ts:48:20)\n```\n\n`Bad credentials`といわれていて、<em>msw</em>でモックしているはずなのにGitHubに通信が行ってしまっている\n\n調べてみると、下記の参考Issueが見つかった\n\n[Unit testing: Bad credentials error · Issue #1115 · actions/toolkit](https://github.com/actions/toolkit/issues/1115)\n\n<!-- textlint-disable prh -->\ndefaultではfetchやaxiosではないラッパーライブラリを使ってリクエストしているので<em>msw</em>やnockなどはモックできない\n<!-- textlint-enable prh -->\n\nIssueに掲載されている例とは若干違うが次のようにしたらモックできた\n\n```typescript\n  it('github', async () => {\n    const octokit = getOctokit('dummy', {request: fetch})\n    const result = await getWorkflowRun(octokit, 1)\n    console.log(result);\n  })\n```\n\n`getOctokit('dummy', {request: fetch})`でrequestに使うモジュールを指定できる\n\nfetchでAPIへリクエストするようにOptionを渡すことで<em>msw</em>が通信をモックできるようになる\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "date": {
+              "value": "2024-01-10",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "GitHub ActionsのOctokitでfetchを使いリクエストする",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "GitHubActions",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Octokit",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "<em>msw</em>",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": [
+                  "msw"
+                ]
+              }
+            ],
+            "description": {
+              "value": "requestライブラリを指定する",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/octokit_using_fetch/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "816977561861d67064710795ab5beb40",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            },
+            "timeToRead": {
+              "value": "3",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/jest_called_with_slack_webhook_send/",
+          "text": "\n- バージョン\n\n```\n@slack/webhook@7.0.2\njest@29.7.0\n```\n\n`@slack/webhook`を用いてWebhook経由のSlack通知を実装した際のテストコードの話\n\n`send`メソッドがどんな引数で呼ばれたかをチェックする\n\n- アプリケーションコード\n\n```typescript\nimport {\n  IncomingWebhook,\n  IncomingWebhookResult,\n  IncomingWebhookSendArguments\n} from '@slack/webhook'\n\nexport async function notify(\n  webhookUrl: string,\n  params: IncomingWebhookSendArguments\n): Promise<IncomingWebhookResult> {\n  const webhook = new IncomingWebhook(webhookUrl)\n\n  return await webhook.send(params)\n}\n```\n\n- テストコード\n\n```typescript\n  let webhookSendMock\n\n  beforeEach(() => {\n    webhookSendMock = jest.spyOn(IncomingWebhook.prototype, 'send').mockImplementation((params): Promise<IncomingWebhookResult> => Promise.resolve({text: 'ok'}))\n  })\n\n  it('run', () => {\n    await main.run() // mainからアプリケーションコードを呼んでいる\n\n    expect(webhookSendMock).toHaveBeenCalledWith(expect.objectContaining({\n      text: expect.stringContaining('Workflow: test-workflow'),\n      blocks: expect.anything()\n    }))\n  })\n```\n\nこんな感じで、引数の検証とレスポンスのモック両方行える\n\nmswでもSlackへの通信をモックしてたが、`spyOn`によって上書きされるので、レスポンスを返すところまで`mockImplementation`で書いてあげる必要がある\n\n使う側からみると`new IncomingWebhook`して返ってきたインスタンスをモックするにはどうすればよいのかと思ってたけど、prototypeを指定すればよいのね\n\nたしかに、納得\n\n## やっていること\n\n`toHaveBeenCalledWith`で呼ばれた際の引数のチェックを行える\n\n- [toHaveBeenCalledWith](https://jestjs.io/ja/docs/expect#tohavebeencalledwitharg1-arg2-)\n\n`expect.objectContaining`で再帰的に受け取ったオブジェクトの中身をチェックできる\n\n- [objectContaining](https://jestjs.io/ja/docs/expect#expectobjectcontainingobject)\n\n中身の指定は固定の値や`expect.anything`、`expect.stringContaining`などのマッチャも指定できる\n\n`expect.stringContaining()`や`expect.anything()`を用いることで部分一致や特定のキー以下は何でもよいというようなチェックができる\n\n- [stringContaining](https://jestjs.io/ja/docs/expect#expectstringcontainingstring)\n- [anything](https://jestjs.io/ja/docs/expect#expectanything)\n\n今回の場合下記のようなパラメータで`send`メソッドにパラメータを送っている\n\n```javascript\n{\n  text: \"Workflow: test-workflow\",\n  blocks: [${色々…}]\n}\n```\n\n他にも`Containing`系のマッチャはあるので場面によって使い分けする\n\nここだけは担保しておきたいというような場合にも検証ができるのとネストした場所でも使用できるので便利\n\n## テスト失敗時の差分表示\n\n`toHaveBeenCalledWith`,`objectContaining`を用いたテストだと、差分があったときのdiff表示がprettyな表示にならないようで\n\n![alt](jest_called_with_slack_webhook_send01.png)\n\n検証対象の量が多いとどこに差分があるか探すのがつらくなってくる\n\n一方この手の確認で有用なのはSnapshotテストが挙げられる\n\nSnapshotテストは差分があった場合prettyな表示をしてくれるのでどこで差分があったか把握しやすい\n\nなのでそもそも引数のオブジェクトのデータ量が多い場合はSnapshotテストに変更したほうが体験はよい\n\nSnapshotテストだと基本的にはオブジェクトの中身すべて完全一致している必要があるので、このあたりもケースによって使い分けが必要",
+          "date": "2024-01-19",
+          "title": "Jestでslackのwebhook.sendの検証",
+          "tags": [
+            "Slack",
+            "Webhook",
+            "Jest",
+            "TypeScript"
+          ],
+          "description": "desc",
+          "slug": "/entries/jest_called_with_slack_webhook_send/",
+          "internal": {
+            "contentDigest": "b033e0d634ee4d9f0bf884ddff15b650"
+          },
+          "timeToRead": 2,
+          "objectID": "2526b89a-46e2-5940-a6ba-2b7b57fc5aa1",
+          "_snippetResult": {
+            "text": {
+              "value": "… んな感じで、引数の検証とレスポンスのモック両方行える\n\n<em>msw</em>でもSlackへの通信をモックしてたが、`spyOn`によって上書きさ …",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/jest_called_with_slack_webhook_send/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "text": {
+              "value": "\n- バージョン\n\n```\n@slack/webhook@7.0.2\njest@29.7.0\n```\n\n`@slack/webhook`を用いてWebhook経由のSlack通知を実装した際のテストコードの話\n\n`send`メソッドがどんな引数で呼ばれたかをチェックする\n\n- アプリケーションコード\n\n```typescript\nimport {\n  IncomingWebhook,\n  IncomingWebhookResult,\n  IncomingWebhookSendArguments\n} from '@slack/webhook'\n\nexport async function notify(\n  webhookUrl: string,\n  params: IncomingWebhookSendArguments\n): Promise<IncomingWebhookResult> {\n  const webhook = new IncomingWebhook(webhookUrl)\n\n  return await webhook.send(params)\n}\n```\n\n- テストコード\n\n```typescript\n  let webhookSendMock\n\n  beforeEach(() => {\n    webhookSendMock = jest.spyOn(IncomingWebhook.prototype, 'send').mockImplementation((params): Promise<IncomingWebhookResult> => Promise.resolve({text: 'ok'}))\n  })\n\n  it('run', () => {\n    await main.run() // mainからアプリケーションコードを呼んでいる\n\n    expect(webhookSendMock).toHaveBeenCalledWith(expect.objectContaining({\n      text: expect.stringContaining('Workflow: test-workflow'),\n      blocks: expect.anything()\n    }))\n  })\n```\n\nこんな感じで、引数の検証とレスポンスのモック両方行える\n\n<em>msw</em>でもSlackへの通信をモックしてたが、`spyOn`によって上書きされるので、レスポンスを返すところまで`mockImplementation`で書いてあげる必要がある\n\n使う側からみると`new IncomingWebhook`して返ってきたインスタンスをモックするにはどうすればよいのかと思ってたけど、prototypeを指定すればよいのね\n\nたしかに、納得\n\n## やっていること\n\n`toHaveBeenCalledWith`で呼ばれた際の引数のチェックを行える\n\n- [toHaveBeenCalledWith](https://jestjs.io/ja/docs/expect#tohavebeencalledwitharg1-arg2-)\n\n`expect.objectContaining`で再帰的に受け取ったオブジェクトの中身をチェックできる\n\n- [objectContaining](https://jestjs.io/ja/docs/expect#expectobjectcontainingobject)\n\n中身の指定は固定の値や`expect.anything`、`expect.stringContaining`などのマッチャも指定できる\n\n`expect.stringContaining()`や`expect.anything()`を用いることで部分一致や特定のキー以下は何でもよいというようなチェックができる\n\n- [stringContaining](https://jestjs.io/ja/docs/expect#expectstringcontainingstring)\n- [anything](https://jestjs.io/ja/docs/expect#expectanything)\n\n今回の場合下記のようなパラメータで`send`メソッドにパラメータを送っている\n\n```javascript\n{\n  text: \"Workflow: test-workflow\",\n  blocks: [${色々…}]\n}\n```\n\n他にも`Containing`系のマッチャはあるので場面によって使い分けする\n\nここだけは担保しておきたいというような場合にも検証ができるのとネストした場所でも使用できるので便利\n\n## テスト失敗時の差分表示\n\n`toHaveBeenCalledWith`,`objectContaining`を用いたテストだと、差分があったときのdiff表示がprettyな表示にならないようで\n\n![alt](jest_called_with_slack_webhook_send01.png)\n\n検証対象の量が多いとどこに差分があるか探すのがつらくなってくる\n\n一方この手の確認で有用なのはSnapshotテストが挙げられる\n\nSnapshotテストは差分があった場合prettyな表示をしてくれるのでどこで差分があったか把握しやすい\n\nなのでそもそも引数のオブジェクトのデータ量が多い場合はSnapshotテストに変更したほうが体験はよい\n\nSnapshotテストだと基本的にはオブジェクトの中身すべて完全一致している必要があるので、このあたりもケースによって使い分けが必要",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "date": {
+              "value": "2024-01-19",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "Jestでslackのwebhook.sendの検証",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "Slack",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Webhook",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Jest",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "desc",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/jest_called_with_slack_webhook_send/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "b033e0d634ee4d9f0bf884ddff15b650",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            },
+            "timeToRead": {
+              "value": "2",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
         }
       ],
-      "nbHits": 3,
+      "nbHits": 6,
       "page": 0,
       "nbPages": 1,
       "hitsPerPage": 20,
       "exhaustiveNbHits": true,
       "exhaustiveTypo": true,
-      "exhaustive": { "nbHits": true, "typo": true },
+      "exhaustive": {
+        "nbHits": true,
+        "typo": true
+      },
       "query": "msw",
-      "params": "facets=%5B%5D&query=msw&tagFilters=",
+      "params": "query=msw",
       "index": "til",
       "renderingContent": {},
-      "processingTimeMS": 2,
+      "processingTimeMS": 1,
       "processingTimingsMS": {
-        "afterFetch": { "format": { "snippeting": 1, "total": 1 }, "total": 1 },
-        "total": 2
-      }
+        "_request": {
+          "roundTrip": 1
+        },
+        "afterFetch": {
+          "format": {
+            "highlighting": 1,
+            "snippeting": 1,
+            "total": 2
+          }
+        },
+        "total": 0
+      },
+      "serverTimeMS": 3
     },
     {
       "hits": [
         {
+          "title": "じぶん Release Notes (ver 0.36.4)",
+          "date": "2024-02-04",
+          "slug": "release_notes/2024_02-0_36_4",
+          "github": "https://github.com/swfz/memo/blob/master/docs/release_notes/2024_02-0_36_4.md",
+          "url": "https://swfz.hatenablog.com/entry/2024/02/04/183123",
+          "section": "release_notes/2024_02-0_36_4",
+          "tags": [
+            "じぶんリリースノート"
+          ],
+          "text": "# じぶん Release Notes (ver 0.36.4)\n\nswfz (ver 0.36.4) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n\n- mswのドキュメントにPR出した\n    - [fix responding with binary usage by swfz · Pull Request #337 · mswjs/mswjs.io](https://github.com/mswjs/mswjs.io/pull/337)\n- deno-kusa-image\n    - [`path`パラメータでユーザー指定可能にした](https://github.com/swfz/deno-kusa-image/pull/34)\n- [swfz/failed-log-to-slack-action](https://github.com/swfz/failed-log-to-slack-action)\n    - GitHub Actionsの失敗時ログをSlack通知するためのカスタムアクションを作った\n    - MarketPlaceに公開した\n    - テスト整備した\n- [GoogleSlideでスライド内リンクの末尾にページ数を付与する（更新の場合は最新情報にする）](https://gist.github.com/swfz/ec323055b7b3dff606b516ea0ca7aecc)GASを書いた\n\n## 読んだ本\n\n- [GitLabに学ぶ 世界最先端のリモート組織のつくりかた ドキュメントの活用でオフィスなしでも最大の成果を出すグローバル企業のしくみ](https://amzn.to/3Ovuo4i)\n    - 意外とできている部分、意識している部分もあるなーというようなところがそれなりにあった\n    - 組織としてできているかはまた別なのでそういう部分は文化として根付くような取り組みが必要かなーと思った\n    - 読んだばかりなのでもう一度見直して何かしらアクションにつなげたい\n\n## 勉強会\n- [【再放送】t-wadaさんが後世に残したい、実録レガシーコード改善 - connpass](https://findy.connpass.com/event/307431/)\n    - 実際のコードを元に解説されていて非常によかった\n    - 定期的に資料読み直したい\n\n## ブログ\n\nリリースノートを除き、次の4エントリを書いた\n\n- [ObsidianのTemplaterスクリプトをObsidian起動時に実行する](https://swfz.hatenablog.com/entry/2024/01/28/174608)\n- [2023年ブログの振り返り](https://swfz.hatenablog.com/entry/2024/01/03/185309)\n- [GitHub Actionsのバージョン指定](https://swfz.hatenablog.com/entry/2024/01/21/190358)\n- [2023年の振り返り](https://swfz.hatenablog.com/entry/2024/01/02/072355)\n\n### 指標\n\n購読者数： 81(`+0`)\n\nはてなブックマーク： 1179(`+0`)\n\n月間PV： 7220(`-733`)\n\n## 生活\n\n正月は毎年恒例の両家実家に行って挨拶\n\n<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->\n後半は娘がインフルエンザB型にかかってしまった、ちょうどその前の週に自分が体調崩してたのでもしかしたら自分もインフルエンザ持ってたかもしれない…\n<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->\n\n家族全員に感染って感じにはならなかったので良かったが去年は自分がおそらくA型にかかっているので結構頻繁にかかっている…\n\n最近毎月何かしら体調崩している気がする…\n\n## 仕事\n\n木曜日を会議まったく入れない日に設定して作業や考えることに時間を使えるようにしたが結構効果があった\n\n集計してみたら単純に会議自体の時間も減っていたが、しっかりまとまった時間を使って考えたり作業したりできるのは進捗が出る\n\n今までだと、空いているところに会議を突っ込まれて日中は会議、18時、19時からさぁ作業しようとなるともはやMPが残っていなくて全然集中できない…という状況だったのでかなり改善された\n\n会議自体も引き続き抑えていけるように取り組むものの、コード書く仕事じゃなくてもまとまった時間は大事というのを実感した\n\nあとは、年度が変わり方針共有や組織編成などがあったのでそのあたりの調整や資料作成などを行っていて前半はいそがしかった\n\nいろいろ反省はあるものの次から頑張っていこうと思えるような感じだったので引き続きやっていく\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2023-08-01 | 2.16h | -0.84 |\n| 2023-09-01 | 2.09h | -0.07 |\n| 2023-10-01 |  1.8h | -0.28 |\n| 2023-11-01 |  2.3h | +0.49 |\n| 2023-12-01 | 3.38h | +1.08 |\n| 2024-01-01 | 2.42h | -0.96 |\n\nプライベートで平日コード書く時間をほとんど取れなかった…\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2023-08-01 | 6.45h | -0.01 | 1.97 |\n| 2023-09-01 | 6.45h | +-0.0 | 1.87 |\n| 2023-10-01 | 7.24h | +0.79 | 3.81 |\n| 2023-11-01 | 7.05h | -0.19 | 3.34 |\n| 2023-12-01 | 6.18h | -0.87 | 1.66 |\n| 2024-01-01 | 6.92h | +0.74 |  2.8 |\n\n体調不良で寝てた分が入っているので増えている\n\n## 月1目標\n- [100%]週次振り返りを週が終わったらすぐ行う\n    - しっかり意識できているし記憶が鮮明なうちに記録残せるので情報の鮮度がよい\n        - 後から見たときに思い出しやすい\n- [83.87%]1日10分は読書時間を取る\n    - 最初は夕飯後の10分～20分を使えていたので順調だったが後半息子とポケモンカード対戦しないといけなくなってしまって時間が取れなくなった\n    - 夜寝る前の布団に入ってから少し落ち着いたら布団かぶって最低10分ってかんじで読んでる\n        - 眠くなってしまうので進捗が良くない…\n        - そのまま寝てしまう日もあってちょっと別のところで時間取ったほうがよいのかなとも思っている…\n- [100%]tilへの投稿数を4以上\n    - 5記事投稿した\n    - 手を動かすことが大事…\n- [50%]Try運用の見直し、実施\n    - いくつか改善はしたがこれで行ける！ みたいな感じにはなっていないので引き続き改善が必要\n    - やりながらかなー\n- [0%]NISAやる\n    - ちょっと調べて満足してしまった\n    - 次は気合い入れてやる…\n- [100%]povoやる\n    - こういうの面倒くさくてやっていなかったが重い腰を上げてやった、やってみたら超簡単だった\n    - 色々見てたら月極の使っていないサービスを見つけたのでこの機会に解約した\n    - そういう意味でもやってよかった\n    - データ容量がいつ減るのか感覚をつかんだので節約していきたい\n    - 思った以上に通話料掛かることがわかったのでこちらも節約したい…\n        - 病院に電話とかそういうのでもチリツモ\n\n### 他習慣化\n- [63.8%]1日15分ステッパー踏むx2\n- [72.22%]懸垂合計10回\n- [96.77%]その日中に振り返りする\n\nこの辺は安定してきた\n\n追わなくなった瞬間やらなくなりそうなので引き続き追う\n\n## 振り返り\n\n### K\n- 作業日取ったことはかなりいい感じ\n    - 落ち着いて考える、作業する時間を確保できた\n- GitHub Actions自作した\n    - いろいろ経験できたので良かった\n    - 一応実用も考えて作れたので自分では使っている\n- アウトプット量は一定保てた\n- 読書も1冊読めるくらいには進められた\n\n### P\n- 勉強会などに参加しても見るだけでメモや記録に残していない\n- プライベートのdataform移行が未着手(2月末にサ終)\n- 年間目標決めきらなかった…\n- 土日で運動週間途切れてしまうのなんとかしたい\n- Amazon Advertising API対応してない\n- 後半の週次Try意識する頻度が減ったためか達成率が低い\n<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->\n    - 気を抜くとすぐ見なくなってしまう…自分は結構な気持ちを持ってエネルギー消費して動かないとこういうのできないのかもしれない\n<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->\n- 徹夜的な無理するスケジュールで体調崩した\n- Tryの運用がまだ微妙かも\n\n### T\n- Try運用の見直し実施\n- 土日にも何かしら運動週間を入れる\n- 勉強会参加、メモとったり感想入力したりしてObsidian上でページ残す\n- 寝る前以外で本を読む機会を作る\n- プライベートのdataform移行やる\n",
+          "objectID": "release_notes/2024_02-0_36_4",
+          "_snippetResult": {
+            "text": {
+              "value": "こと\n\n- __ais-highlight__msw__/ais-highlight__のドキュメントにPR出した\n    - [fix responding with binary usage by swfz · Pull Request #337 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__js.io](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__js.io/pull/337)\n- deno-kusa-image\n    - [`path`パラメータでユーザー",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "じぶん Release Notes (ver 0.36.4)",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "date": {
+              "value": "2024-02-04",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "release_notes/2024_02-0_36_4",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "github": {
+              "value": "https://github.com/swfz/memo/blob/master/docs/release_notes/2024_02-0_36_4.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "https://swfz.hatenablog.com/entry/2024/02/04/183123",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "release_notes/2024_02-0_36_4",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "じぶんリリースノート",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "text": {
+              "value": "# じぶん Release Notes (ver 0.36.4)\n\nswfz (ver 0.36.4) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n\n- __ais-highlight__msw__/ais-highlight__のドキュメントにPR出した\n    - [fix responding with binary usage by swfz · Pull Request #337 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__js.io](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__js.io/pull/337)\n- deno-kusa-image\n    - [`path`パラメータでユーザー指定可能にした](https://github.com/swfz/deno-kusa-image/pull/34)\n- [swfz/failed-log-to-slack-action](https://github.com/swfz/failed-log-to-slack-action)\n    - GitHub Actionsの失敗時ログをSlack通知するためのカスタムアクションを作った\n    - MarketPlaceに公開した\n    - テスト整備した\n- [GoogleSlideでスライド内リンクの末尾にページ数を付与する（更新の場合は最新情報にする）](https://gist.github.com/swfz/ec323055b7b3dff606b516ea0ca7aecc)GASを書いた\n\n## 読んだ本\n\n- [GitLabに学ぶ 世界最先端のリモート組織のつくりかた ドキュメントの活用でオフィスなしでも最大の成果を出すグローバル企業のしくみ](https://amzn.to/3Ovuo4i)\n    - 意外とできている部分、意識している部分もあるなーというようなところがそれなりにあった\n    - 組織としてできているかはまた別なのでそういう部分は文化として根付くような取り組みが必要かなーと思った\n    - 読んだばかりなのでもう一度見直して何かしらアクションにつなげたい\n\n## 勉強会\n- [【再放送】t-wadaさんが後世に残したい、実録レガシーコード改善 - connpass](https://findy.connpass.com/event/307431/)\n    - 実際のコードを元に解説されていて非常によかった\n    - 定期的に資料読み直したい\n\n## ブログ\n\nリリースノートを除き、次の4エントリを書いた\n\n- [ObsidianのTemplaterスクリプトをObsidian起動時に実行する](https://swfz.hatenablog.com/entry/2024/01/28/174608)\n- [2023年ブログの振り返り](https://swfz.hatenablog.com/entry/2024/01/03/185309)\n- [GitHub Actionsのバージョン指定](https://swfz.hatenablog.com/entry/2024/01/21/190358)\n- [2023年の振り返り](https://swfz.hatenablog.com/entry/2024/01/02/072355)\n\n### 指標\n\n購読者数： 81(`+0`)\n\nはてなブックマーク： 1179(`+0`)\n\n月間PV： 7220(`-733`)\n\n## 生活\n\n正月は毎年恒例の両家実家に行って挨拶\n\n<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->\n後半は娘がインフルエンザB型にかかってしまった、ちょうどその前の週に自分が体調崩してたのでもしかしたら自分もインフルエンザ持ってたかもしれない…\n<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->\n\n家族全員に感染って感じにはならなかったので良かったが去年は自分がおそらくA型にかかっているので結構頻繁にかかっている…\n\n最近毎月何かしら体調崩している気がする…\n\n## 仕事\n\n木曜日を会議まったく入れない日に設定して作業や考えることに時間を使えるようにしたが結構効果があった\n\n集計してみたら単純に会議自体の時間も減っていたが、しっかりまとまった時間を使って考えたり作業したりできるのは進捗が出る\n\n今までだと、空いているところに会議を突っ込まれて日中は会議、18時、19時からさぁ作業しようとなるともはやMPが残っていなくて全然集中できない…という状況だったのでかなり改善された\n\n会議自体も引き続き抑えていけるように取り組むものの、コード書く仕事じゃなくてもまとまった時間は大事というのを実感した\n\nあとは、年度が変わり方針共有や組織編成などがあったのでそのあたりの調整や資料作成などを行っていて前半はいそがしかった\n\nいろいろ反省はあるものの次から頑張っていこうと思えるような感じだったので引き続きやっていく\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2023-08-01 | 2.16h | -0.84 |\n| 2023-09-01 | 2.09h | -0.07 |\n| 2023-10-01 |  1.8h | -0.28 |\n| 2023-11-01 |  2.3h | +0.49 |\n| 2023-12-01 | 3.38h | +1.08 |\n| 2024-01-01 | 2.42h | -0.96 |\n\nプライベートで平日コード書く時間をほとんど取れなかった…\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2023-08-01 | 6.45h | -0.01 | 1.97 |\n| 2023-09-01 | 6.45h | +-0.0 | 1.87 |\n| 2023-10-01 | 7.24h | +0.79 | 3.81 |\n| 2023-11-01 | 7.05h | -0.19 | 3.34 |\n| 2023-12-01 | 6.18h | -0.87 | 1.66 |\n| 2024-01-01 | 6.92h | +0.74 |  2.8 |\n\n体調不良で寝てた分が入っているので増えている\n\n## 月1目標\n- [100%]週次振り返りを週が終わったらすぐ行う\n    - しっかり意識できているし記憶が鮮明なうちに記録残せるので情報の鮮度がよい\n        - 後から見たときに思い出しやすい\n- [83.87%]1日10分は読書時間を取る\n    - 最初は夕飯後の10分～20分を使えていたので順調だったが後半息子とポケモンカード対戦しないといけなくなってしまって時間が取れなくなった\n    - 夜寝る前の布団に入ってから少し落ち着いたら布団かぶって最低10分ってかんじで読んでる\n        - 眠くなってしまうので進捗が良くない…\n        - そのまま寝てしまう日もあってちょっと別のところで時間取ったほうがよいのかなとも思っている…\n- [100%]tilへの投稿数を4以上\n    - 5記事投稿した\n    - 手を動かすことが大事…\n- [50%]Try運用の見直し、実施\n    - いくつか改善はしたがこれで行ける！ みたいな感じにはなっていないので引き続き改善が必要\n    - やりながらかなー\n- [0%]NISAやる\n    - ちょっと調べて満足してしまった\n    - 次は気合い入れてやる…\n- [100%]povoやる\n    - こういうの面倒くさくてやっていなかったが重い腰を上げてやった、やってみたら超簡単だった\n    - 色々見てたら月極の使っていないサービスを見つけたのでこの機会に解約した\n    - そういう意味でもやってよかった\n    - データ容量がいつ減るのか感覚をつかんだので節約していきたい\n    - 思った以上に通話料掛かることがわかったのでこちらも節約したい…\n        - 病院に電話とかそういうのでもチリツモ\n\n### 他習慣化\n- [63.8%]1日15分ステッパー踏むx2\n- [72.22%]懸垂合計10回\n- [96.77%]その日中に振り返りする\n\nこの辺は安定してきた\n\n追わなくなった瞬間やらなくなりそうなので引き続き追う\n\n## 振り返り\n\n### K\n- 作業日取ったことはかなりいい感じ\n    - 落ち着いて考える、作業する時間を確保できた\n- GitHub Actions自作した\n    - いろいろ経験できたので良かった\n    - 一応実用も考えて作れたので自分では使っている\n- アウトプット量は一定保てた\n- 読書も1冊読めるくらいには進められた\n\n### P\n- 勉強会などに参加しても見るだけでメモや記録に残していない\n- プライベートのdataform移行が未着手(2月末にサ終)\n- 年間目標決めきらなかった…\n- 土日で運動週間途切れてしまうのなんとかしたい\n- Amazon Advertising API対応してない\n- 後半の週次Try意識する頻度が減ったためか達成率が低い\n<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->\n    - 気を抜くとすぐ見なくなってしまう…自分は結構な気持ちを持ってエネルギー消費して動かないとこういうのできないのかもしれない\n<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->\n- 徹夜的な無理するスケジュールで体調崩した\n- Tryの運用がまだ微妙かも\n\n### T\n- Try運用の見直し実施\n- 土日にも何かしら運動週間を入れる\n- 勉強会参加、メモとったり感想入力したりしてObsidian上でページ残す\n- 寝る前以外で本を読む機会を作る\n- プライベートのdataform移行やる\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            }
+          }
+        },
+        {
+          "title": "じぶん Release Notes (ver 0.37.1)",
+          "date": "2024-11-04",
+          "slug": "release_notes/2024_11-0_37_1",
+          "github": "https://github.com/swfz/memo/blob/master/docs/release_notes/2024_11-0_37_1.md",
+          "url": "https://swfz.hatenablog.com/entry/2024/11/04/191756",
+          "section": "release_notes/2024_11-0_37_1",
+          "tags": [
+            "じぶんリリースノート"
+          ],
+          "text": "# じぶん Release Notes (ver 0.37.1)\n\nswfz (ver 0.37.1) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n\n- [til](https://til.swfz.io)\n    - テストフレームワークをjestからvitestに変更した\n        - それに伴いmswもv2に上げた\n- [article-search](https://github.com/swfz/article-search)\n    - jest -> vitestへ移行\n- [kusa-image](https://kusa-image.deno.dev)\n    - Docs（トップ）画面のfaviconを追加 [PR](https://github.com/swfz/deno-kusa-image/pull/87)\n    - ハロウィンの日の色変更不具合修正 [PR](https://github.com/swfz/deno-kusa-image/pull/89)\n- private\n    - LookerStudioからリンクでObsidianの特定ファイルへ遷移できるようにした [記事](https://swfz.hatenablog.com/entry/2024/10/20/184853)\n\n## 読んだ本\n\nなし\n\n## 勉強会\n- adtech:tokyo2024に参加\n    - ビジターパスでちょっとだけだけどブースに行って色々話を聞いてきた\n    - 結構久しぶりだったが普段と違うインプットができて刺激になったので良かった\n\n## ブログ\n\nリリースノートを除き、次の3エントリを書いた\n\n- [AWSのSSO環境で一時的な認証情報を用いる](https://swfz.hatenablog.com/entry/2024/10/27/190100)\n- [GitHub Pagesを使っているリポジトリを洗い出す](https://swfz.hatenablog.com/entry/2024/10/13/182228)\n- [LookerStudioからリンクでObsidianの特定ファイルへ遷移する](https://swfz.hatenablog.com/entry/2024/10/20/184853)\n\n### 指標\n\nはてなブックマーク： 1194(`+1`)\n\n月間PV： 9183(`+1054`)\n\n購読者数： 86(`+0`)\n\n## 生活\n\n### 体調不良\n半分くらいを体調不良で過ごしてた\n\n<!-- textlint-disable jtf-style/2.1.2.漢字 -->\n風邪をひく→鼻水が出る→蓄膿症になるっていうパターン\n\n蓄膿症由来の頭痛が何も考えられない感じのやつなのでなってしまうと色々と滞る…\n<!-- textlint-enable jtf-style/2.1.2.漢字 -->\n\n病院行って抗生剤もらわないと厳しいなって状況に気付くまでに日数経ってしまい、またこのパターンかー…って感じだった\n\n上手に付き合っていくしかないんだろうけど、無駄にした時間が惜しい…\n\n### お出かけ\n\n去年に続き、今年も二子玉川のハロウィンイベントに行ってきた\n\n今年子どもは仮装して参加、結構周りの子どもも仮装している子がいてイベント感が出てた\n\nスタンプラリーやったけど、大規模ってほどでもなく程よい感じだった\n\n### 書斎整理\n\n相変わらずちまちまやっている\n\nPrivateのPCと仕事用のPCの切り替えをやりやすくしたり、配線整理をしっかりやったり、収納を増やす工夫をしたりと色々やった\n\nこの辺別に誰かの参考にはならないだろうけどせっかくだしやったことを記録しておきたいなとか思った\n\n## 仕事\n\nリソースを空ける動きのおかげで、技術領域の取り組みに使う時間は増えたが肝心の成果はあまり出ていない\n\n決めて進めるだけではあるんだけど心理的な要因とか色々含めなかなか動き出せていない…\n\n考え方とか取り組み方、とらえ方を変えるなどして少しでも進捗を出したい\n\nマネジメント関連では直近であるチームの大きめな課題解決に向けた調整などやった結果スムーズにことが運ぶ流れになった\n\nそれまでもプッシュはしていたがなかなか進まないなーという状況だったので新たに話す人を増やしお互い持っている情報を持ち寄って話した結果、ストッパーになっているものがなくなったのか、一気に話が進んだ\n\nこういうところがネックだったのかーと言うのが自分的に納得感があり、人が動くときってそういうときだよなというのを感じた案件だった\n\n「なぜ人と組織はかわれないのか」など本で読んだことを理屈ではわかっていたが実体験として感じた\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2024-05-01 | 2.27h | +1.07 |\n| 2024-06-01 | 1.67h | -0.59 |\n| 2024-07-01 | 1.86h | +0.18 |\n| 2024-08-01 | 1.71h | -0.15 |\n| 2024-09-01 | 2.04h | +0.33 |\n| 2024-10-01 | 1.69h | -0.35 |\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2024-05-01 | 6.06h | -0.53 | 1.85 |\n| 2024-06-01 | 6.37h | +0.31 | 2.03 |\n| 2024-07-01 | 6.81h | +0.44 | 2.17 |\n| 2024-08-01 | 6.69h | -0.12 | 2.18 |\n| 2024-09-01 |  6.8h |  +0.1 | 2.06 |\n| 2024-10-01 | 6.65h | -0.15 | 2.85 |\n\n## 月1目標\n\n未設定\n\n運動習慣も途切れてしまったため、何もない…\n\n## 振り返り\n\n### K\n- adtech tokyoオフライン参加した(前回Try)\n- 手を動かせた(前回Try)\n    - 新たにツールいれたり、マイグレーションしたりできた\n    - やらないとなーと思っていた部分の整備もできた\n- 書斎整備色々やった(前回Try)\n    - PrivatePCとの切り替えが楽になった、Sleepから復帰でOKにした\n    - もう少し改善ポイントはあるので年明けまでにはスッキリした形で向かえたい\n\n### P\n- 半分くらい体調悪い状態だった\n    - 習慣化結局始められなかった\n    - 他Tryで上げた項目も進められなかった\n- 仕事の進捗が良くない\n    - 方針、ゴール見直し、設定しようとしたが右往左往している\n- ブログ記事がいつもギリギリ…\n\n### T\n- 本1冊は読みきる\n- 習慣化の復活\n- 小さくアウトプットを出していけるようにする\n- ブログ記事ストックを作る\n",
+          "objectID": "release_notes/2024_11-0_37_1",
+          "_snippetResult": {
+            "text": {
+              "value": "テストフレームワークをjestからvitestに変更した\n        - それに伴い__ais-highlight__msw__/ais-highlight__もv2に上げた\n- [article-search](https://github.com/swfz/article-search)\n    - jest -> vitestへ移行\n- [kusa-image](https://kusa-image",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "じぶん Release Notes (ver 0.37.1)",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "date": {
+              "value": "2024-11-04",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "release_notes/2024_11-0_37_1",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "github": {
+              "value": "https://github.com/swfz/memo/blob/master/docs/release_notes/2024_11-0_37_1.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "https://swfz.hatenablog.com/entry/2024/11/04/191756",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "release_notes/2024_11-0_37_1",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "じぶんリリースノート",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "text": {
+              "value": "# じぶん Release Notes (ver 0.37.1)\n\nswfz (ver 0.37.1) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n\n- [til](https://til.swfz.io)\n    - テストフレームワークをjestからvitestに変更した\n        - それに伴い__ais-highlight__msw__/ais-highlight__もv2に上げた\n- [article-search](https://github.com/swfz/article-search)\n    - jest -> vitestへ移行\n- [kusa-image](https://kusa-image.deno.dev)\n    - Docs（トップ）画面のfaviconを追加 [PR](https://github.com/swfz/deno-kusa-image/pull/87)\n    - ハロウィンの日の色変更不具合修正 [PR](https://github.com/swfz/deno-kusa-image/pull/89)\n- private\n    - LookerStudioからリンクでObsidianの特定ファイルへ遷移できるようにした [記事](https://swfz.hatenablog.com/entry/2024/10/20/184853)\n\n## 読んだ本\n\nなし\n\n## 勉強会\n- adtech:tokyo2024に参加\n    - ビジターパスでちょっとだけだけどブースに行って色々話を聞いてきた\n    - 結構久しぶりだったが普段と違うインプットができて刺激になったので良かった\n\n## ブログ\n\nリリースノートを除き、次の3エントリを書いた\n\n- [AWSのSSO環境で一時的な認証情報を用いる](https://swfz.hatenablog.com/entry/2024/10/27/190100)\n- [GitHub Pagesを使っているリポジトリを洗い出す](https://swfz.hatenablog.com/entry/2024/10/13/182228)\n- [LookerStudioからリンクでObsidianの特定ファイルへ遷移する](https://swfz.hatenablog.com/entry/2024/10/20/184853)\n\n### 指標\n\nはてなブックマーク： 1194(`+1`)\n\n月間PV： 9183(`+1054`)\n\n購読者数： 86(`+0`)\n\n## 生活\n\n### 体調不良\n半分くらいを体調不良で過ごしてた\n\n<!-- textlint-disable jtf-style/2.1.2.漢字 -->\n風邪をひく→鼻水が出る→蓄膿症になるっていうパターン\n\n蓄膿症由来の頭痛が何も考えられない感じのやつなのでなってしまうと色々と滞る…\n<!-- textlint-enable jtf-style/2.1.2.漢字 -->\n\n病院行って抗生剤もらわないと厳しいなって状況に気付くまでに日数経ってしまい、またこのパターンかー…って感じだった\n\n上手に付き合っていくしかないんだろうけど、無駄にした時間が惜しい…\n\n### お出かけ\n\n去年に続き、今年も二子玉川のハロウィンイベントに行ってきた\n\n今年子どもは仮装して参加、結構周りの子どもも仮装している子がいてイベント感が出てた\n\nスタンプラリーやったけど、大規模ってほどでもなく程よい感じだった\n\n### 書斎整理\n\n相変わらずちまちまやっている\n\nPrivateのPCと仕事用のPCの切り替えをやりやすくしたり、配線整理をしっかりやったり、収納を増やす工夫をしたりと色々やった\n\nこの辺別に誰かの参考にはならないだろうけどせっかくだしやったことを記録しておきたいなとか思った\n\n## 仕事\n\nリソースを空ける動きのおかげで、技術領域の取り組みに使う時間は増えたが肝心の成果はあまり出ていない\n\n決めて進めるだけではあるんだけど心理的な要因とか色々含めなかなか動き出せていない…\n\n考え方とか取り組み方、とらえ方を変えるなどして少しでも進捗を出したい\n\nマネジメント関連では直近であるチームの大きめな課題解決に向けた調整などやった結果スムーズにことが運ぶ流れになった\n\nそれまでもプッシュはしていたがなかなか進まないなーという状況だったので新たに話す人を増やしお互い持っている情報を持ち寄って話した結果、ストッパーになっているものがなくなったのか、一気に話が進んだ\n\nこういうところがネックだったのかーと言うのが自分的に納得感があり、人が動くときってそういうときだよなというのを感じた案件だった\n\n「なぜ人と組織はかわれないのか」など本で読んだことを理屈ではわかっていたが実体験として感じた\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2024-05-01 | 2.27h | +1.07 |\n| 2024-06-01 | 1.67h | -0.59 |\n| 2024-07-01 | 1.86h | +0.18 |\n| 2024-08-01 | 1.71h | -0.15 |\n| 2024-09-01 | 2.04h | +0.33 |\n| 2024-10-01 | 1.69h | -0.35 |\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2024-05-01 | 6.06h | -0.53 | 1.85 |\n| 2024-06-01 | 6.37h | +0.31 | 2.03 |\n| 2024-07-01 | 6.81h | +0.44 | 2.17 |\n| 2024-08-01 | 6.69h | -0.12 | 2.18 |\n| 2024-09-01 |  6.8h |  +0.1 | 2.06 |\n| 2024-10-01 | 6.65h | -0.15 | 2.85 |\n\n## 月1目標\n\n未設定\n\n運動習慣も途切れてしまったため、何もない…\n\n## 振り返り\n\n### K\n- adtech tokyoオフライン参加した(前回Try)\n- 手を動かせた(前回Try)\n    - 新たにツールいれたり、マイグレーションしたりできた\n    - やらないとなーと思っていた部分の整備もできた\n- 書斎整備色々やった(前回Try)\n    - PrivatePCとの切り替えが楽になった、Sleepから復帰でOKにした\n    - もう少し改善ポイントはあるので年明けまでにはスッキリした形で向かえたい\n\n### P\n- 半分くらい体調悪い状態だった\n    - 習慣化結局始められなかった\n    - 他Tryで上げた項目も進められなかった\n- 仕事の進捗が良くない\n    - 方針、ゴール見直し、設定しようとしたが右往左往している\n- ブログ記事がいつもギリギリ…\n\n### T\n- 本1冊は読みきる\n- 習慣化の復活\n- 小さくアウトプットを出していけるようにする\n- ブログ記事ストックを作る\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            }
+          }
+        },
+        {
           "title": "PixelaのグラフをGatsby製のブログに埋め込む",
           "date": "2021-10-15",
           "slug": "react/gatsby_pixela_direct_execution",
-          "url": "http://localhost:8001/react/gatsby_pixela_direct_execution",
+          "github": "https://github.com/swfz/memo/blob/master/docs/react/gatsby_pixela_direct_execution.md",
+          "url": "https://swfz.hatenablog.com/entry/2021/10/15/024551",
           "section": "react/gatsby_pixela_direct_execution",
-          "tags": ["React", "Gatsby", "Pixela"],
+          "tags": [
+            "React",
+            "Gatsby",
+            "Pixela"
+          ],
           "text": "# PixelaのグラフをGatsby製のブログに埋め込む\n\nPixelaのグラフをGatsby(React)で表示させたい\n\n素直にsvgをobjectタグで読み込むだけだとツールチップが表示されないのでせっかくなら表示させたい\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\n（※前提の参考リンクをよく読めばiframeで良くないか?という話になるが、今回はmswを使って開発しているときはローカルだけで完結させたい、がiframeはmswではモックできないという事情により色々面倒なことをやっている）\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n\nなので完全な自分用のメモである\n\n## 前提知識\n\n[はてなブログに Pixela グラフを埋め込んで、さらにツールチップを表示させる方法 - えいのうにっき](https://blog.a-know.me/entry/2018/11/20/220257)\n\n[https://blog.a-know.me/entry/2018/11/20/220257:embed:cite]\n\nはてなブログへの埋め込み方法は上記\n\npopoverを表示するためのライブラリとして`tippyjs`を使うことを前提としている\n\nPixelaが返すSVGの中のrectタグ中に`data-tippy-content`というプロパティがありその中にpopoverで表示されるコンテンツが入っている\n\ntippyjs側では特定の属性の内容をツールチップの内容とする仕様になっている\n\n- popoverの中身\n\n頑張って一瞬でコピーした\n\n```html\n<div class=\"tippy-popper\" role=\"tooltip\" id=\"tippy-92\" x-placement=\"top\" style=\"z-index: 9999; visibility: hidden; transition-duration: 0ms; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(542px, 6020px, 0px);\"><div class=\"tippy-tooltip dark-theme\" data-size=\"regular\" data-animation=\"shift-away\" data-state=\"hidden\" style=\"transition-duration: 275ms; top: 0px;\"><div class=\"tippy-arrow\" style=\"left: 77px;\"></div><div class=\"tippy-content\" data-state=\"hidden\" style=\"transition-duration: 275ms;\"><div>143 views on 2021-09-19</div></div></div></div>\n```\n\n- rect(当日)\n\n```html\n<rect class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"0\" y=\"0\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-19\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210919\" data-index=\"1\" tabindex=\"0\"></rect>\n```\n\n一個不具合というかわからないが当日のデータは`data-tippy-content`にデータが入ってこないっぽい\n\n- rect(昨日以前)\n\n```html\n<rect data-tippy-content=\"6 view(s) on 2021-09-18\" class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"1\" y=\"72\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-18\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210918\" data-index=\"2\" tabindex=\"0\"></rect>\n```\n\nなるほど\n\n## Reactでどうやってツールチップを実現するか\n\ntippyjsを前提としているならreactでtippyjsを使えるようなライブラリがあれば良さそう\n\ntippyjs作者と同じ方がReact用のライブラリも作っているようなのでそれを見にいってREADMEをいくつか試してみた\n\n[atomiks/tippyjs-react: React component for Tippy.js (official)](https://github.com/atomiks/tippyjs-react)\n\n[https://github.com/atomiks/tippyjs-react:embed:cite]\n\ntippyjs単体での使用方法は下記\n\n[Constructor | Tippy.js](https://atomiks.github.io/tippyjs/v6/constructor/)\n\n[https://atomiks.github.io/tippyjs/v6/constructor/:embed:cite]\n\n色々試してみたが力不足のためtippyjs-reactを用いてPixelaのグラフの中のデータをツールチップに表示させるところまで実装できなかった\n\n下記読んで見たissue\n\n[Question - Programmatically create tippies on spans inserted with 'dangerouslySetInnerHTML' · Issue #98 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/98)\n\n[Is there a way to use css selectors like with tippy.js? · Issue #170 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/170)\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\n`tippy`を呼び出して直接実行することはできそう\n\nということで、useEffect内でtippyを実行するよう試してみたが\n\n```tsx\nimport {tippy} from '@tippyjs/react'\n.....\n.....\n\n  useEffect(() => {\n    tippy('.each-day', {arrow: true})\n  })\n\n.....\n.....\n\nreturn (\n    <>\n      <div>\n        <div className=\"each-day\" data-tippy-content=\"aaaa 1\">a</div>\n        <div className=\"each-day\" data-tippy-content=\"bbbb 1\">b</div>\n        <div className=\"each-day\" data-tippy-content=\"cccc 1\">c</div>\n      </div>\n      <object\n        type=\"image/svg+xml\"\n        data=\"https://pixe.la/v1/users/swfz/graphs/til-pv-dev?mode=short\"\n      ></object>\n    </>\n)\n```\n\nSVGで呼び出した各rectには`each-day`クラスが存在するはずだが反応せず…\n\n同様のCSSクラス名を設定した子要素には反応した\n\nこれはobjectで読み込んだSVGがiframeなどと同様に子コンテンツ扱いされているからのよう\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\nCSSセレクタで中身を取得したい場合次のような感じで取得できる\n\n```javascript\nconst element = document.querySelector('.selector-in-parent-content').contentWindow.document.querySelector('.selector-in-child-content');\n```\n\nこれをCSSセレクタ一発で取得できるか少し調べたが見つからなかったので断念\n\nということでどうしたもんかなと考えたが次の案くらいしか思い浮かばなかった\n\n## 案1 fetchとdangerouslySetInnerHTMLでSVGのレスポンスをそのまま突っ込む\n- fetchでSVGデータを取得する\n- dangerouslySetInnerHTMLでHTMLを入れ込む\n- jQueryなどでの使用法と同様に`tippy`を実行する\n\nツールチップの要素などは`tippy`が実行してDOM操作する形になるのでReactの管理対象外になるはず\n\nなので正直気持ちの良いものではない\n\n## 案2 fetchとcloneElementなどを使ってDOMを書き換えツールチップを動作させる\n- fetchでSVGデータを取得する\n- cloneElementなどを駆使し、Tippyタグが動作するようにDOMを書き換える\n\n工夫すればできそうだけどsvgの中身まで把握しておかないといけないし結構たいへんそう…\n\n## 案3 objectタグでレンダリングしているSVGの中でtippyjsを実行する\n- そもそもできるのか不明\n\nこのへんまで調べてそんなに時間使えないし案1で良いか…ということで\n\nまずは動かすところまで持っていく!!\n\n結局次のような感じになった\n\n## 案1でやってみた\n\n```typescript\nimport React, { useState, useEffect } from \"react\"\nimport fetch from \"node-fetch\"\nimport { tippy } from \"@tippyjs/react\"\nimport \"tippy.js/dist/tippy.css\"\nimport DOMPurify from \"dompurify\"\n\nconst Pixela = () => {\n  const [pixelaSvg, setPixelaSvg] = useState(\"\")\n\n  useEffect(() => {\n    const fetchPixelaSvg = async () => {\n      const res = await fetch(\n        \"https://pixe.la/v1/users/swfz/graphs/til-pageviews?mode=short\"\n      )\n      const html: string = await res.text()\n\n      setPixelaSvg(DOMPurify.sanitize(html))\n      tippy(\".each-day\", { arrow: true })\n    }\n    fetchPixelaSvg()\n  }, [])\n\n  return (\n    <>\n      <div\n        dangerouslySetInnerHTML={{\n          __html: pixelaSvg,\n        }}\n      ></div>\n      <div\n        style={{\n          textAlign: `right`,\n        }}\n      >\n        Powered by{\" \"}\n        <a href=\"https://pixe.la/\" target=\"_blank\">\n          Pixela\n        </a>\n      </div>\n    </>\n  )\n}\n```\n\n![alt](gatsby_pixela_direct_execution01.png)\n\n### まとめ\n- PixelaのグラフをGatsby(React)で表示してツールチップまで表示できるようにした\n- Reactの中の世界でツールチップを管理することを断念した\n- 他案はまた別な機会で挑戦したい",
           "objectID": "react/gatsby_pixela_direct_execution",
           "_snippetResult": {
@@ -274,8 +836,13 @@
               "matchLevel": "none",
               "matchedWords": []
             },
+            "github": {
+              "value": "https://github.com/swfz/memo/blob/master/docs/react/gatsby_pixela_direct_execution.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
             "url": {
-              "value": "http://localhost:8001/react/gatsby_pixela_direct_execution",
+              "value": "https://swfz.hatenablog.com/entry/2021/10/15/024551",
               "matchLevel": "none",
               "matchedWords": []
             },
@@ -285,15 +852,29 @@
               "matchedWords": []
             },
             "tags": [
-              { "value": "React", "matchLevel": "none", "matchedWords": [] },
-              { "value": "Gatsby", "matchLevel": "none", "matchedWords": [] },
-              { "value": "Pixela", "matchLevel": "none", "matchedWords": [] }
+              {
+                "value": "React",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Gatsby",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Pixela",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             ],
             "text": {
               "value": "# PixelaのグラフをGatsby製のブログに埋め込む\n\nPixelaのグラフをGatsby(React)で表示させたい\n\n素直にsvgをobjectタグで読み込むだけだとツールチップが表示されないのでせっかくなら表示させたい\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\n（※前提の参考リンクをよく読めばiframeで良くないか?という話になるが、今回は__ais-highlight__msw__/ais-highlight__を使って開発しているときはローカルだけで完結させたい、がiframeは__ais-highlight__msw__/ais-highlight__ではモックできないという事情により色々面倒なことをやっている）\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n\nなので完全な自分用のメモである\n\n## 前提知識\n\n[はてなブログに Pixela グラフを埋め込んで、さらにツールチップを表示させる方法 - えいのうにっき](https://blog.a-know.me/entry/2018/11/20/220257)\n\n[https://blog.a-know.me/entry/2018/11/20/220257:embed:cite]\n\nはてなブログへの埋め込み方法は上記\n\npopoverを表示するためのライブラリとして`tippyjs`を使うことを前提としている\n\nPixelaが返すSVGの中のrectタグ中に`data-tippy-content`というプロパティがありその中にpopoverで表示されるコンテンツが入っている\n\ntippyjs側では特定の属性の内容をツールチップの内容とする仕様になっている\n\n- popoverの中身\n\n頑張って一瞬でコピーした\n\n```html\n<div class=\"tippy-popper\" role=\"tooltip\" id=\"tippy-92\" x-placement=\"top\" style=\"z-index: 9999; visibility: hidden; transition-duration: 0ms; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(542px, 6020px, 0px);\"><div class=\"tippy-tooltip dark-theme\" data-size=\"regular\" data-animation=\"shift-away\" data-state=\"hidden\" style=\"transition-duration: 275ms; top: 0px;\"><div class=\"tippy-arrow\" style=\"left: 77px;\"></div><div class=\"tippy-content\" data-state=\"hidden\" style=\"transition-duration: 275ms;\"><div>143 views on 2021-09-19</div></div></div></div>\n```\n\n- rect(当日)\n\n```html\n<rect class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"0\" y=\"0\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-19\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210919\" data-index=\"1\" tabindex=\"0\"></rect>\n```\n\n一個不具合というかわからないが当日のデータは`data-tippy-content`にデータが入ってこないっぽい\n\n- rect(昨日以前)\n\n```html\n<rect data-tippy-content=\"6 view(s) on 2021-09-18\" class=\"each-day\" rx=\"2\" ry=\"2\" width=\"10\" height=\"10\" x=\"1\" y=\"72\" fill=\"#d5eaff\" data-count=\"6\" data-date=\"2021-09-18\" data-unit=\"view(s)\" data-retina=\"true\" data-retinaday=\"20210918\" data-index=\"2\" tabindex=\"0\"></rect>\n```\n\nなるほど\n\n## Reactでどうやってツールチップを実現するか\n\ntippyjsを前提としているならreactでtippyjsを使えるようなライブラリがあれば良さそう\n\ntippyjs作者と同じ方がReact用のライブラリも作っているようなのでそれを見にいってREADMEをいくつか試してみた\n\n[atomiks/tippyjs-react: React component for Tippy.js (official)](https://github.com/atomiks/tippyjs-react)\n\n[https://github.com/atomiks/tippyjs-react:embed:cite]\n\ntippyjs単体での使用方法は下記\n\n[Constructor | Tippy.js](https://atomiks.github.io/tippyjs/v6/constructor/)\n\n[https://atomiks.github.io/tippyjs/v6/constructor/:embed:cite]\n\n色々試してみたが力不足のためtippyjs-reactを用いてPixelaのグラフの中のデータをツールチップに表示させるところまで実装できなかった\n\n下記読んで見たissue\n\n[Question - Programmatically create tippies on spans inserted with 'dangerouslySetInnerHTML' · Issue #98 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/98)\n\n[Is there a way to use css selectors like with tippy.js? · Issue #170 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/170)\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\n`tippy`を呼び出して直接実行することはできそう\n\nということで、useEffect内でtippyを実行するよう試してみたが\n\n```tsx\nimport {tippy} from '@tippyjs/react'\n.....\n.....\n\n  useEffect(() => {\n    tippy('.each-day', {arrow: true})\n  })\n\n.....\n.....\n\nreturn (\n    <>\n      <div>\n        <div className=\"each-day\" data-tippy-content=\"aaaa 1\">a</div>\n        <div className=\"each-day\" data-tippy-content=\"bbbb 1\">b</div>\n        <div className=\"each-day\" data-tippy-content=\"cccc 1\">c</div>\n      </div>\n      <object\n        type=\"image/svg+xml\"\n        data=\"https://pixe.la/v1/users/swfz/graphs/til-pv-dev?mode=short\"\n      ></object>\n    </>\n)\n```\n\nSVGで呼び出した各rectには`each-day`クラスが存在するはずだが反応せず…\n\n同様のCSSクラス名を設定した子要素には反応した\n\nこれはobjectで読み込んだSVGがiframeなどと同様に子コンテンツ扱いされているからのよう\n\n[Doesn't accept target property · Issue #39 · atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react/issues/39)\n\nCSSセレクタで中身を取得したい場合次のような感じで取得できる\n\n```javascript\nconst element = document.querySelector('.selector-in-parent-content').contentWindow.document.querySelector('.selector-in-child-content');\n```\n\nこれをCSSセレクタ一発で取得できるか少し調べたが見つからなかったので断念\n\nということでどうしたもんかなと考えたが次の案くらいしか思い浮かばなかった\n\n## 案1 fetchとdangerouslySetInnerHTMLでSVGのレスポンスをそのまま突っ込む\n- fetchでSVGデータを取得する\n- dangerouslySetInnerHTMLでHTMLを入れ込む\n- jQueryなどでの使用法と同様に`tippy`を実行する\n\nツールチップの要素などは`tippy`が実行してDOM操作する形になるのでReactの管理対象外になるはず\n\nなので正直気持ちの良いものではない\n\n## 案2 fetchとcloneElementなどを使ってDOMを書き換えツールチップを動作させる\n- fetchでSVGデータを取得する\n- cloneElementなどを駆使し、Tippyタグが動作するようにDOMを書き換える\n\n工夫すればできそうだけどsvgの中身まで把握しておかないといけないし結構たいへんそう…\n\n## 案3 objectタグでレンダリングしているSVGの中でtippyjsを実行する\n- そもそもできるのか不明\n\nこのへんまで調べてそんなに時間使えないし案1で良いか…ということで\n\nまずは動かすところまで持っていく!!\n\n結局次のような感じになった\n\n## 案1でやってみた\n\n```typescript\nimport React, { useState, useEffect } from \"react\"\nimport fetch from \"node-fetch\"\nimport { tippy } from \"@tippyjs/react\"\nimport \"tippy.js/dist/tippy.css\"\nimport DOMPurify from \"dompurify\"\n\nconst Pixela = () => {\n  const [pixelaSvg, setPixelaSvg] = useState(\"\")\n\n  useEffect(() => {\n    const fetchPixelaSvg = async () => {\n      const res = await fetch(\n        \"https://pixe.la/v1/users/swfz/graphs/til-pageviews?mode=short\"\n      )\n      const html: string = await res.text()\n\n      setPixelaSvg(DOMPurify.sanitize(html))\n      tippy(\".each-day\", { arrow: true })\n    }\n    fetchPixelaSvg()\n  }, [])\n\n  return (\n    <>\n      <div\n        dangerouslySetInnerHTML={{\n          __html: pixelaSvg,\n        }}\n      ></div>\n      <div\n        style={{\n          textAlign: `right`,\n        }}\n      >\n        Powered by{\" \"}\n        <a href=\"https://pixe.la/\" target=\"_blank\">\n          Pixela\n        </a>\n      </div>\n    </>\n  )\n}\n```\n\n![alt](gatsby_pixela_direct_execution01.png)\n\n### まとめ\n- PixelaのグラフをGatsby(React)で表示してツールチップまで表示できるようにした\n- Reactの中の世界でツールチップを管理することを断念した\n- 他案はまた別な機会で挑戦したい",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             }
           }
         },
@@ -301,9 +882,12 @@
           "title": "じぶん Release Notes (ver 0.35.0)",
           "date": "2022-10-09",
           "slug": "release_notes/2022_10-0_35_0",
-          "url": "http://localhost:8001/release_notes/2022_10-0_35_0",
+          "github": "https://github.com/swfz/memo/blob/master/docs/release_notes/2022_10-0_35_0.md",
+          "url": "https://swfz.hatenablog.com/entry/2022/10/09/173432",
           "section": "release_notes/2022_10-0_35_0",
-          "tags": ["じぶんリリースノート"],
+          "tags": [
+            "じぶんリリースノート"
+          ],
           "text": "# じぶん Release Notes (ver 0.35.0)\n\nswfz (ver 0.35.0) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n- プライベートのブログ環境のmkdocs更新\n- [kusa](https://tools.swfz.io/kusa)関連\n    - Renovate,dependabot系のアクティビティを除けるようにした\n    - octiconを入れた\n    - コメント系イベントを表示できるようにした\n- 既存のprivateのActionsでGCP(bq, gsutil)を使っている箇所をOIDCで実行できるようにした\n- [article-search](https://github.com/swfz/article-search)\n    - テストコードを書いた\n    - mswを入れた\n    - Cloudflareにデプロイした\n    - CloudflareAccessで制限を掛けた\n\n## 読んだ本\n\n- インプット大全(Audible)\n\n<iframe sandbox=\"allow-popups allow-scripts allow-modals allow-forms allow-same-origin\" style=\"width:120px;height:240px;\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\" frameborder=\"0\" src=\"//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=swfz-22&language=ja_JP&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B07SR28M94&linkId=92ee63e16420b14a37b1a8e77d74991d\"></iframe>\n\n## 勉強会\n\nなし\n\n## ブログ\n\nリリースノートを除き、次の3エントリを書いた\n\n- [BigQueryにAPIのデータを定期的に同期して、削除されたレコードを検出する](https://swfz.hatenablog.com/entry/2022/09/09/203039)\n- [CloudFlare Access + Pagesで自分のみアクセスできるようにする](https://swfz.hatenablog.com/entry/2022/09/30/193552)\n- [VS Code Markdown CheckboxプラグインでToDo管理](https://swfz.hatenablog.com/entry/2022/09/21/190153)\n\n### 指標\n\n購読者数： 76(`+0`)\n\n月間PV： 8482(`-108`)\n\nはてなブックマーク： 1108(`+1`)\n\nいつも通りって感じ\n\n## 生活\n\n色々でかけた\n\n<!-- textlint-disable jtf-style/2.1.2.漢字 -->\n黒たまごを食べるためだけに大涌谷へいったり\n<!-- textlint-enable prh -->\n\nソラマチでプラネタリウム見たり\n\nあとは、まだ歯の治療が終わらない…\n\n担当が日曜だけしかいないようで予定合わないと平気で1ヵ月空いたりするので全然進まない\n\nそろそろ焼肉を何も気にせず食べたい…\n\n## 仕事\n\nQの末なので目標振り返りやら金額の話だったり締め的な仕事が多かった\n\n組織の目標の金額の集計だったりレポートだったりを自分で作業したので状況把握という意味だと今まで以上に解像度は上がった\n\nそして実際にやってみるとコスト意識は高まる?かなと感じた\n\n今までふんわり認識していた部分が具体的数値として認識でき「この金額ってこんなに掛かっているのか！」という気付きが多かった\n\n恥ずかしい話あんまりそういうところ意識してこなかったなというのが正直なところだったのでやってよかった\n\nただ、あまり整備されているわけではないのでかなり手作業が多くたいへんだった\n\n今後は効率化する予定\n\n### 有給消化した\n\n9月終わったら消えてしまう有給が残り1.5日というところまで消化した\n\n今までかなりの日数のこしてしまっていて結局使わず消滅させてしまっていたが今回はなるべく消化することにした\n\n結果かなり消化できたが仕事は進まなかった\n\nそのぶんプライベートでコードを結構書けたのでそれはそれで良かった\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2022-04-01 | 2.35h | +0.16 |\n| 2022-05-01 |  3.0h | +0.65 |\n| 2022-06-01 | 2.55h | -0.46 |\n| 2022-07-01 | 3.98h | +1.43 |\n| 2022-08-01 | 3.56h | -0.42 |\n| 2022-09-01 | 3.18h | -0.37 |\n\n直近3ヵ月くらいは有給消化があったためある程度時間確保できたが10月以降もこのペースで行けるか不安が残る…\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2022-04-01 | 6.61h | -0.23 | 1.65 |\n| 2022-05-01 | 6.13h | -0.48 | 2.01 |\n| 2022-06-01 | 6.28h | +0.15 | 1.68 |\n| 2022-07-01 | 6.24h | -0.04 | 1.89 |\n| 2022-08-01 | 6.33h | +0.09 | 1.61 |\n| 2022-09-01 | 6.26h | -0.07 |  1.9 |\n\n## 振り返り\n\n### K\n- コード書く時間はそれなりに取れた\n- ステッパーは引き続き続けられている\n- ある程度有給消化できた\n- GitHubの草継続して毎日生やすことができている\n- 毎日の振り返り週間はできているかどうかをいったん可視化した\n\n### P\n- 引き続き気持ちがのらずぐだっている\n- 筋トレできていない\n- やろうとしてタスクに積んだあと崩せていない\n- Pocketに積むだけ積んだ後読んでいない\n- 毎日その日中に振り返りできていない(56%)\n\n### T\n- 筋トレの習慣化再考\n- 本読む時間を増やす\n- 新しい刺激になることをやる\n- 何か1つ決めてタスクを崩す機会と時間を作る\n- Pocket積読は目標決めて取り組む\n",
           "objectID": "release_notes/2022_10-0_35_0",
           "_snippetResult": {
@@ -328,8 +912,13 @@
               "matchLevel": "none",
               "matchedWords": []
             },
+            "github": {
+              "value": "https://github.com/swfz/memo/blob/master/docs/release_notes/2022_10-0_35_0.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
             "url": {
-              "value": "http://localhost:8001/release_notes/2022_10-0_35_0",
+              "value": "https://swfz.hatenablog.com/entry/2022/10/09/173432",
               "matchLevel": "none",
               "matchedWords": []
             },
@@ -349,43 +938,211 @@
               "value": "# じぶん Release Notes (ver 0.35.0)\n\nswfz (ver 0.35.0) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n- プライベートのブログ環境のmkdocs更新\n- [kusa](https://tools.swfz.io/kusa)関連\n    - Renovate,dependabot系のアクティビティを除けるようにした\n    - octiconを入れた\n    - コメント系イベントを表示できるようにした\n- 既存のprivateのActionsでGCP(bq, gsutil)を使っている箇所をOIDCで実行できるようにした\n- [article-search](https://github.com/swfz/article-search)\n    - テストコードを書いた\n    - __ais-highlight__msw__/ais-highlight__を入れた\n    - Cloudflareにデプロイした\n    - CloudflareAccessで制限を掛けた\n\n## 読んだ本\n\n- インプット大全(Audible)\n\n<iframe sandbox=\"allow-popups allow-scripts allow-modals allow-forms allow-same-origin\" style=\"width:120px;height:240px;\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\" frameborder=\"0\" src=\"//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=swfz-22&language=ja_JP&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B07SR28M94&linkId=92ee63e16420b14a37b1a8e77d74991d\"></iframe>\n\n## 勉強会\n\nなし\n\n## ブログ\n\nリリースノートを除き、次の3エントリを書いた\n\n- [BigQueryにAPIのデータを定期的に同期して、削除されたレコードを検出する](https://swfz.hatenablog.com/entry/2022/09/09/203039)\n- [CloudFlare Access + Pagesで自分のみアクセスできるようにする](https://swfz.hatenablog.com/entry/2022/09/30/193552)\n- [VS Code Markdown CheckboxプラグインでToDo管理](https://swfz.hatenablog.com/entry/2022/09/21/190153)\n\n### 指標\n\n購読者数： 76(`+0`)\n\n月間PV： 8482(`-108`)\n\nはてなブックマーク： 1108(`+1`)\n\nいつも通りって感じ\n\n## 生活\n\n色々でかけた\n\n<!-- textlint-disable jtf-style/2.1.2.漢字 -->\n黒たまごを食べるためだけに大涌谷へいったり\n<!-- textlint-enable prh -->\n\nソラマチでプラネタリウム見たり\n\nあとは、まだ歯の治療が終わらない…\n\n担当が日曜だけしかいないようで予定合わないと平気で1ヵ月空いたりするので全然進まない\n\nそろそろ焼肉を何も気にせず食べたい…\n\n## 仕事\n\nQの末なので目標振り返りやら金額の話だったり締め的な仕事が多かった\n\n組織の目標の金額の集計だったりレポートだったりを自分で作業したので状況把握という意味だと今まで以上に解像度は上がった\n\nそして実際にやってみるとコスト意識は高まる?かなと感じた\n\n今までふんわり認識していた部分が具体的数値として認識でき「この金額ってこんなに掛かっているのか！」という気付きが多かった\n\n恥ずかしい話あんまりそういうところ意識してこなかったなというのが正直なところだったのでやってよかった\n\nただ、あまり整備されているわけではないのでかなり手作業が多くたいへんだった\n\n今後は効率化する予定\n\n### 有給消化した\n\n9月終わったら消えてしまう有給が残り1.5日というところまで消化した\n\n今までかなりの日数のこしてしまっていて結局使わず消滅させてしまっていたが今回はなるべく消化することにした\n\n結果かなり消化できたが仕事は進まなかった\n\nそのぶんプライベートでコードを結構書けたのでそれはそれで良かった\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2022-04-01 | 2.35h | +0.16 |\n| 2022-05-01 |  3.0h | +0.65 |\n| 2022-06-01 | 2.55h | -0.46 |\n| 2022-07-01 | 3.98h | +1.43 |\n| 2022-08-01 | 3.56h | -0.42 |\n| 2022-09-01 | 3.18h | -0.37 |\n\n直近3ヵ月くらいは有給消化があったためある程度時間確保できたが10月以降もこのペースで行けるか不安が残る…\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2022-04-01 | 6.61h | -0.23 | 1.65 |\n| 2022-05-01 | 6.13h | -0.48 | 2.01 |\n| 2022-06-01 | 6.28h | +0.15 | 1.68 |\n| 2022-07-01 | 6.24h | -0.04 | 1.89 |\n| 2022-08-01 | 6.33h | +0.09 | 1.61 |\n| 2022-09-01 | 6.26h | -0.07 |  1.9 |\n\n## 振り返り\n\n### K\n- コード書く時間はそれなりに取れた\n- ステッパーは引き続き続けられている\n- ある程度有給消化できた\n- GitHubの草継続して毎日生やすことができている\n- 毎日の振り返り週間はできているかどうかをいったん可視化した\n\n### P\n- 引き続き気持ちがのらずぐだっている\n- 筋トレできていない\n- やろうとしてタスクに積んだあと崩せていない\n- Pocketに積むだけ積んだ後読んでいない\n- 毎日その日中に振り返りできていない(56%)\n\n### T\n- 筋トレの習慣化再考\n- 本読む時間を増やす\n- 新しい刺激になることをやる\n- 何か1つ決めてタスクを崩す機会と時間を作る\n- Pocket積読は目標決めて取り組む\n",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            }
+          }
+        },
+        {
+          "title": "じぶん Release Notes (ver 0.36.2)",
+          "date": "2023-12-06",
+          "slug": "release_notes/2023_12-0_36_2",
+          "github": "https://github.com/swfz/memo/blob/master/docs/release_notes/2023_12-0_36_2.md",
+          "url": "https://swfz.hatenablog.com/entry/2023/12/06/204400",
+          "section": "release_notes/2023_12-0_36_2",
+          "tags": [
+            "じぶんリリースノート"
+          ],
+          "text": "# じぶん Release Notes (ver 0.36.2)\n\nswfz (ver 0.36.2) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n\n- [til](https://til.swfz.io)\n    - [Shareボタンを設置した](https://github.com/swfz/til/pull/1698)\n    - [TailwindCSSへ置き換えた](https://github.com/swfz/til/pull/1713)\n        - 今までbulmaを使っていたが正直とりあえず入れてみた状態だったのでこの機に入れ替えた\n        - 同時にモバイルでも見た目を変えて読めるよう対応した\n        - スタイルに関しては付け焼き刃で対応してた感があったので、自分の中ではある程度理解しながら進められたので良かったし勉強になった\n    - [VisualRegressionTestをCIで実行できるようにした](https://github.com/swfz/til/issues/1741)\n        - VisualRegressionテストを入れるにあたって結構変更入れた\n        - いくつか課題は残っているのでまた今度実施する予定\n    - [コードハイライト、Markdownの見た目調整](https://github.com/swfz/til/pull/1694)\n- [deno-kusa-image](https://github.com/swfz/deno-kusa-image/)\n    - [凡例の色指定を動的に取得可能にした](https://github.com/swfz/deno-kusa-image/pull/24)\n        - ハロウィンで色変わったので違和感がでたところ、芝生の色に合わせた\n\n\n## 読んだ本\n- スタッフエンジニア\n    - とりあえず一通り読んだ\n    - 個別の事例が結構面白かった\n    - 自分や今の組織と照らし合わせてなるほどーと読むのが面白かった\n    - もう一度アーキタイプのところ読んで解像度上げられると活かせるかな\n\n## 勉強会\n\nなし\n\n## ブログ\n\nリリースノートを除き、次の4エントリを書いた\n\n- [Gatsbyで特定のJSONファイルを用意してGraphQLで扱えるようにする](https://swfz.hatenablog.com/entry/2023/11/26/191437)\n- [Gatsbyで記事用のMarkdownとサンプル用のMarkdownを分けて扱う](https://swfz.hatenablog.com/entry/2023/11/25/054154)\n- [GitHub CLIで複数行に渡るコメントをIssueやPullRequestのbodyに含める](https://swfz.hatenablog.com/entry/2023/11/03/035612)\n- [GatsbyのwrapPageElementをssrとbrowser両方で設定し、Hydrationエラーに対応する](https://swfz.hatenablog.com/entry/2023/11/12/165512)\n\n### 指標\n\n購読者数： 81(`+0`)\n\nはてなブックマーク： 1176(`+0`)\n\n月間PV： 7381(`+193`)\n\nPV関連は結構停滞している、購読者100まではまだまだ遠い\n\n## 生活\n\n中旬にお腹を下して下痢が止まらなくなってしまった、思い当たるふしもないのでストレス?脱水症状的なものもあったので結構ビビった\n\n結局3日間くらい動けず、その後も数日は調子悪かった…\n\nこの件だけではないが、先月のインフルも含め直近イベントごとや飲みの機会などことごとく体調不良で参加できてないのでちょっと気が滅入ってきている…\n\n元気になってからは、埼玉の森林公園にいってサイクリング（下の子を後ろに乗せて）してきた\n\n<!-- textlint-disable ja-technical-writing/max-ten -->\n結構坂が多い、自転車自体が重い、病み上がり、こいでも進まない、足つりそうになる、息もあがるでかなりきつかった\n<!-- textlint-enable ja-technical-writing/max-ten -->\n\n次は下の子が自転車運転できるようになってからかな、と思った\n\n## 仕事\n\nどうにもこうにも作業したり考えたりする時間を取れない状態が続いている\n\nそんな中でも締切があるものはあるのでそういう緊急なものだけをなんとかこなすっていう状態が続いていて良くない\n\nまず兼務状態を外さないといけないけど目処が立たず…\n\n気持ち的な面でかなりきついなーって感じ始めているのでどこかの質を落とすとか何か落とさないと厳しそうだなという感じで迷っている\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2023-06-01 | 2.36h | +0.37 |\n| 2023-07-01 |  3.0h | +0.64 |\n| 2023-08-01 | 2.16h | -0.84 |\n| 2023-09-01 | 2.09h | -0.07 |\n| 2023-10-01 |  1.8h | -0.28 |\n| 2023-11-01 |  2.3h | +0.49 |\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2023-06-01 | 6.23h | -0.68 | 2.25 |\n| 2023-07-01 | 6.46h | +0.24 | 1.76 |\n| 2023-08-01 | 6.45h | -0.01 | 1.97 |\n| 2023-09-01 | 6.45h | +-0.0 | 1.87 |\n| 2023-10-01 | 7.24h | +0.79 | 3.81 |\n| 2023-11-01 |  6.9h | -0.35 | 3.49 |\n\n10月はインフルだったので多い\n\n11月もいつもより少し多い\n\nおそらく中盤のお腹下して下痢が止まらなくなってしまったときのやつが影響していそう\n\n2日間まるまる寝てたので…\n\n## 月1目標\n\n今月も設定できず\n\n習慣化だけ\n\n- 1日15分ステッパー踏むx2\n    - 20%\n- 懸垂合計10回\n    - 65.00%\n- その日中に振り返りする\n    - 83.33%\n\n体調崩した中ではよく頑張ったのではないかな…\n\n## 振り返り\n\n### K\n- 引き続きプライベートだがコード書く機会は取れている\n    - VRTにplaywright入れて、mswとも連携できて良き\n- 少しずつだが本読み進められている\n- 懸垂は継続ある程度できている\n\n### P\n- 振り返っていると「ネットサーフィン」何やってたっけ?となりがち\n- 本読む機会が多くない\n    - もう少し増やしたい\n- なんとか締め切りあるものに関してはこなしている状況\n\t- 何か考えて施策していくなどの活動が全然取れていない\n    - 先月のTryにもあげているがむしろ悪くなっているまである…\n    - やりかけの仕事ばかりがたまっていく\n- 週次の振り返りを月末まとめてやってしまっている\n- 先月Try全然できてない\n    - 意識できてない\n\t- 月末の振り返りで「そういえばなんだったっけ」って思っている時点ですでに…\n\n### T\n- 特定時間で本読む習慣をつける\n    - 朝とか、夜とか、昼休みとか\n- 週次の振り返りを日曜夜から月曜にかけて行う習慣化\n- ネットサーフィンをもう少し分類して記録する\n- 月次、週次のTryを見やすいところ、よく見るところ(DailyNote)に置く\n    - 目標設定も見えるようにできるとなお良し\n- ToDoのリードタイムを減らす\n    - 仕事の発生から完了までの期間を測って改善する",
+          "objectID": "release_notes/2023_12-0_36_2",
+          "_snippetResult": {
+            "text": {
+              "value": "イベートだがコード書く機会は取れている\n    - VRTにplaywright入れて、__ais-highlight__msw__/ais-highlight__とも連携できて良き\n- 少しずつだが本読み進められてい",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "じぶん Release Notes (ver 0.36.2)",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "date": {
+              "value": "2023-12-06",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "release_notes/2023_12-0_36_2",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "github": {
+              "value": "https://github.com/swfz/memo/blob/master/docs/release_notes/2023_12-0_36_2.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "https://swfz.hatenablog.com/entry/2023/12/06/204400",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "release_notes/2023_12-0_36_2",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "じぶんリリースノート",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "text": {
+              "value": "# じぶん Release Notes (ver 0.36.2)\n\nswfz (ver 0.36.2) がリリースされました、更新内容は次のとおりです\n\n## 技術\n\n### やったこと\n\n- [til](https://til.swfz.io)\n    - [Shareボタンを設置した](https://github.com/swfz/til/pull/1698)\n    - [TailwindCSSへ置き換えた](https://github.com/swfz/til/pull/1713)\n        - 今までbulmaを使っていたが正直とりあえず入れてみた状態だったのでこの機に入れ替えた\n        - 同時にモバイルでも見た目を変えて読めるよう対応した\n        - スタイルに関しては付け焼き刃で対応してた感があったので、自分の中ではある程度理解しながら進められたので良かったし勉強になった\n    - [VisualRegressionTestをCIで実行できるようにした](https://github.com/swfz/til/issues/1741)\n        - VisualRegressionテストを入れるにあたって結構変更入れた\n        - いくつか課題は残っているのでまた今度実施する予定\n    - [コードハイライト、Markdownの見た目調整](https://github.com/swfz/til/pull/1694)\n- [deno-kusa-image](https://github.com/swfz/deno-kusa-image/)\n    - [凡例の色指定を動的に取得可能にした](https://github.com/swfz/deno-kusa-image/pull/24)\n        - ハロウィンで色変わったので違和感がでたところ、芝生の色に合わせた\n\n\n## 読んだ本\n- スタッフエンジニア\n    - とりあえず一通り読んだ\n    - 個別の事例が結構面白かった\n    - 自分や今の組織と照らし合わせてなるほどーと読むのが面白かった\n    - もう一度アーキタイプのところ読んで解像度上げられると活かせるかな\n\n## 勉強会\n\nなし\n\n## ブログ\n\nリリースノートを除き、次の4エントリを書いた\n\n- [Gatsbyで特定のJSONファイルを用意してGraphQLで扱えるようにする](https://swfz.hatenablog.com/entry/2023/11/26/191437)\n- [Gatsbyで記事用のMarkdownとサンプル用のMarkdownを分けて扱う](https://swfz.hatenablog.com/entry/2023/11/25/054154)\n- [GitHub CLIで複数行に渡るコメントをIssueやPullRequestのbodyに含める](https://swfz.hatenablog.com/entry/2023/11/03/035612)\n- [GatsbyのwrapPageElementをssrとbrowser両方で設定し、Hydrationエラーに対応する](https://swfz.hatenablog.com/entry/2023/11/12/165512)\n\n### 指標\n\n購読者数： 81(`+0`)\n\nはてなブックマーク： 1176(`+0`)\n\n月間PV： 7381(`+193`)\n\nPV関連は結構停滞している、購読者100まではまだまだ遠い\n\n## 生活\n\n中旬にお腹を下して下痢が止まらなくなってしまった、思い当たるふしもないのでストレス?脱水症状的なものもあったので結構ビビった\n\n結局3日間くらい動けず、その後も数日は調子悪かった…\n\nこの件だけではないが、先月のインフルも含め直近イベントごとや飲みの機会などことごとく体調不良で参加できてないのでちょっと気が滅入ってきている…\n\n元気になってからは、埼玉の森林公園にいってサイクリング（下の子を後ろに乗せて）してきた\n\n<!-- textlint-disable ja-technical-writing/max-ten -->\n結構坂が多い、自転車自体が重い、病み上がり、こいでも進まない、足つりそうになる、息もあがるでかなりきつかった\n<!-- textlint-enable ja-technical-writing/max-ten -->\n\n次は下の子が自転車運転できるようになってからかな、と思った\n\n## 仕事\n\nどうにもこうにも作業したり考えたりする時間を取れない状態が続いている\n\nそんな中でも締切があるものはあるのでそういう緊急なものだけをなんとかこなすっていう状態が続いていて良くない\n\nまず兼務状態を外さないといけないけど目処が立たず…\n\n気持ち的な面でかなりきついなーって感じ始めているのでどこかの質を落とすとか何か落とさないと厳しそうだなという感じで迷っている\n\n## 時間の使い方\n\n直近半年の勉強の指標は次のような感じ\n\n| 月          |    平均 |   前月比 |\n| :--------- | ----: | ----: |\n| 2023-06-01 | 2.36h | +0.37 |\n| 2023-07-01 |  3.0h | +0.64 |\n| 2023-08-01 | 2.16h | -0.84 |\n| 2023-09-01 | 2.09h | -0.07 |\n| 2023-10-01 |  1.8h | -0.28 |\n| 2023-11-01 |  2.3h | +0.49 |\n\n直近半年の睡眠の指標は次のような感じ\n\n| 月          |    平均 |   前月比 | 標準偏差 |\n| :--------- | ----: | ----: | ---: |\n| 2023-06-01 | 6.23h | -0.68 | 2.25 |\n| 2023-07-01 | 6.46h | +0.24 | 1.76 |\n| 2023-08-01 | 6.45h | -0.01 | 1.97 |\n| 2023-09-01 | 6.45h | +-0.0 | 1.87 |\n| 2023-10-01 | 7.24h | +0.79 | 3.81 |\n| 2023-11-01 |  6.9h | -0.35 | 3.49 |\n\n10月はインフルだったので多い\n\n11月もいつもより少し多い\n\nおそらく中盤のお腹下して下痢が止まらなくなってしまったときのやつが影響していそう\n\n2日間まるまる寝てたので…\n\n## 月1目標\n\n今月も設定できず\n\n習慣化だけ\n\n- 1日15分ステッパー踏むx2\n    - 20%\n- 懸垂合計10回\n    - 65.00%\n- その日中に振り返りする\n    - 83.33%\n\n体調崩した中ではよく頑張ったのではないかな…\n\n## 振り返り\n\n### K\n- 引き続きプライベートだがコード書く機会は取れている\n    - VRTにplaywright入れて、__ais-highlight__msw__/ais-highlight__とも連携できて良き\n- 少しずつだが本読み進められている\n- 懸垂は継続ある程度できている\n\n### P\n- 振り返っていると「ネットサーフィン」何やってたっけ?となりがち\n- 本読む機会が多くない\n    - もう少し増やしたい\n- なんとか締め切りあるものに関してはこなしている状況\n\t- 何か考えて施策していくなどの活動が全然取れていない\n    - 先月のTryにもあげているがむしろ悪くなっているまである…\n    - やりかけの仕事ばかりがたまっていく\n- 週次の振り返りを月末まとめてやってしまっている\n- 先月Try全然できてない\n    - 意識できてない\n\t- 月末の振り返りで「そういえばなんだったっけ」って思っている時点ですでに…\n\n### T\n- 特定時間で本読む習慣をつける\n    - 朝とか、夜とか、昼休みとか\n- 週次の振り返りを日曜夜から月曜にかけて行う習慣化\n- ネットサーフィンをもう少し分類して記録する\n- 月次、週次のTryを見やすいところ、よく見るところ(DailyNote)に置く\n    - 目標設定も見えるようにできるとなお良し\n- ToDoのリードタイムを減らす\n    - 仕事の発生から完了までの期間を測って改善する",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            }
+          }
+        },
+        {
+          "title": "Gatsbyで記事用のMarkdownとサンプル用のMarkdownを分けて扱う",
+          "date": "2023-11-25",
+          "slug": "react/gatsby_multi_source_in_markdown",
+          "github": "https://github.com/swfz/memo/blob/master/docs/react/gatsby_multi_source_in_markdown.md",
+          "url": "https://swfz.hatenablog.com/entry/2023/11/25/054154",
+          "section": "react/gatsby_multi_source_in_markdown",
+          "tags": [
+            "React",
+            "Gatsby",
+            "TypeScript"
+          ],
+          "text": "# Gatsbyで記事用のMarkdownとサンプル用のMarkdownを分けて扱う\n\nGatsby製のブログで、コードハイライトにはプラグインとして`gatsby-remark-prismjs`を使っている\n\n特に設定などせず使っていたが、調べたら行番号指定でのハイライトや、シェル表示など色々なものがあるようだったのでローカルで試していた\n\nしかし、`prism-coy`のテーマが良くないのか組み合わせが悪いのか、結構意図と反する表示になることが多く、CSSをがっつり修正することにした\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\nその際に、このケースが載っている記事はあったっけな…というのを毎度探すのがたいへんだったので、どうせならある程度のユースケースを網羅しているサンプル用の記事を用意してそこを見ればOKというような状態にしたい\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n\nあわよくばVisualRegressionTestまで行えれば良さそうではということでサンプル用の記事を作ることにした\n\nやりたいことは下記\n\n- Markdownでサンプル用の記事を作成したい、既存の記事と同様\n- 記事一覧やArchiveには載らないようにしたい\n\n調べたらsource filesystemで複数ソースを扱うことができるよう\n\n## 参考\n\n[Gatsbyで2種類のマークダウンファイルの区別する方法Takumon Blog](https://takumon.com/how-to-distinct-2-kinds-of-markdown-in-gatsby/)\n\n[https://takumon.com/how-to-distinct-2-kinds-of-markdown-in-gatsby/:embed:cite]\n\nまさにやろうとしているのはこれだった、以降で自身でも実際にやったことを残していく\n\n## ディレクトリ分割してsource filesystemで読み込む\n\n通常の記事を`blog`、今回作成するサンプル用の記事を`sample`として扱う\n\n### ディレクトリ\n\n- blog\n    - `content/blog/entries/`以下にMarkdownファイル\n- sample\n    - `content/sample/samples/`以下にMarkdownファイル\n\n### sourceの読み込み\n\n- gatsby-config.ts\n\nplugins以下の設定にsample用の設定を加える\n\n```diff\n  {\n    resolve: `gatsby-source-filesystem`,\n    options: {\n      path: `${__dirname}/content/blog`,\n      name: `blog`,\n    },\n  },\n+  {\n+    resolve: `gatsby-source-filesystem`,\n+    options: {\n+      path: `${__dirname}/content/sample`,\n+      name: `sample`,\n+    },\n+  },\n```\n\n以降`name`を元に区別をしていく\n\n## GatsbyのNodeにフィールド追加する\n\nGatsbyではビルドプロセス中に、NodeといってMarkdownファイル、画像ファイル、ファイルなどのデータの単位を生成している\n\nそのNodeに対してGraphQLでクエリを投げて取得したデータを元に色々な処理や表示をさせることができるという仕組みになっている\n\n各種プラグインではこのNodeに対して特定のソースではこのNodeを生成するという処理をしている\n\nそして、Nodeの生成時に呼び出されるAPIとして`onCreateNode`という物があり、生成されるNodeに対して独自の処理を加えることができる\n\nよくあるのはフィールド追加などかな\n\n今回はMarkdownRemarkのNodeに`collection`というフィールドを追加した\n\n- gatsby-node.ts(一部抜粋)\n\n```typescript\nexport const onCreateNode: GatsbyNode[\"onCreateNode\"] = ({ node, actions, getNode }) => {\n  const { createNodeField } = actions\n\n  if (node.internal.type === `MarkdownRemark` && node.parent) {\n    const slug = createFilePath({ node, getNode })\n\n    createNodeField({\n      name: `slug`,\n      node,\n      value: slug,\n    })\n\n    const parent = getNode(node.parent)\n\n    createNodeField({\n      name: \"collection\",\n      node,\n      value: parent?.sourceInstanceName,\n    })\n  }\n}\n```\n\nMarkdownRemarkの`parent`はFileのNodeでFileには`sourceInstanceName`というフィールドがあり、そこに前節で設定した`blog`、`sample`などが設定されている\n\nGraphQLでFileに対してクエリして確認した\n\n- Fileへのクエリ\n\n```graphql\nquery File {\n  allFile {\n    nodes {\n      sourceInstanceName\n      name\n    }\n  }\n}\n```\n\n- クエリ結果一部抜粋\n\n```json\n{\n  \"data\": {\n    \"allFile\": {\n      \"nodes\": [\n        {\n          \"sourceInstanceName\": \"blog\",\n          \"name\": \"algolia_mock_with_msw\"\n        },\n        {\n          \"sourceInstanceName\": \"sample\",\n          \"name\": \"prismjs\"\n        }\n      ]\n    }\n  }\n}\n```\n\n`collection`というフィールド名でその値を設定する\n\nこれでMarkdownRemarkのNodeで`blog`、`sample`の区別ができるようになる\n\nフィールド追加後、MarkdownRemarkにクエリした結果の一部抜粋\n\n```graphql\nquery AllMarkdown {\n  allMarkdownRemark {\n    edges {\n      node {\n        fields {\n          slug\n          collection\n        }\n      }\n    }\n  }\n}\n```\n\n```json\n{\n  \"node\": {\n    \"fields\": {\n      \"slug\": \"/entries/vscode_terminal_profile/\",\n      \"collection\": \"blog\"\n    }\n  }\n},\n{\n  \"node\": {\n    \"fields\": {\n      \"slug\": \"/samples/prismjs/\",\n      \"collection\": \"sample\"\n    }\n  }\n},\n```\n\nOKそう\n\n## GraphQLクエリでフィルタリングする\n\n前節でMarkdownRemarkのNodeに`collection`フィールドを追加した\n\n今までは想定として単一種のMarkdownソースを扱うようにGraphQLのクエリを書いていたため、ブログ記事を想定している各画面ではブログ記事orサンプルを区別する必要がある\n\nということで、すべてのGraphQLクエリに変更が必要…\n\nといっても今回のケースはそんなに多くなかったのでひとつずつ書き換えた\n\n- 例\n\n```graphql\nallMarkdownRemark(sort: { frontmatter: { date: DESC } }, filter: { fields: { collection: { eq: \"blog\" } } }) {\n  edges {\n    node {\n.....\n.....\n.....\n```\n\nMarkdownRemarkに対して`filter`で`fields: { collection: {eq: \"blog\" } }`というように取得したいcollectionを指定する\n\n実際に一覧ではクエリで絞ってサンプル記事を表示しないようにした\n\n## まとめ\n\nGatsbyのブログサイトで、通常の記事とサンプル記事を区別して扱えるようにした\n\n- gatsby-source-filesystemで複数のMarkdownソースを管理\n- GatsbyのNodeにフィールドを追加して後続プロセスで区別できるような値を設定\n- GraphQLクエリでブログ記事とサンプル用の記事の出し分け\n\nこの辺のGatsbyのAPIや、source、transformerなどを調べるとかなりわかった気になる（理解度は深まったはず）、色々できそうだなと感じたのでアイデア考えるのが楽しくなる\n\n最後に、コードハイライトのCSSも修正しているけど、実際の差分は下記PullRequestに\n\n[コードハイライト、Markdownの見た目調整 by swfz · Pull Request #1694 · swfz/til](https://github.com/swfz/til/pull/1694)\n",
+          "objectID": "react/gatsby_multi_source_in_markdown",
+          "_snippetResult": {
+            "text": {
+              "value": "query File {\n  allFile {\n    nodes {\n      sourceInstanceName\n      name\n    }\n  }\n}\n```\n\n- クエリ結果一部抜粋\n\n```json\n{\n  \"data\": {\n    \"allFile\": {\n      \"nodes\": [\n        {\n          \"sourceInstanceName\": \"blog\",\n          \"name\": \"algolia_mock_with___ais-highlight__msw__/ais-highlight__\"\n        },\n        {\n          \"sourceInstanceName\": \"sample\",\n          \"name\": \"prismjs\"\n        }\n      ]\n    }\n  }\n}\n```\n\n`collection`というフィールド名でその値を設定する\n\nこ",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "title": {
+              "value": "Gatsbyで記事用のMarkdownとサンプル用のMarkdownを分けて扱う",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "date": {
+              "value": "2023-11-25",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "react/gatsby_multi_source_in_markdown",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "github": {
+              "value": "https://github.com/swfz/memo/blob/master/docs/react/gatsby_multi_source_in_markdown.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "url": {
+              "value": "https://swfz.hatenablog.com/entry/2023/11/25/054154",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "section": {
+              "value": "react/gatsby_multi_source_in_markdown",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "React",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Gatsby",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "text": {
+              "value": "# Gatsbyで記事用のMarkdownとサンプル用のMarkdownを分けて扱う\n\nGatsby製のブログで、コードハイライトにはプラグインとして`gatsby-remark-prismjs`を使っている\n\n特に設定などせず使っていたが、調べたら行番号指定でのハイライトや、シェル表示など色々なものがあるようだったのでローカルで試していた\n\nしかし、`prism-coy`のテーマが良くないのか組み合わせが悪いのか、結構意図と反する表示になることが多く、CSSをがっつり修正することにした\n\n<!-- textlint-disable ja-technical-writing/sentence-length -->\nその際に、このケースが載っている記事はあったっけな…というのを毎度探すのがたいへんだったので、どうせならある程度のユースケースを網羅しているサンプル用の記事を用意してそこを見ればOKというような状態にしたい\n<!-- textlint-enable ja-technical-writing/sentence-length -->\n\nあわよくばVisualRegressionTestまで行えれば良さそうではということでサンプル用の記事を作ることにした\n\nやりたいことは下記\n\n- Markdownでサンプル用の記事を作成したい、既存の記事と同様\n- 記事一覧やArchiveには載らないようにしたい\n\n調べたらsource filesystemで複数ソースを扱うことができるよう\n\n## 参考\n\n[Gatsbyで2種類のマークダウンファイルの区別する方法Takumon Blog](https://takumon.com/how-to-distinct-2-kinds-of-markdown-in-gatsby/)\n\n[https://takumon.com/how-to-distinct-2-kinds-of-markdown-in-gatsby/:embed:cite]\n\nまさにやろうとしているのはこれだった、以降で自身でも実際にやったことを残していく\n\n## ディレクトリ分割してsource filesystemで読み込む\n\n通常の記事を`blog`、今回作成するサンプル用の記事を`sample`として扱う\n\n### ディレクトリ\n\n- blog\n    - `content/blog/entries/`以下にMarkdownファイル\n- sample\n    - `content/sample/samples/`以下にMarkdownファイル\n\n### sourceの読み込み\n\n- gatsby-config.ts\n\nplugins以下の設定にsample用の設定を加える\n\n```diff\n  {\n    resolve: `gatsby-source-filesystem`,\n    options: {\n      path: `${__dirname}/content/blog`,\n      name: `blog`,\n    },\n  },\n+  {\n+    resolve: `gatsby-source-filesystem`,\n+    options: {\n+      path: `${__dirname}/content/sample`,\n+      name: `sample`,\n+    },\n+  },\n```\n\n以降`name`を元に区別をしていく\n\n## GatsbyのNodeにフィールド追加する\n\nGatsbyではビルドプロセス中に、NodeといってMarkdownファイル、画像ファイル、ファイルなどのデータの単位を生成している\n\nそのNodeに対してGraphQLでクエリを投げて取得したデータを元に色々な処理や表示をさせることができるという仕組みになっている\n\n各種プラグインではこのNodeに対して特定のソースではこのNodeを生成するという処理をしている\n\nそして、Nodeの生成時に呼び出されるAPIとして`onCreateNode`という物があり、生成されるNodeに対して独自の処理を加えることができる\n\nよくあるのはフィールド追加などかな\n\n今回はMarkdownRemarkのNodeに`collection`というフィールドを追加した\n\n- gatsby-node.ts(一部抜粋)\n\n```typescript\nexport const onCreateNode: GatsbyNode[\"onCreateNode\"] = ({ node, actions, getNode }) => {\n  const { createNodeField } = actions\n\n  if (node.internal.type === `MarkdownRemark` && node.parent) {\n    const slug = createFilePath({ node, getNode })\n\n    createNodeField({\n      name: `slug`,\n      node,\n      value: slug,\n    })\n\n    const parent = getNode(node.parent)\n\n    createNodeField({\n      name: \"collection\",\n      node,\n      value: parent?.sourceInstanceName,\n    })\n  }\n}\n```\n\nMarkdownRemarkの`parent`はFileのNodeでFileには`sourceInstanceName`というフィールドがあり、そこに前節で設定した`blog`、`sample`などが設定されている\n\nGraphQLでFileに対してクエリして確認した\n\n- Fileへのクエリ\n\n```graphql\nquery File {\n  allFile {\n    nodes {\n      sourceInstanceName\n      name\n    }\n  }\n}\n```\n\n- クエリ結果一部抜粋\n\n```json\n{\n  \"data\": {\n    \"allFile\": {\n      \"nodes\": [\n        {\n          \"sourceInstanceName\": \"blog\",\n          \"name\": \"algolia_mock_with___ais-highlight__msw__/ais-highlight__\"\n        },\n        {\n          \"sourceInstanceName\": \"sample\",\n          \"name\": \"prismjs\"\n        }\n      ]\n    }\n  }\n}\n```\n\n`collection`というフィールド名でその値を設定する\n\nこれでMarkdownRemarkのNodeで`blog`、`sample`の区別ができるようになる\n\nフィールド追加後、MarkdownRemarkにクエリした結果の一部抜粋\n\n```graphql\nquery AllMarkdown {\n  allMarkdownRemark {\n    edges {\n      node {\n        fields {\n          slug\n          collection\n        }\n      }\n    }\n  }\n}\n```\n\n```json\n{\n  \"node\": {\n    \"fields\": {\n      \"slug\": \"/entries/vscode_terminal_profile/\",\n      \"collection\": \"blog\"\n    }\n  }\n},\n{\n  \"node\": {\n    \"fields\": {\n      \"slug\": \"/samples/prismjs/\",\n      \"collection\": \"sample\"\n    }\n  }\n},\n```\n\nOKそう\n\n## GraphQLクエリでフィルタリングする\n\n前節でMarkdownRemarkのNodeに`collection`フィールドを追加した\n\n今までは想定として単一種のMarkdownソースを扱うようにGraphQLのクエリを書いていたため、ブログ記事を想定している各画面ではブログ記事orサンプルを区別する必要がある\n\nということで、すべてのGraphQLクエリに変更が必要…\n\nといっても今回のケースはそんなに多くなかったのでひとつずつ書き換えた\n\n- 例\n\n```graphql\nallMarkdownRemark(sort: { frontmatter: { date: DESC } }, filter: { fields: { collection: { eq: \"blog\" } } }) {\n  edges {\n    node {\n.....\n.....\n.....\n```\n\nMarkdownRemarkに対して`filter`で`fields: { collection: {eq: \"blog\" } }`というように取得したいcollectionを指定する\n\n実際に一覧ではクエリで絞ってサンプル記事を表示しないようにした\n\n## まとめ\n\nGatsbyのブログサイトで、通常の記事とサンプル記事を区別して扱えるようにした\n\n- gatsby-source-filesystemで複数のMarkdownソースを管理\n- GatsbyのNodeにフィールドを追加して後続プロセスで区別できるような値を設定\n- GraphQLクエリでブログ記事とサンプル用の記事の出し分け\n\nこの辺のGatsbyのAPIや、source、transformerなどを調べるとかなりわかった気になる（理解度は深まったはず）、色々できそうだなと感じたのでアイデア考えるのが楽しくなる\n\n最後に、コードハイライトのCSSも修正しているけど、実際の差分は下記PullRequestに\n\n[コードハイライト、Markdownの見た目調整 by swfz · Pull Request #1694 · swfz/til](https://github.com/swfz/til/pull/1694)\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             }
           }
         }
       ],
-      "nbHits": 2,
+      "nbHits": 6,
       "page": 0,
       "nbPages": 1,
       "hitsPerPage": 20,
       "exhaustiveNbHits": true,
       "exhaustiveTypo": true,
-      "exhaustive": { "nbHits": true, "typo": true },
+      "exhaustive": {
+        "nbHits": true,
+        "typo": true
+      },
       "query": "msw",
-      "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw&tagFilters=",
+      "params": "highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw",
       "index": "hatenablog",
       "renderingContent": {},
-      "processingTimeMS": 2,
+      "processingTimeMS": 1,
       "processingTimingsMS": {
-        "afterFetch": { "format": { "snippeting": 1, "total": 2 }, "total": 2 },
-        "total": 2
-      }
+        "_request": {
+          "roundTrip": 1
+        },
+        "afterFetch": {
+          "format": {
+            "highlighting": 1,
+            "snippeting": 2,
+            "total": 4
+          }
+        },
+        "total": 0
+      },
+      "serverTimeMS": 8
     },
     {
       "hits": [
         {
           "url": "https://til.swfz.io//entries/msw_mock_svg/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/msw_mock_svg/index.md",
           "text": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\nmswを使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということでmswを使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://mswjs.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev msw\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx msw init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from 'msw'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from 'msw'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · mswjs/msw](https://github.com/mswjs/msw/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\nmswを使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
           "date": "2021-12-29",
           "title": "mswでSVGをモックする",
-          "tags": ["JavaScript", "TypeScript", "Gatsby", "msw"],
+          "tags": [
+            "JavaScript",
+            "TypeScript",
+            "Gatsby",
+            "msw"
+          ],
           "description": "Pixelaを題材としてモックしてみた",
           "slug": "/entries/msw_mock_svg/",
+          "internal": {
+            "contentDigest": "71397493f188ec4f06b2ff7879cacb1b"
+          },
           "timeToRead": 3,
-          "objectID": "75a9abd2-0b34-54b0-b919-36e1513da0ed",
+          "objectID": "93160714-a398-50c1-8c1a-bdbf52be4d8c",
           "_snippetResult": {
             "text": {
-              "value": "ような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__/issues/461)\n\nモックできているかどうかの確認は",
+              "value": "… ような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__/issues/461)\n\nモックできているかどうかの確認は …",
               "matchLevel": "full"
             }
           },
@@ -394,13 +1151,25 @@
               "value": "https://til.swfz.io//entries/__ais-highlight__msw__/ais-highlight___mock_svg/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/__ais-highlight__msw__/ais-highlight___mock_svg/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             },
             "text": {
               "value": "\n本ブログでPixelaのグラフを表示させるようにした\n\n表示するだけなら下記にあるようにiframeで呼び出すだけでOK\n\n[草グラフを iframe タグで簡単に埋め込む（Pixela v1.12.1） - えいのうにっき](https://blog.a-know.me/entry/2019/06/16/210915)\n\nが、Gatsbyなどで開発しているときなどは特にリクエストを外部に送る必要がないためURLを出し分けするなりモックするなどできたら良いなと思っていた\n\nこれができていればuseEffectでミスって無限ループしてしまったときなども特に心配せずに開発できる\n\n__ais-highlight__msw__/ais-highlight__を使えば外部リクエストをモックできるので行けそう?だったがiframeの中身のコンテンツのモックはできないようなのでSVGを表示する方法にする\n\nということで__ais-highlight__msw__/ais-highlight__を使ってSVGをモックするようにしてみた\n\n## install\n\n[Install - Getting Started - Mock Service Worker Docs](https://__ais-highlight__msw__/ais-highlight__js.io/docs/getting-started/install)\n\n基本的にはドキュメントを見て進めるでOKそう\n\n```shell\nyarn add --dev __ais-highlight__msw__/ais-highlight__\nmkdir src/mocks\ntouch src/mocks/handlers.ts\n```\n\npublicディレクトリに作成する\n\ngatsbyなので`static/`\n\n```\nnpx __ais-highlight__msw__/ais-highlight__ init static/ --save\n```\n\nすると`static/mockServiceWorker.js`というファイルが生成される\n\n\n## svgファイルをモックする\n\n必要な修正をする\n\n- gatsby-browser.js\n\n```javascript\nconst startWorker = async () => {\n  const { worker } = require(\"./src/mocks/browser\")\n  await worker.start({\n    ServiceWorker: {\n      url: \"/pixela-mock\",\n    },\n  })\n}\n\nexport const onClientEntry = () => {\n  if (process.env.NODE_ENV === \"development\") {\n    startWorker()\n  }\n}\n```\n\nGatsbyのレンダリング初期にモック処理ができるか調べてみた\n\n[Gatsbyドキュメント Doc -> Recipes ざっくりまとめ - 奇をてらったテクノロジー](https://kiotera-tech.com/gatsby_doc_recipes_summary)\n\n[https://kiotera-tech.com/gatsby_doc_recipes_summary:embed:cite]\n\nGatsbyのライフサイクル`onClientEntry`を使うことで可能っぽい\n\n`onClientEntry`の処理時に`startWorker`を動かすようにした\n\nこのライフサイクルを考慮せず`startWorker`を書いてしまうとタイミングによってはモックされたりされなかったり…という現象に見舞われた\n\n- src/mocks/browser.js\n\n```javascript\n// src/mocks/browser.js\nimport { setupWorker } from '__ais-highlight__msw__/ais-highlight__'\nimport { handlers } from './handler'\n// This configures a Service Worker with the given request handlers.\nexport const worker = setupWorker(...handlers)\n```\n\n- src/mocks/handler.ts\n\n```typescript\nimport { rest } from '__ais-highlight__msw__/ais-highlight__'\nimport svgImage from './pixela.svg'\n\nexport const handlers = [\n  rest.get('https://pixe.la/v1/users/swfz/graphs/til-pageviews', async (req, res, ctx) => {\n    const svgBuffer = await fetch(svgImage).then((res) => res.arrayBuffer())\n\n    return res(ctx.status(200), ctx.body(svgBuffer))\n  }),\n  rest.post('https://undefined-1.algolianet.com/1/indexes/*/queries', (req, res, ctx) => {\n    return res(ctx.status(200), ctx.json({results: {hits: []}}))\n  })\n]\n```\n\nsvgファイルは一度curlなり何なりでローカルに持ってきて保存しておく→`./pixela.svg`\n\nおまけでalgoliaへのリクエストも開発時はほとんど使わないので定義した\n\n## SVGのモック処理\n\nsvgをモックするのどうすれば良いのかと思ったが\n\n画像と同じような感じでOKだったので`arrayBuffer`を使う\n\n[Possible to mock an img src url? · Issue #461 · __ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__](https://github.com/__ais-highlight__msw__/ais-highlight__js/__ais-highlight__msw__/ais-highlight__/issues/461)\n\nモックできているかどうかの確認はモック用のSVGはPixelaの色を変えてからローカルに保存したのでdev用は赤、本番は青といった感じで別れている\n\n## まとめ\n\n__ais-highlight__msw__/ais-highlight__を使って開発時はpixelaへのSVGリクエストをモックして開発時はアクセスが行かないようにした\n\nリクエスト先のURLを出し分けせずにモックできるのは非常に体験が良い\n\n外部のサービスやツールを使っていてsandbox用とかで分けられていない場合などいろんな用途に使えそう\n\n他にも用途いろいろありそうなので使っていこうと思った",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "date": {
               "value": "2021-12-29",
@@ -411,7 +1180,9 @@
               "value": "__ais-highlight__msw__/ais-highlight__でSVGをモックする",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "tags": [
               {
@@ -424,12 +1195,18 @@
                 "matchLevel": "none",
                 "matchedWords": []
               },
-              { "value": "Gatsby", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "Gatsby",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
               {
                 "value": "__ais-highlight__msw__/ais-highlight__",
                 "matchLevel": "full",
                 "fullyHighlighted": true,
-                "matchedWords": ["msw"]
+                "matchedWords": [
+                  "msw"
+                ]
               }
             ],
             "description": {
@@ -441,7 +1218,16 @@
               "value": "/entries/__ais-highlight__msw__/ais-highlight___mock_svg/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "71397493f188ec4f06b2ff7879cacb1b",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             },
             "timeToRead": {
               "value": "3",
@@ -452,17 +1238,25 @@
         },
         {
           "url": "https://til.swfz.io//entries/jest_with_msw/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/jest_with_msw/index.md",
           "text": "\n開発用に定義したmswの設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // mswでのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"msw\"\nimport { setupServer } from \"msw/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + mswのtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
           "date": "2022-08-19",
           "title": "mswのモックをjestのテストでも使う",
-          "tags": ["Jest", "msw", "TypeScript"],
+          "tags": [
+            "Jest",
+            "msw",
+            "TypeScript"
+          ],
           "description": "開発時と同様",
           "slug": "/entries/jest_with_msw/",
+          "internal": {
+            "contentDigest": "cb26c9401a09c7486cd06eff588ff7a7"
+          },
           "timeToRead": 1,
-          "objectID": "3cb05eab-dd49-525f-9761-98eaccf45fa7",
+          "objectID": "b42b1c17-8031-515a-b628-71a053c72bf4",
           "_snippetResult": {
             "text": {
-              "value": "ト\", async () => {\n    // __ais-highlight__msw__/ais-highlight__でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport { setupServer } from \"__ais-highlight__msw__/ais-highlight__/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer",
+              "value": "… ト\", async () => {\n    // __ais-highlight__msw__/ais-highlight__でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport { setupServer } from \"__ais-highlight__msw__/ais-highlight__/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer …",
               "matchLevel": "full"
             }
           },
@@ -471,13 +1265,25 @@
               "value": "https://til.swfz.io//entries/jest_with___ais-highlight__msw__/ais-highlight__/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/jest_with___ais-highlight__msw__/ais-highlight__/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             },
             "text": {
               "value": "\n開発用に定義した__ais-highlight__msw__/ais-highlight__の設定をJestでも使いたい案件\n\n参考のまんまだけどめちゃくちゃ簡単だった\n\nテスト用のファイルに下記のように書くだけ\n\n- search.tsx\n\n```tsx\nimport { handlers } from \"../../mocks/handler\"\ndescribe(\"Search\", () => {\n  const user = userEvent.setup()\n  const server = setupServer(...handlers)\n\n  beforeEach(() => {\n    server.listen()\n  })\n\n  afterEach(() => {\n    server.close()\n  })\n\n  it(\"検索UIのテスト\", async () => {\n    // __ais-highlight__msw__/ais-highlight__でのモックレスポンスが適用される\n    .....\n    .....\n    .....\n    .....\n  })\n})\n```\n\n- handler.ts\n\n```ts\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport { setupServer } from \"__ais-highlight__msw__/ais-highlight__/node\"\n\nexport const handlers = [\n  rest.post(\"https://example.com/*\", (req, res, ctx) => {\n    return res(\n      ctx.status(200),\n      ctx.json({})\n    )\n  }),\n]\n```\n\n`setupServer`で事前定義した`handlers`を読ませ`beforeEach`で各テストの実行前にサーバ起動する\n\n終わったら落とすようにしている\n\nこれだけでよい\n\nとても楽\n\n開発時とテスト時で同じ設定を使えるのもメンテナンス上とてもよい\n\n外部へのリクエストが発生する機能はどんどん活用していくモチベーションが上がった\n\n### 参考\n- [Jest + @testing-library/react + __ais-highlight__msw__/ais-highlight__のtips - Qiita](https://qiita.com/shibukawa/items/4d431ee4f98c80b682ec)\n",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "date": {
               "value": "2022-08-19",
@@ -488,15 +1294,23 @@
               "value": "__ais-highlight__msw__/ais-highlight__のモックをjestのテストでも使う",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "tags": [
-              { "value": "Jest", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "Jest",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
               {
                 "value": "__ais-highlight__msw__/ais-highlight__",
                 "matchLevel": "full",
                 "fullyHighlighted": true,
-                "matchedWords": ["msw"]
+                "matchedWords": [
+                  "msw"
+                ]
               },
               {
                 "value": "TypeScript",
@@ -513,7 +1327,16 @@
               "value": "/entries/jest_with___ais-highlight__msw__/ais-highlight__/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "cb26c9401a09c7486cd06eff588ff7a7",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             },
             "timeToRead": {
               "value": "1",
@@ -524,17 +1347,25 @@
         },
         {
           "url": "https://til.swfz.io//entries/algolia_mock_with_msw/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/algolia_mock_with_msw/index.md",
           "text": "\nAlgoliaの検索リクエストをmswでモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、mswで解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONをmswを用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスがmsw経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"msw\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
           "date": "2022-08-12",
           "title": "Algoliaのレスポンスをmswでモックして開発ではダミーレスポンスを扱う",
-          "tags": ["Algolia", "msw", "TypeScript"],
+          "tags": [
+            "Algolia",
+            "msw",
+            "TypeScript"
+          ],
           "description": "実際のJSONを用意する",
           "slug": "/entries/algolia_mock_with_msw/",
+          "internal": {
+            "contentDigest": "7bd7f8494ba8c00196e1ea10d11e4c68"
+          },
           "timeToRead": 3,
-          "objectID": "c8728ebf-22ac-5299-ba20-c595cab71ff1",
+          "objectID": "f49a2a18-3ffc-5f6a-87b1-d66c7163e3b3",
           "_snippetResult": {
             "text": {
-              "value": "\nAlgoliaの検索リクエストを__ais-highlight__msw__/ais-highlight__でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしな",
+              "value": "\nAlgoliaの検索リクエストを__ais-highlight__msw__/ais-highlight__でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしな …",
               "matchLevel": "full"
             }
           },
@@ -543,13 +1374,25 @@
               "value": "https://til.swfz.io//entries/algolia_mock_with___ais-highlight__msw__/ais-highlight__/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/algolia_mock_with___ais-highlight__msw__/ais-highlight__/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
             },
             "text": {
               "value": "\nAlgoliaの検索リクエストを__ais-highlight__msw__/ais-highlight__でモックした\n\n開発時は検索用のAPIキーを登録せずにインデックスへのアクセスもしないようにすれば良くない？\n\n空レスポンスを返すようにしておけば良くない？\n\nみたいな話はあるものの、検索にかかるUI部分を開発するならある程度実際にリクエストした時のレスポンスが欲しくなる\n\nかと言ってAlgoliaに毎度リクエストさせてしまうと無料枠がどんどん減っていく…\n\nということで、__ais-highlight__msw__/ais-highlight__で解決した\n\n## やっていること\n- 実際のレスポンスデータをdev toolsのNetworkからレスポンス内容を取得してきてJSONに保存\n    - 特定文字列(`BigQuery`)を順次入力した場合のレスポンスを逐次取得\n        - `B`と入力した際のレスポンス\n        - `Bi`と入力した際のレスポンス\n        - `Big`と入力した際のレスポンス\n        - `BigQ`と入力した際のレスポンス\n        - `BigQu`と入力した際のレスポンス\n        - `BigQue`と入力した際のレスポンス\n        - `BigQuer`と入力した際のレスポンス\n        - `BigQuery`と入力した際のレスポンス\n- 先工程で保存したJSONを__ais-highlight__msw__/ais-highlight__を用いて返すように設定する\n\n「検索文字列の変化によっって返ってくる件数や内容が変わる」というのを再現したかったので固定値ではあるが検索文字列が変化した場合は文字数にあったレスポンスが__ais-highlight__msw__/ais-highlight__経由で返るようにした\n\n実際のコードは下記\n\n- handler.ts\n\n```typescript\nimport { rest } from \"__ais-highlight__msw__/ais-highlight__\"\nimport query0Words from \"./algolia-search-response-0-words.json\"\nimport query1Words from \"./algolia-search-response-1-words.json\"\nimport query2Words from \"./algolia-search-response-2-words.json\"\nimport query3Words from \"./algolia-search-response-3-words.json\"\nimport query4Words from \"./algolia-search-response-4-words.json\"\nimport query5Words from \"./algolia-search-response-5-words.json\"\nimport query6Words from \"./algolia-search-response-6-words.json\"\nimport query7Words from \"./algolia-search-response-7-words.json\"\nimport query8Words from \"./algolia-search-response-8-words.json\"\n\nexport const handlers = [\n  rest.post(\"https://*.algolia.net/1/indexes/*/queries\", (req, res, ctx) => {\n    const empty = query0Words\n\n    const wordCountResponseMap = [\n      empty,       // 空\n      query1Words, // B\n      query2Words, // Bi\n      query3Words, // Big\n      query4Words, // BigQ\n      query5Words, // BigQu\n      query6Words, // BigQue\n      query7Words, // BigQuer\n      query8Words, // BigQuery\n    ]\n\n    const bodyString = req.body as string\n\n    if (bodyString.length === 0) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    const body = JSON.parse(bodyString)\n    const params = [\n      ...new URLSearchParams(body.requests[0].params).entries(),\n    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string })\n\n    if (\n      !params.query ||\n      params.query.length === 0 ||\n      params.query.length > wordCountResponseMap.length\n    ) {\n      return res(ctx.status(200), ctx.json(empty))\n    }\n\n    return res(\n      ctx.status(200),\n      ctx.json(wordCountResponseMap[params.query.length])\n    )\n  }),\n]\n```\n\n`import`している実際のレスポンスを保存したJSONはAlgoliaでの設定などにより変わるのでここでは割愛する\n\nAlgoliaのレスポンスを完全再現はできないので次のような挙動にしている\n\n<!-- textlint-disable prh -->\n- どの文字列を入力したとしても開発時は`BigQuery`と入力した場合のレスポンスを返す\n- 検索文字列の入力文字数によってモック用のレスポンスを返す\n    - 1文字入力時は`B`が入力された時のモック用レスポンスを返す\n    - 2文字入力時は`Bi`が入力された時のモック用レスポンスを返す\n    - 3文字入力時は`Big`が入力された時のモック用レスポンスを返す\n    - 8文字まで同様\n- 検索文字列が用意している文字列以上入力された場合は何も文字を入力していない場合のレスポンスを返す(`query0Words`)\n<!-- textlint-enable prh -->\n\nこれで検索UIの開発はかなり捗ったのでメモとして残しておく\n",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "date": {
               "value": "2022-08-12",
@@ -560,15 +1403,23 @@
               "value": "Algoliaのレスポンスを__ais-highlight__msw__/ais-highlight__でモックして開発ではダミーレスポンスを扱う",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
             },
             "tags": [
-              { "value": "Algolia", "matchLevel": "none", "matchedWords": [] },
+              {
+                "value": "Algolia",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
               {
                 "value": "__ais-highlight__msw__/ais-highlight__",
                 "matchLevel": "full",
                 "fullyHighlighted": true,
-                "matchedWords": ["msw"]
+                "matchedWords": [
+                  "msw"
+                ]
               },
               {
                 "value": "TypeScript",
@@ -585,7 +1436,16 @@
               "value": "/entries/algolia_mock_with___ais-highlight__msw__/ais-highlight__/",
               "matchLevel": "full",
               "fullyHighlighted": false,
-              "matchedWords": ["msw"]
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "7bd7f8494ba8c00196e1ea10d11e4c68",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
             },
             "timeToRead": {
               "value": "3",
@@ -593,24 +1453,336 @@
               "matchedWords": []
             }
           }
+        },
+        {
+          "url": "https://til.swfz.io//entries/zip_response_using_msw/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/zip_response_using_msw/index.md",
+          "text": "\nmswでモックする対象として`zip`や動画などバイナリファイルも扱える\n\n次の例はGitHub Actionsの各ジョブのログをあらかじめDLしておきそれを読み込みレスポンスとして返す処理\n\n- handlerの例\n\n```typescript\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*/logs', () => {\n    const buffer = fs.readFileSync(\n      path.resolve(process.cwd(), './src/mocks/responses/failed_log.zip')\n    )\n\n    return HttpResponse.arrayBuffer(buffer, {\n      status: 200,\n      headers: {\n        'Content-Type': 'application/zip'\n      }\n    })\n  })\n]\n```\n\n公式の例では`mp4`をバイナリとして返している\n\n基本的にはこの方法でバイナリファイルでもレスポンスをモックすることが可能\n\n- 公式\n\n[Responding with binary - Mock Service Worker](https://mswjs.io/docs/recipes/responding-with-binary/)\n",
+          "date": "2024-01-23",
+          "title": "mswでzipレスポンスを返す",
+          "tags": [
+            "msw",
+            "zip"
+          ],
+          "description": "HttpResponse.arrayBuffer",
+          "slug": "/entries/zip_response_using_msw/",
+          "internal": {
+            "contentDigest": "7f9b54300aa0d7b74023b091384b3ec7"
+          },
+          "timeToRead": 1,
+          "objectID": "48c1d237-66e6-5a93-aaa4-3b1026447702",
+          "_snippetResult": {
+            "text": {
+              "value": "\n__ais-highlight__msw__/ais-highlight__でモックする対象として`zip`や動画などバイナリファイルも扱える\n\n次の例はGitHub Actionsの各ジョブのログをあらかじ …",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/zip_response_using___ais-highlight__msw__/ais-highlight__/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/zip_response_using___ais-highlight__msw__/ais-highlight__/index.md",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "text": {
+              "value": "\n__ais-highlight__msw__/ais-highlight__でモックする対象として`zip`や動画などバイナリファイルも扱える\n\n次の例はGitHub Actionsの各ジョブのログをあらかじめDLしておきそれを読み込みレスポンスとして返す処理\n\n- handlerの例\n\n```typescript\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*/logs', () => {\n    const buffer = fs.readFileSync(\n      path.resolve(process.cwd(), './src/mocks/responses/failed_log.zip')\n    )\n\n    return HttpResponse.arrayBuffer(buffer, {\n      status: 200,\n      headers: {\n        'Content-Type': 'application/zip'\n      }\n    })\n  })\n]\n```\n\n公式の例では`mp4`をバイナリとして返している\n\n基本的にはこの方法でバイナリファイルでもレスポンスをモックすることが可能\n\n- 公式\n\n[Responding with binary - Mock Service Worker](https://__ais-highlight__msw__/ais-highlight__js.io/docs/recipes/responding-with-binary/)\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "date": {
+              "value": "2024-01-23",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "__ais-highlight__msw__/ais-highlight__でzipレスポンスを返す",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "tags": [
+              {
+                "value": "__ais-highlight__msw__/ais-highlight__",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": [
+                  "msw"
+                ]
+              },
+              {
+                "value": "zip",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "HttpResponse.arrayBuffer",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/zip_response_using___ais-highlight__msw__/ais-highlight__/",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "7f9b54300aa0d7b74023b091384b3ec7",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            },
+            "timeToRead": {
+              "value": "1",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/octokit_using_fetch/",
+          "github": "https://github.com/swfz/til/blob/master/content/blog//entries/octokit_using_fetch/index.md",
+          "text": "\nGitHub Actionsのカスタムアクションの開発をしていてエラーに遭遇したのでメモ\n\n`@actions/github`の`getOctokit`を使ってoctokitを呼び出して使うと`msw`によるAPI通信のモックが行えない\n\n- 動作環境\n\n```\n@actions/github@6.0.0\nmsw@2.0.14\nnode@21.2.0\noctokit@3.1.2\n```\n\n- テスト対象コード\n\n```typescript\nexport async function getWorkflowRun(\n  octokit: Octokit,\n  runId: number\n): Promise<WorkflowRun> {\n  const { data } = await octokit.rest.actions.getWorkflowRun({\n    owner: context.repo.owner,\n    repo: context.repo.repo,\n    run_id: runId\n  })\n  core.debug('fetched workflow run')\n\n  return data\n}\n```\n\n- テストコード一部抜粋\n\n```typescript\nimport { getOctokit } from '@actions/github'\n\n  const octokit = getOctokit('dummy')\n  it('getWorkflowRun', async () => {\n    const workflowRun = await getWorkflowRun(octokit, 1)\n\n    expect(workflowRun.id).toEqual(30433642)\n  })\n```\n\n- mswのhandler一部抜粋\n\n```typescript\nimport workflowRun from './responses/workflow_run.json'\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*', () => {\n    return HttpResponse.json(workflowRun)\n  }),\n]\n```\n\nmswのモックの設定を行いテストを実行してみたが下記のようにエラーが発生する状態だった\n\n```shell\n> typescript-action@0.0.0 test\n> jest __tests__/main.test.ts\n\n  console.warn\n    Deprecation: [@octokit/request-error] `error.code` is deprecated, use `error.status`.\n        at RequestError.get (/home/user/gh/self/failed-log-to-slack-action/node_modules/@octokit/request-error/dist-node/index.js:70:11)\n        at isAssertionError (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:179:13)\n        at /home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:58:14\n        at Array.map (<anonymous>)\n        at formatNodeAssertErrors (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:39:43)\n        at dispatch (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/state.js:67:11)\n        at processTicksAndRejections (node:internal/process/task_queues:95:5)\n        at _runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:264:3)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:126:9)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:121:9)\n        at run (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:71:3)\n        at runAndTransformResultsToJestFormat (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n        at jestAdapter (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n        at runTestInternal (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:367:16)\n        at runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:444:34)\n\n      at node_modules/@octokit/request-error/dist-node/index.js:38:69\n      at f (node_modules/once/once.js:25:25)\n      at RequestError.get (node_modules/@octokit/request-error/dist-node/index.js:69:9)\n          at Array.map (<anonymous>)\n\n FAIL  __tests__/main.test.ts (5.021 s)\n  sample\n    ✓ hoge (17 ms)\n    ✕ github (269 ms)\n  action\n    ○ skipped sets the time output\n    ○ skipped sets a failed status\n\n  ● sample › github\n\n    HttpError: Bad credentials\n\n      34 |   runId: number\n      35 | ): Promise<WorkflowRun> {\n    > 36 |   const { data } = await octokit.rest.actions.getWorkflowRun({\n         |                    ^\n      37 |     owner: context.repo.owner,\n      38 |     repo: context.repo.repo,\n      39 |     run_id: runId\n\n      at node_modules/@octokit/request/dist-node/index.js:124:21\n      at getWorkflowRun (src/github.ts:36:20)\n      at Object.<anonymous> (__tests__/main.test.ts:48:20)\n```\n\n`Bad credentials`といわれていて、mswでモックしているはずなのにGitHubに通信が行ってしまっている\n\n調べてみると、下記の参考Issueが見つかった\n\n[Unit testing: Bad credentials error · Issue #1115 · actions/toolkit](https://github.com/actions/toolkit/issues/1115)\n\n<!-- textlint-disable prh -->\ndefaultではfetchやaxiosではないラッパーライブラリを使ってリクエストしているのでmswやnockなどはモックできない\n<!-- textlint-enable prh -->\n\nIssueに掲載されている例とは若干違うが次のようにしたらモックできた\n\n```typescript\n  it('github', async () => {\n    const octokit = getOctokit('dummy', {request: fetch})\n    const result = await getWorkflowRun(octokit, 1)\n    console.log(result);\n  })\n```\n\n`getOctokit('dummy', {request: fetch})`でrequestに使うモジュールを指定できる\n\nfetchでAPIへリクエストするようにOptionを渡すことでmswが通信をモックできるようになる\n",
+          "date": "2024-01-10",
+          "title": "GitHub ActionsのOctokitでfetchを使いリクエストする",
+          "tags": [
+            "GitHubActions",
+            "Octokit",
+            "TypeScript",
+            "msw"
+          ],
+          "description": "requestライブラリを指定する",
+          "slug": "/entries/octokit_using_fetch/",
+          "internal": {
+            "contentDigest": "816977561861d67064710795ab5beb40"
+          },
+          "timeToRead": 3,
+          "objectID": "f4c4ccfa-e867-564b-be95-3968b0aa83d7",
+          "_snippetResult": {
+            "text": {
+              "value": "… __ais-highlight__msw__/ais-highlight__`によるAPI通信のモックが行えない\n\n- 動作環境\n\n```\n@actions/github@6.0.0\n__ais-highlight__msw__/ais-highlight__@2.0.14\nnode@21.2.0\noctokit@3.1.2\n```\n\n- テスト対象コード\n\n```typescript\nexport async function getWorkflowRun …",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/octokit_using_fetch/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "github": {
+              "value": "https://github.com/swfz/til/blob/master/content/blog//entries/octokit_using_fetch/index.md",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "text": {
+              "value": "\nGitHub Actionsのカスタムアクションの開発をしていてエラーに遭遇したのでメモ\n\n`@actions/github`の`getOctokit`を使ってoctokitを呼び出して使うと`__ais-highlight__msw__/ais-highlight__`によるAPI通信のモックが行えない\n\n- 動作環境\n\n```\n@actions/github@6.0.0\n__ais-highlight__msw__/ais-highlight__@2.0.14\nnode@21.2.0\noctokit@3.1.2\n```\n\n- テスト対象コード\n\n```typescript\nexport async function getWorkflowRun(\n  octokit: Octokit,\n  runId: number\n): Promise<WorkflowRun> {\n  const { data } = await octokit.rest.actions.getWorkflowRun({\n    owner: context.repo.owner,\n    repo: context.repo.repo,\n    run_id: runId\n  })\n  core.debug('fetched workflow run')\n\n  return data\n}\n```\n\n- テストコード一部抜粋\n\n```typescript\nimport { getOctokit } from '@actions/github'\n\n  const octokit = getOctokit('dummy')\n  it('getWorkflowRun', async () => {\n    const workflowRun = await getWorkflowRun(octokit, 1)\n\n    expect(workflowRun.id).toEqual(30433642)\n  })\n```\n\n- __ais-highlight__msw__/ais-highlight__のhandler一部抜粋\n\n```typescript\nimport workflowRun from './responses/workflow_run.json'\nexport const handlers = [\n  http.get('https://api.github.com/repos/*/*/actions/runs/*', () => {\n    return HttpResponse.json(workflowRun)\n  }),\n]\n```\n\n__ais-highlight__msw__/ais-highlight__のモックの設定を行いテストを実行してみたが下記のようにエラーが発生する状態だった\n\n```shell\n> typescript-action@0.0.0 test\n> jest __tests__/main.test.ts\n\n  console.warn\n    Deprecation: [@octokit/request-error] `error.code` is deprecated, use `error.status`.\n        at RequestError.get (/home/user/gh/self/failed-log-to-slack-action/node_modules/@octokit/request-error/dist-node/index.js:70:11)\n        at isAssertionError (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:179:13)\n        at /home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:58:14\n        at Array.map (<anonymous>)\n        at formatNodeAssertErrors (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/formatNodeAssertErrors.js:39:43)\n        at dispatch (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/state.js:67:11)\n        at processTicksAndRejections (node:internal/process/task_queues:95:5)\n        at _runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:264:3)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:126:9)\n        at _runTestsForDescribeBlock (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:121:9)\n        at run (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/run.js:71:3)\n        at runAndTransformResultsToJestFormat (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n        at jestAdapter (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n        at runTestInternal (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:367:16)\n        at runTest (/home/user/gh/self/failed-log-to-slack-action/node_modules/jest-runner/build/runTest.js:444:34)\n\n      at node_modules/@octokit/request-error/dist-node/index.js:38:69\n      at f (node_modules/once/once.js:25:25)\n      at RequestError.get (node_modules/@octokit/request-error/dist-node/index.js:69:9)\n          at Array.map (<anonymous>)\n\n FAIL  __tests__/main.test.ts (5.021 s)\n  sample\n    ✓ hoge (17 ms)\n    ✕ github (269 ms)\n  action\n    ○ skipped sets the time output\n    ○ skipped sets a failed status\n\n  ● sample › github\n\n    HttpError: Bad credentials\n\n      34 |   runId: number\n      35 | ): Promise<WorkflowRun> {\n    > 36 |   const { data } = await octokit.rest.actions.getWorkflowRun({\n         |                    ^\n      37 |     owner: context.repo.owner,\n      38 |     repo: context.repo.repo,\n      39 |     run_id: runId\n\n      at node_modules/@octokit/request/dist-node/index.js:124:21\n      at getWorkflowRun (src/github.ts:36:20)\n      at Object.<anonymous> (__tests__/main.test.ts:48:20)\n```\n\n`Bad credentials`といわれていて、__ais-highlight__msw__/ais-highlight__でモックしているはずなのにGitHubに通信が行ってしまっている\n\n調べてみると、下記の参考Issueが見つかった\n\n[Unit testing: Bad credentials error · Issue #1115 · actions/toolkit](https://github.com/actions/toolkit/issues/1115)\n\n<!-- textlint-disable prh -->\ndefaultではfetchやaxiosではないラッパーライブラリを使ってリクエストしているので__ais-highlight__msw__/ais-highlight__やnockなどはモックできない\n<!-- textlint-enable prh -->\n\nIssueに掲載されている例とは若干違うが次のようにしたらモックできた\n\n```typescript\n  it('github', async () => {\n    const octokit = getOctokit('dummy', {request: fetch})\n    const result = await getWorkflowRun(octokit, 1)\n    console.log(result);\n  })\n```\n\n`getOctokit('dummy', {request: fetch})`でrequestに使うモジュールを指定できる\n\nfetchでAPIへリクエストするようにOptionを渡すことで__ais-highlight__msw__/ais-highlight__が通信をモックできるようになる\n",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "date": {
+              "value": "2024-01-10",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "GitHub ActionsのOctokitでfetchを使いリクエストする",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "GitHubActions",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Octokit",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "__ais-highlight__msw__/ais-highlight__",
+                "matchLevel": "full",
+                "fullyHighlighted": true,
+                "matchedWords": [
+                  "msw"
+                ]
+              }
+            ],
+            "description": {
+              "value": "requestライブラリを指定する",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/octokit_using_fetch/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "816977561861d67064710795ab5beb40",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            },
+            "timeToRead": {
+              "value": "3",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
+        },
+        {
+          "url": "https://til.swfz.io//entries/jest_called_with_slack_webhook_send/",
+          "text": "\n- バージョン\n\n```\n@slack/webhook@7.0.2\njest@29.7.0\n```\n\n`@slack/webhook`を用いてWebhook経由のSlack通知を実装した際のテストコードの話\n\n`send`メソッドがどんな引数で呼ばれたかをチェックする\n\n- アプリケーションコード\n\n```typescript\nimport {\n  IncomingWebhook,\n  IncomingWebhookResult,\n  IncomingWebhookSendArguments\n} from '@slack/webhook'\n\nexport async function notify(\n  webhookUrl: string,\n  params: IncomingWebhookSendArguments\n): Promise<IncomingWebhookResult> {\n  const webhook = new IncomingWebhook(webhookUrl)\n\n  return await webhook.send(params)\n}\n```\n\n- テストコード\n\n```typescript\n  let webhookSendMock\n\n  beforeEach(() => {\n    webhookSendMock = jest.spyOn(IncomingWebhook.prototype, 'send').mockImplementation((params): Promise<IncomingWebhookResult> => Promise.resolve({text: 'ok'}))\n  })\n\n  it('run', () => {\n    await main.run() // mainからアプリケーションコードを呼んでいる\n\n    expect(webhookSendMock).toHaveBeenCalledWith(expect.objectContaining({\n      text: expect.stringContaining('Workflow: test-workflow'),\n      blocks: expect.anything()\n    }))\n  })\n```\n\nこんな感じで、引数の検証とレスポンスのモック両方行える\n\nmswでもSlackへの通信をモックしてたが、`spyOn`によって上書きされるので、レスポンスを返すところまで`mockImplementation`で書いてあげる必要がある\n\n使う側からみると`new IncomingWebhook`して返ってきたインスタンスをモックするにはどうすればよいのかと思ってたけど、prototypeを指定すればよいのね\n\nたしかに、納得\n\n## やっていること\n\n`toHaveBeenCalledWith`で呼ばれた際の引数のチェックを行える\n\n- [toHaveBeenCalledWith](https://jestjs.io/ja/docs/expect#tohavebeencalledwitharg1-arg2-)\n\n`expect.objectContaining`で再帰的に受け取ったオブジェクトの中身をチェックできる\n\n- [objectContaining](https://jestjs.io/ja/docs/expect#expectobjectcontainingobject)\n\n中身の指定は固定の値や`expect.anything`、`expect.stringContaining`などのマッチャも指定できる\n\n`expect.stringContaining()`や`expect.anything()`を用いることで部分一致や特定のキー以下は何でもよいというようなチェックができる\n\n- [stringContaining](https://jestjs.io/ja/docs/expect#expectstringcontainingstring)\n- [anything](https://jestjs.io/ja/docs/expect#expectanything)\n\n今回の場合下記のようなパラメータで`send`メソッドにパラメータを送っている\n\n```javascript\n{\n  text: \"Workflow: test-workflow\",\n  blocks: [${色々…}]\n}\n```\n\n他にも`Containing`系のマッチャはあるので場面によって使い分けする\n\nここだけは担保しておきたいというような場合にも検証ができるのとネストした場所でも使用できるので便利\n\n## テスト失敗時の差分表示\n\n`toHaveBeenCalledWith`,`objectContaining`を用いたテストだと、差分があったときのdiff表示がprettyな表示にならないようで\n\n![alt](jest_called_with_slack_webhook_send01.png)\n\n検証対象の量が多いとどこに差分があるか探すのがつらくなってくる\n\n一方この手の確認で有用なのはSnapshotテストが挙げられる\n\nSnapshotテストは差分があった場合prettyな表示をしてくれるのでどこで差分があったか把握しやすい\n\nなのでそもそも引数のオブジェクトのデータ量が多い場合はSnapshotテストに変更したほうが体験はよい\n\nSnapshotテストだと基本的にはオブジェクトの中身すべて完全一致している必要があるので、このあたりもケースによって使い分けが必要",
+          "date": "2024-01-19",
+          "title": "Jestでslackのwebhook.sendの検証",
+          "tags": [
+            "Slack",
+            "Webhook",
+            "Jest",
+            "TypeScript"
+          ],
+          "description": "desc",
+          "slug": "/entries/jest_called_with_slack_webhook_send/",
+          "internal": {
+            "contentDigest": "b033e0d634ee4d9f0bf884ddff15b650"
+          },
+          "timeToRead": 2,
+          "objectID": "2526b89a-46e2-5940-a6ba-2b7b57fc5aa1",
+          "_snippetResult": {
+            "text": {
+              "value": "… んな感じで、引数の検証とレスポンスのモック両方行える\n\n__ais-highlight__msw__/ais-highlight__でもSlackへの通信をモックしてたが、`spyOn`によって上書きさ …",
+              "matchLevel": "full"
+            }
+          },
+          "_highlightResult": {
+            "url": {
+              "value": "https://til.swfz.io//entries/jest_called_with_slack_webhook_send/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "text": {
+              "value": "\n- バージョン\n\n```\n@slack/webhook@7.0.2\njest@29.7.0\n```\n\n`@slack/webhook`を用いてWebhook経由のSlack通知を実装した際のテストコードの話\n\n`send`メソッドがどんな引数で呼ばれたかをチェックする\n\n- アプリケーションコード\n\n```typescript\nimport {\n  IncomingWebhook,\n  IncomingWebhookResult,\n  IncomingWebhookSendArguments\n} from '@slack/webhook'\n\nexport async function notify(\n  webhookUrl: string,\n  params: IncomingWebhookSendArguments\n): Promise<IncomingWebhookResult> {\n  const webhook = new IncomingWebhook(webhookUrl)\n\n  return await webhook.send(params)\n}\n```\n\n- テストコード\n\n```typescript\n  let webhookSendMock\n\n  beforeEach(() => {\n    webhookSendMock = jest.spyOn(IncomingWebhook.prototype, 'send').mockImplementation((params): Promise<IncomingWebhookResult> => Promise.resolve({text: 'ok'}))\n  })\n\n  it('run', () => {\n    await main.run() // mainからアプリケーションコードを呼んでいる\n\n    expect(webhookSendMock).toHaveBeenCalledWith(expect.objectContaining({\n      text: expect.stringContaining('Workflow: test-workflow'),\n      blocks: expect.anything()\n    }))\n  })\n```\n\nこんな感じで、引数の検証とレスポンスのモック両方行える\n\n__ais-highlight__msw__/ais-highlight__でもSlackへの通信をモックしてたが、`spyOn`によって上書きされるので、レスポンスを返すところまで`mockImplementation`で書いてあげる必要がある\n\n使う側からみると`new IncomingWebhook`して返ってきたインスタンスをモックするにはどうすればよいのかと思ってたけど、prototypeを指定すればよいのね\n\nたしかに、納得\n\n## やっていること\n\n`toHaveBeenCalledWith`で呼ばれた際の引数のチェックを行える\n\n- [toHaveBeenCalledWith](https://jestjs.io/ja/docs/expect#tohavebeencalledwitharg1-arg2-)\n\n`expect.objectContaining`で再帰的に受け取ったオブジェクトの中身をチェックできる\n\n- [objectContaining](https://jestjs.io/ja/docs/expect#expectobjectcontainingobject)\n\n中身の指定は固定の値や`expect.anything`、`expect.stringContaining`などのマッチャも指定できる\n\n`expect.stringContaining()`や`expect.anything()`を用いることで部分一致や特定のキー以下は何でもよいというようなチェックができる\n\n- [stringContaining](https://jestjs.io/ja/docs/expect#expectstringcontainingstring)\n- [anything](https://jestjs.io/ja/docs/expect#expectanything)\n\n今回の場合下記のようなパラメータで`send`メソッドにパラメータを送っている\n\n```javascript\n{\n  text: \"Workflow: test-workflow\",\n  blocks: [${色々…}]\n}\n```\n\n他にも`Containing`系のマッチャはあるので場面によって使い分けする\n\nここだけは担保しておきたいというような場合にも検証ができるのとネストした場所でも使用できるので便利\n\n## テスト失敗時の差分表示\n\n`toHaveBeenCalledWith`,`objectContaining`を用いたテストだと、差分があったときのdiff表示がprettyな表示にならないようで\n\n![alt](jest_called_with_slack_webhook_send01.png)\n\n検証対象の量が多いとどこに差分があるか探すのがつらくなってくる\n\n一方この手の確認で有用なのはSnapshotテストが挙げられる\n\nSnapshotテストは差分があった場合prettyな表示をしてくれるのでどこで差分があったか把握しやすい\n\nなのでそもそも引数のオブジェクトのデータ量が多い場合はSnapshotテストに変更したほうが体験はよい\n\nSnapshotテストだと基本的にはオブジェクトの中身すべて完全一致している必要があるので、このあたりもケースによって使い分けが必要",
+              "matchLevel": "full",
+              "fullyHighlighted": false,
+              "matchedWords": [
+                "msw"
+              ]
+            },
+            "date": {
+              "value": "2024-01-19",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "title": {
+              "value": "Jestでslackのwebhook.sendの検証",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "tags": [
+              {
+                "value": "Slack",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Webhook",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "Jest",
+                "matchLevel": "none",
+                "matchedWords": []
+              },
+              {
+                "value": "TypeScript",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            ],
+            "description": {
+              "value": "desc",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "slug": {
+              "value": "/entries/jest_called_with_slack_webhook_send/",
+              "matchLevel": "none",
+              "matchedWords": []
+            },
+            "internal": {
+              "contentDigest": {
+                "value": "b033e0d634ee4d9f0bf884ddff15b650",
+                "matchLevel": "none",
+                "matchedWords": []
+              }
+            },
+            "timeToRead": {
+              "value": "2",
+              "matchLevel": "none",
+              "matchedWords": []
+            }
+          }
         }
       ],
-      "nbHits": 3,
+      "nbHits": 6,
       "page": 0,
       "nbPages": 1,
       "hitsPerPage": 20,
       "exhaustiveNbHits": true,
       "exhaustiveTypo": true,
-      "exhaustive": { "nbHits": true, "typo": true },
+      "exhaustive": {
+        "nbHits": true,
+        "typo": true
+      },
       "query": "msw",
-      "params": "facets=%5B%5D&highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw&tagFilters=",
+      "params": "highlightPostTag=__%2Fais-highlight__&highlightPreTag=__ais-highlight__&page=0&query=msw",
       "index": "til",
       "renderingContent": {},
       "processingTimeMS": 1,
       "processingTimingsMS": {
-        "afterFetch": { "format": { "total": 1 }, "total": 1 },
-        "total": 1
-      }
+        "_request": {
+          "roundTrip": 1
+        },
+        "afterFetch": {
+          "format": {
+            "snippeting": 1,
+            "total": 2
+          }
+        },
+        "total": 0
+      },
+      "serverTimeMS": 10
     }
   ]
 }
