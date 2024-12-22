@@ -173,6 +173,16 @@
   background: #6699f3;
 }
 
+.article {
+  display: inline-block;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  padding: 2px 1em;
+  margin: 2px;
+  color: #FFFFFF;
+  background: #ff0087; 
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;

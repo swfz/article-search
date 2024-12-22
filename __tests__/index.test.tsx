@@ -78,38 +78,38 @@ describe("Search", () => {
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
-    expect(queryAllByTestId("hit-card")).toHaveLength(16);
+    expect(queryAllByTestId("hit-card")).toHaveLength(26);
     expect(
       document.querySelectorAll(
         'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
       ),
-    ).toHaveLength(8);
+    ).toHaveLength(14);
     expect(
       document.querySelectorAll(
         'div[data-testid="til"] div[data-testid="hit-card"]',
       ),
-    ).toHaveLength(8);
+    ).toHaveLength(12);
     expect(container).toMatchSnapshot();
 
     // Query内容が変わったとき、すぐにはリクエストが送信されないため変更なし
     user.type(searchInput, "w");
-    expect(queryAllByTestId("hit-card")).toHaveLength(16);
+    expect(queryAllByTestId("hit-card")).toHaveLength(26);
 
     // 入力が終わったと判断され、新たにリクエスト送信。検索結果にも反映されているかの確認
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1500));
     });
-    expect(queryAllByTestId("hit-card")).toHaveLength(5);
+    expect(queryAllByTestId("hit-card")).toHaveLength(12);
     expect(
       document.querySelectorAll(
         'div[data-testid="hatenablog"] div[data-testid="hit-card"]',
       ),
-    ).toHaveLength(2);
+    ).toHaveLength(6);
     expect(
       document.querySelectorAll(
         'div[data-testid="til"] div[data-testid="hit-card"]',
       ),
-    ).toHaveLength(3);
+    ).toHaveLength(6);
     expect(container).toMatchSnapshot();
   });
 
