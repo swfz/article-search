@@ -40,12 +40,11 @@
 }
 
 .title {
-  margin: 0;
+  margin: 4px;
   line-height: 1.15;
-  font-size: 4rem;
+  font-size: 1.25rem;
 }
 
-.title,
 .description {
   text-align: center;
 }
@@ -173,14 +172,21 @@
   background: #6699f3;
 }
 
-.article {
+.line {
+  margin-right: 2px;
   display: inline-block;
+}
+
+.article {
   border-radius: 2px;
   font-size: 0.7rem;
-  padding: 2px 1em;
-  margin: 2px;
-  color: #FFFFFF;
-  background: #ff0087; 
+  padding: 2px 4px;
+  margin: 1px;
+  color: #ff0087;
+  border: 1px solid #ff0087; 
+}
+.article:hover {
+  background-color: #eeeeee;
 }
 
 @media (max-width: 600px) {

@@ -13,8 +13,6 @@ import {
   Index,
   Highlight,
   Snippet,
-  Hits,
-  RefinementList,
   PoweredBy,
   InfiniteHits,
 } from "react-instantsearch";
@@ -29,19 +27,20 @@ type PageHitProps = {
 const PageHit = ({ hit }: PageHitProps) => {
   return (
     <div data-testid="hit-card" className={styles.card}>
-      <a href={hit.github} target="_blank" rel="noreferrer">
-        <p>
-          <Highlight attribute="title" hit={hit} />
-        </p>
-      </a>
-
-      {hit.url && (
-        <span className={styles.article}>
-          <a href={hit.url} target="_blank" rel="noreferrer">
-            Article
+      <div className="line">
+        {hit.url && (
+          <span className={styles.article}>
+            <a href={hit.url} target="_blank" rel="noreferrer">
+              🡽
+            </a>
+          </span>
+        )}
+        <span className={styles.title}>
+          <a href={hit.github} target="_blank" rel="noreferrer">
+            <Highlight attribute="title" hit={hit} />
           </a>
         </span>
-      )}
+      </div>
 
       {hit.tags.map((tag: string) => {
         return (
@@ -50,7 +49,9 @@ const PageHit = ({ hit }: PageHitProps) => {
           </span>
         );
       })}
+
       <br />
+
       <Snippet
         attribute="text"
         separator="..."
