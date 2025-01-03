@@ -25,15 +25,33 @@ type PageHitProps = {
 };
 
 const PageHit = ({ hit }: PageHitProps) => {
+  const handleCopy = (format: "raw" | "md") => {
+    return () => {
+      const text = format === "md" ? `[${hit.title}](${hit.url})` : hit.url;
+      navigator.clipboard.writeText(text).then(
+        () => console.log("copied"),
+        () => console.error("copy failed"),
+      );
+    };
+  };
+
   return (
     <div data-testid="hit-card" className={styles.card}>
       <div className="line">
         {hit.url && (
-          <span className={styles.article}>
-            <a href={hit.url} target="_blank" rel="noreferrer">
-              🡽
-            </a>
-          </span>
+          <>
+            <span className={styles.article}>
+              <a href={hit.url} target="_blank" rel="noreferrer">
+                ↗
+              </a>
+            </span>
+            <button onClick={handleCopy("md")} className={styles.copyButton}>
+              md
+            </button>
+            <button onClick={handleCopy("raw")} className={styles.copyButton}>
+              raw
+            </button>
+          </>
         )}
         <span className={styles.title}>
           <a href={hit.github} target="_blank" rel="noreferrer">

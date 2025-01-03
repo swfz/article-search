@@ -189,6 +189,16 @@
   background-color: #eeeeee;
 }
 
+.copyButton {
+  border-radius: 2px;
+  font-size: 0.7rem;
+  margin: 1px;
+  padding: 2px 4px;
+  border: 1px solid #999;
+  background: #999;
+  cursor: pointer;
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;
