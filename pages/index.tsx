@@ -1,10 +1,7 @@
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 
-import {
-  SearchResponses,
-  SearchQuery,
-} from "algoliasearch/lite";
+import { SearchResponses, SearchQuery } from "algoliasearch/lite";
 import { liteClient } from "algoliasearch/lite";
 import { default as React, useRef } from "react";
 import {
@@ -91,21 +88,34 @@ const Search: NextPage = () => {
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "dummy",
   );
 
+  const getQueryFromRequest = (req: SearchQuery): string | undefined => {
+    if ("params" in req) {
+      const p = req.params as unknown;
+      if (typeof p === "string") {
+        return new URLSearchParams(p).get("query") ?? undefined;
+      }
+      if (p && typeof p === "object") {
+        const q = (p as { query?: string }).query;
+        if (typeof q === "string") return q;
+      }
+    }
+    if (typeof (req as any).query === "string") {
+      return (req as any).query;
+    }
+    return undefined;
+  };
+
   const searchClient: SearchClient = {
     ...algoliaClient,
     // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
     // クエリ文字列が空の場合はリクエストを送らずダミーのレスポンスを返す実装を挟んでいる
     search: <SearchResponse,>(requests: Readonly<SearchQuery[]>) => {
-      if (requests.every((request) => {
-        if ('params' in request) {
-          if (typeof request.params === 'string') {
-            return !request.params || request.params === '';
-          } else if (typeof request.params === 'object' && request.params !== null) {
-            return !request.params.query || request.params.query === '';
-          }
-        }
-        return !('query' in request) || !request.query;
-      })) {
+      const hasAnyQuery = requests.some((r) => {
+        const q = getQueryFromRequest(r);
+        return q != null && q !== "";
+      });
+
+      if (!hasAnyQuery) {
         return Promise.resolve<SearchResponses<SearchResponse>>({
           results: requests.map(() => ({
             hits: [],
