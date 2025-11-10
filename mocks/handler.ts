@@ -5,22 +5,32 @@ import queryWordsMs from "./json/search-response-ms.json";
 import queryWordsMsw from "./json/search-response-msw.json";
 
 export const handlers = [
-  rest.post("https://*.algolia.net/1/indexes/*/queries", (req, res, ctx) => {
-    const bodyString = req.body as string;
+  rest.post(/\/1\/indexes\/.*\/(queries|query)$/, (req, res, ctx) => {
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const firstRequest = body.requests ? body.requests[0] : body;
+    
+    let query: string | undefined;
+    if (typeof firstRequest.params === 'string') {
+      const params = [
+        ...new URLSearchParams(firstRequest.params).entries(),
+      ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string });
+      query = params.query;
+    } else if (typeof firstRequest.params === 'object' && firstRequest.params !== null && 'query' in firstRequest.params) {
+      query = firstRequest.params.query;
+    } else if (firstRequest.query !== undefined) {
+      query = firstRequest.query;
+    }
 
-    const body = JSON.parse(bodyString);
-    const params = [
-      ...new URLSearchParams(body.requests[0].params).entries(),
-    ].reduce((obj, e) => ({ ...obj, [e[0]]: e[1] }), {} as { query: string });
-
-    if (params.query === "m") {
+    if (query === "m") {
       return res(ctx.status(200), ctx.json(queryWordsM));
     }
-    if (params.query === "ms") {
+    if (query === "ms") {
       return res(ctx.status(200), ctx.json(queryWordsMs));
     }
-    if (params.query === "msw") {
+    if (query === "msw") {
       return res(ctx.status(200), ctx.json(queryWordsMsw));
     }
+    
+    return res(ctx.status(200), ctx.json({ results: [] }));
   }),
 ];

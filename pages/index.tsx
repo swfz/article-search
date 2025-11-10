@@ -2,10 +2,10 @@ import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 
 import {
-  MultipleQueriesResponse,
-  MultipleQueriesQuery,
-} from "@algolia/client-search";
-import algoliasearch from "algoliasearch/lite";
+  SearchResponses,
+  SearchQuery,
+} from "algoliasearch/lite";
+import { liteClient } from "algoliasearch/lite";
 import { default as React, useRef } from "react";
 import {
   InstantSearch,
@@ -86,18 +86,27 @@ const Search: NextPage = () => {
   const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || "").split(",");
   const timerId = useRef<ReturnType<typeof setTimeout>>();
 
-  const algoliaClient = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "",
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "",
+  const algoliaClient = liteClient(
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "dummy",
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "dummy",
   );
 
   const searchClient: SearchClient = {
     ...algoliaClient,
     // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
     // クエリ文字列が空の場合はリクエストを送らずダミーのレスポンスを返す実装を挟んでいる
-    search: <SearchResponse,>(requests: Readonly<MultipleQueriesQuery[]>) => {
-      if (requests.every(({ params }) => !params?.query)) {
-        return Promise.resolve<MultipleQueriesResponse<SearchResponse>>({
+    search: <SearchResponse,>(requests: Readonly<SearchQuery[]>) => {
+      if (requests.every((request) => {
+        if ('params' in request) {
+          if (typeof request.params === 'string') {
+            return !request.params || request.params === '';
+          } else if (typeof request.params === 'object' && request.params !== null) {
+            return !request.params.query || request.params.query === '';
+          }
+        }
+        return !('query' in request) || !request.query;
+      })) {
+        return Promise.resolve<SearchResponses<SearchResponse>>({
           results: requests.map(() => ({
             hits: [],
             nbHits: 0,
@@ -112,7 +121,7 @@ const Search: NextPage = () => {
         });
       }
 
-      return algoliaClient.search(requests);
+      return algoliaClient.search({ requests: [...requests] });
     },
   };
 
