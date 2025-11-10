@@ -13,7 +13,7 @@ describe("Search", () => {
   const server = setupServer(...handlers);
 
   beforeEach(() => {
-    server.listen();
+    server.listen({ onUnhandledRequest: "error" });
   });
 
   afterEach(() => {
