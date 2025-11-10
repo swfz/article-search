@@ -1,8 +1,11 @@
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 
-import { SearchResponses, SearchQuery } from "algoliasearch/lite";
-import { liteClient } from "algoliasearch/lite";
+import {
+  MultipleQueriesResponse,
+  MultipleQueriesQuery,
+} from "@algolia/client-search";
+import algoliasearch from "algoliasearch/lite";
 import { default as React, useRef } from "react";
 import {
   InstantSearch,
@@ -83,40 +86,18 @@ const Search: NextPage = () => {
   const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || "").split(",");
   const timerId = useRef<ReturnType<typeof setTimeout>>();
 
-  const algoliaClient = liteClient(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "dummy",
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "dummy",
+  const algoliaClient = algoliasearch(
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "",
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "",
   );
-
-  const getQueryFromRequest = (req: SearchQuery): string | undefined => {
-    if ("params" in req) {
-      const p = req.params as unknown;
-      if (typeof p === "string") {
-        return new URLSearchParams(p).get("query") ?? undefined;
-      }
-      if (p && typeof p === "object") {
-        const q = (p as { query?: string }).query;
-        if (typeof q === "string") return q;
-      }
-    }
-    if (typeof (req as any).query === "string") {
-      return (req as any).query;
-    }
-    return undefined;
-  };
 
   const searchClient: SearchClient = {
     ...algoliaClient,
     // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
     // クエリ文字列が空の場合はリクエストを送らずダミーのレスポンスを返す実装を挟んでいる
-    search: <SearchResponse,>(requests: Readonly<SearchQuery[]>) => {
-      const hasAnyQuery = requests.some((r) => {
-        const q = getQueryFromRequest(r);
-        return q != null && q !== "";
-      });
-
-      if (!hasAnyQuery) {
-        return Promise.resolve<SearchResponses<SearchResponse>>({
+    search: <SearchResponse,>(requests: Readonly<MultipleQueriesQuery[]>) => {
+      if (requests.every(({ params }) => !params?.query)) {
+        return Promise.resolve<MultipleQueriesResponse<SearchResponse>>({
           results: requests.map(() => ({
             hits: [],
             nbHits: 0,
@@ -131,7 +112,7 @@ const Search: NextPage = () => {
         });
       }
 
-      return algoliaClient.search({ requests: [...requests] });
+      return algoliaClient.search(requests);
     },
   };
 
