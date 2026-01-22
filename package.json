@@ -17,8 +17,8 @@
     "algoliasearch": "4.25.3",
     "instantsearch.js": "4.74.2",
     "next": "14.2.35",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-instantsearch": "^7.2.0"
   },
   "devDependencies": {
@@ -27,8 +27,8 @@
     "@testing-library/react": "16.3.1",
     "@testing-library/user-event": "14.6.1",
     "@types/node": "20.19.27",
-    "@types/react": "18.3.27",
-    "@types/react-dom": "18.3.7",
+    "@types/react": "19.2.9",
+    "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
     "eslint": "8.57.1",
     "eslint-config-next": "14.2.35",
@@ -40,8 +40,8 @@
   },
   "packageManager": "pnpm@8.15.9",
   "resolutions": {
-    "@types/react": "18.3.27",
-    "@types/react-dom": "18.3.7"
+    "@types/react": "19.2.9",
+    "@types/react-dom": "19.2.3"
   },
   "msw": {
     "workerDirectory": "public"
