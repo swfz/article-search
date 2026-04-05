@@ -12,11 +12,15 @@ describe("Search", () => {
   const user = userEvent.setup();
   const server = setupServer(...handlers);
 
-  beforeEach(() => {
+  beforeAll(() => {
     server.listen();
   });
 
   afterEach(() => {
+    server.resetHandlers();
+  });
+
+  afterAll(() => {
     server.close();
   });
 
@@ -48,7 +52,7 @@ describe("Search", () => {
     const searchInput = getByPlaceholderText("Search");
 
     await user.click(searchButton);
-    user.type(searchInput, "m");
+    await user.type(searchInput, "m");
 
     // 検索入力後すぐはリクエストが送信されないので結果が返ってきていない状態
     expect(queryAllByTestId("hit-card")).toHaveLength(0);
@@ -71,7 +75,7 @@ describe("Search", () => {
     expect(container).toMatchSnapshot();
 
     // Query内容が変わったとき、すぐにはリクエストが送信されないため変更なし
-    user.type(searchInput, "s");
+    await user.type(searchInput, "s");
     expect(queryAllByTestId("hit-card")).toHaveLength(40);
 
     // 入力が終わったと判断され、新たにリクエスト送信。検索結果にも反映されているかの確認
@@ -92,7 +96,7 @@ describe("Search", () => {
     expect(container).toMatchSnapshot();
 
     // Query内容が変わったとき、すぐにはリクエストが送信されないため変更なし
-    user.type(searchInput, "w");
+    await user.type(searchInput, "w");
     expect(queryAllByTestId("hit-card")).toHaveLength(26);
 
     // 入力が終わったと判断され、新たにリクエスト送信。検索結果にも反映されているかの確認
@@ -129,7 +133,7 @@ describe("Search", () => {
     const searchInput = getByPlaceholderText("Search");
 
     await user.click(searchButton);
-    user.type(searchInput, "m");
+    await user.type(searchInput, "m");
 
     // 検索入力後すぐはリクエストが送信されないので結果が返ってきていない状態
     expect(queryAllByTestId("hit-card")).toHaveLength(0);
@@ -152,7 +156,7 @@ describe("Search", () => {
     expect(container).toMatchSnapshot();
 
     const showMore = getAllByText("Show more results");
-    user.click(showMore[0]);
+    await user.click(showMore[0]);
 
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1500));
