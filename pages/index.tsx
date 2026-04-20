@@ -1,11 +1,7 @@
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 
-import {
-  MultipleQueriesResponse,
-  MultipleQueriesQuery,
-} from "@algolia/client-search";
-import algoliasearch from "algoliasearch/lite";
+import { liteClient as algoliasearch } from "algoliasearch/lite";
 import { default as React, useRef } from "react";
 import {
   InstantSearch,
@@ -87,17 +83,17 @@ const Search: NextPage = () => {
   const timerId = useRef<ReturnType<typeof setTimeout>>();
 
   const algoliaClient = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "",
-    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "",
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "placeholder",
+    process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "placeholder",
   );
 
   const searchClient: SearchClient = {
     ...algoliaClient,
     // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
     // クエリ文字列が空の場合はリクエストを送らずダミーのレスポンスを返す実装を挟んでいる
-    search: <SearchResponse,>(requests: Readonly<MultipleQueriesQuery[]>) => {
+    search(requests) {
       if (requests.every(({ params }) => !params?.query)) {
-        return Promise.resolve<MultipleQueriesResponse<SearchResponse>>({
+        return Promise.resolve({
           results: requests.map(() => ({
             hits: [],
             nbHits: 0,
