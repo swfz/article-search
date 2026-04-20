@@ -80,7 +80,7 @@ const PageHit = ({ hit }: PageHitProps) => {
 
 const Search: NextPage = () => {
   const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || "").split(",");
-  const timerId = useRef<ReturnType<typeof setTimeout>>();
+  const timerId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const algoliaClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || "placeholder",
