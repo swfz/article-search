@@ -8,7 +8,7 @@
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "lint:format": "prettier --check \"**/*.{ts,tsx}\"",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til NEXT_PUBLIC_API_MOCKING=enabled vitest run"
   },
@@ -30,7 +30,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
-    "eslint": "8.57.1",
+    "eslint": "9.39.4",
     "eslint-config-next": "16.2.3",
     "jsdom": "29.0.2",
     "msw": "2.13.2",
