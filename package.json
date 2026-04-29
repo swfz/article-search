@@ -13,8 +13,8 @@
     "test": "NEXT_PUBLIC_ALGOLIA_INDICES=hatenablog,til NEXT_PUBLIC_API_MOCKING=enabled vitest run"
   },
   "dependencies": {
-    "@algolia/client-search": "5.50.2",
-    "algoliasearch": "5.50.2",
+    "@algolia/client-search": "5.51.0",
+    "algoliasearch": "5.51.0",
     "instantsearch.js": "4.94.0",
     "next": "16.2.3",
     "react": "19.2.5",
