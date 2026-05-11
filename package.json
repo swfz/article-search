@@ -16,7 +16,7 @@
     "@algolia/client-search": "5.52.0",
     "algoliasearch": "5.52.0",
     "instantsearch.js": "4.95.0",
-    "next": "16.2.4",
+    "next": "16.2.6",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "react-instantsearch": "^7.2.0"
