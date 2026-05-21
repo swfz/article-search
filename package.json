@@ -31,7 +31,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.2.4",
+    "eslint-config-next": "16.2.5",
     "jsdom": "29.1.1",
     "msw": "2.14.3",
     "prettier": "3.8.3",
