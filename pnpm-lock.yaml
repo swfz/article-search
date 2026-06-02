@@ -15,8 +15,8 @@ importers:
         specifier: 5.52.1
         version: 5.52.1
       instantsearch.js:
-        specifier: 4.98.0
-        version: 4.98.0(algoliasearch@5.52.1)
+        specifier: 4.99.0
+        version: 4.99.0(algoliasearch@5.52.1)
       next:
         specifier: 16.2.6
         version: 16.2.6(@babel/core@7.29.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -1669,8 +1669,16 @@ packages:
   instantsearch-ui-components@0.27.0:
     resolution: {integrity: sha512-N+u14ae8xtvWA3vMTjUaZqu1cof3jBbkGGUMMAq+QfA+fQSrHG1nVCXqiz72zrV+oxo8+VyxmhCb0d/M6mwgzQ==}
 
+  instantsearch-ui-components@0.28.0:
+    resolution: {integrity: sha512-tg1ROheML153XxJIOVUyxWiYv/lofljFfDjibEFjgdSRXOS4bXB3i7q20V0xRecgTaBiDgK5RjS/t+Om+y1bpQ==}
+
   instantsearch.js@4.98.0:
     resolution: {integrity: sha512-QGEjT5I56TmH2zmHG0NPt9Yl60EAJ3daasErB7TKMsPgNMxH+oEwW0Fqc/WkacN+ya2SZvHxMJOmNR8+sgUycw==}
+    peerDependencies:
+      algoliasearch: '>= 3.1 < 6'
+
+  instantsearch.js@4.99.0:
+    resolution: {integrity: sha512-LtbVwJYShDVw9YO/sB3Lgw1OkRjPrJkLVcwoHvklrp/KjnQu4qWD3JZbgUJ8+0OfYDjHtNO6HgUfN6KVc8LBAQ==}
     peerDependencies:
       algoliasearch: '>= 3.1 < 6'
 
@@ -4385,6 +4393,13 @@ snapshots:
     transitivePeerDependencies:
       - react
 
+  instantsearch-ui-components@0.28.0(react@19.2.6):
+    dependencies:
+      '@swc/helpers': 0.5.18
+      markdown-to-jsx: 7.7.17(react@19.2.6)
+    transitivePeerDependencies:
+      - react
+
   instantsearch.js@4.98.0(algoliasearch@5.52.1):
     dependencies:
       '@algolia/events': 4.0.1
@@ -4404,6 +4419,24 @@ snapshots:
       search-insights: 2.17.3
       zod: 4.4.3
       zod-to-json-schema: 3.24.6(zod@4.4.3)
+
+  instantsearch.js@4.99.0(algoliasearch@5.52.1):
+    dependencies:
+      '@algolia/events': 4.0.1
+      '@swc/helpers': 0.5.18
+      '@types/dom-speech-recognition': 0.0.1
+      '@types/google.maps': 3.64.1
+      '@types/hogan.js': 3.0.5
+      '@types/qs': 6.15.1
+      algoliasearch: 5.52.1
+      algoliasearch-helper: 3.29.1(algoliasearch@5.52.1)
+      hogan.js: 3.0.2
+      htm: 3.1.1
+      instantsearch-ui-components: 0.28.0(react@19.2.6)
+      preact: 10.29.2
+      qs: 6.15.2
+      react: 19.2.6
+      search-insights: 2.17.3
 
   internal-slot@1.1.0:
     dependencies:
