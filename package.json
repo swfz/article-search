@@ -16,7 +16,7 @@
     "@algolia/client-search": "5.55.0",
     "algoliasearch": "5.55.0",
     "instantsearch.js": "4.101.1",
-    "next": "16.2.7",
+    "next": "16.2.9",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-instantsearch": "^7.2.0"
@@ -31,7 +31,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "eslint": "10.5.0",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.2.9",
     "jsdom": "29.1.1",
     "msw": "2.14.6",
     "prettier": "3.8.4",
