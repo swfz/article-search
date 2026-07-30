@@ -15,7 +15,7 @@
   "dependencies": {
     "@algolia/client-search": "5.56.0",
     "algoliasearch": "5.56.0",
-    "instantsearch.js": "4.107.0",
+    "instantsearch.js": "4.108.0",
     "next": "16.2.11",
     "react": "19.2.7",
     "react-dom": "19.2.7",
