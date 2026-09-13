@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render } from "@testing-library/react";
 import Search from "../pages/index";
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 import { act } from "react-dom/test-utils";
 import { handlers } from "../mocks/handler";
 import { setupServer } from "msw/node";
