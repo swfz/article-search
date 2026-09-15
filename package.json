@@ -38,7 +38,7 @@
     "typescript": "6.0.3",
     "vitest": "5.0.0"
   },
-  "packageManager": "pnpm@12.3.0",
+  "packageManager": "pnpm@12.4.0",
   "resolutions": {
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5"
