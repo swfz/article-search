@@ -1,9 +1,0 @@
-pre-commit:
-  parallel: true
-  commands:
-    prettier:
-      glob: "*.{ts,tsx}"
-      run: pnpm exec prettier --check {staged_files}
-    eslint:
-      glob: "*.{ts,tsx}"
-      run: pnpm exec eslint {staged_files}
