@@ -5,7 +5,9 @@ import queryWordsMs from "./json/search-response-ms.json";
 import queryWordsMsw from "./json/search-response-msw.json";
 
 // algoliasearch v5: query lives directly on the request; v4 put it inside a URL-encoded `params` string
-const resolveQuery = async (request: Request): Promise<string | undefined> => {
+export const resolveQuery = async (
+  request: Request,
+): Promise<string | undefined> => {
   const body = (await request.json()) as {
     requests: { query?: string; params?: string }[];
   };
