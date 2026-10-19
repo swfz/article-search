@@ -1,0 +1,34 @@
+name: タスク
+description: エージェントが着手・完了判定できる形でタスクを起票する
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: なぜ必要か。何が困っているか
+    validations:
+      required: true
+  - type: textarea
+    id: todo
+    attributes:
+      label: やること
+      description: 具体的な作業。ファイル名・関数名まで書けるとよい
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 機械的に確認できる条件を「コマンド → 期待結果」で書く
+      placeholder: |
+        - `pnpm test` が成功する
+        - `pnpm lint` の出力に警告が無い
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: 範囲外
+      description: この Issue ではやらないこと
+    validations:
+      required: true

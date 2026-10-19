@@ -1,12 +1,13 @@
 import * as React from "react";
 import { render } from "@testing-library/react";
-import Search from "../pages/index";
+import Search, { createSearchClient } from "../pages/index";
 import "@testing-library/jest-dom/vitest";
 import { act } from "react-dom/test-utils";
 import { handlers } from "../mocks/handler";
 import { setupServer } from "msw/node";
 import { within } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
+import type { SearchClient } from "instantsearch.js";
 
 describe("Search", () => {
   const user = userEvent.setup();
@@ -18,6 +19,7 @@ describe("Search", () => {
 
   afterEach(() => {
     server.resetHandlers();
+    vi.restoreAllMocks();
   });
 
   afterAll(() => {
@@ -173,5 +175,63 @@ describe("Search", () => {
       ),
     ).toHaveLength(20);
     expect(container).toMatchSnapshot();
+  });
+
+  it("検索結果のURLをMarkdown形式とraw形式でコピーする", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    const { getByPlaceholderText, getAllByRole, findAllByTestId } = render(
+      <Search />,
+    );
+
+    await user.type(getByPlaceholderText("Search"), "m");
+    await findAllByTestId("hit-card");
+
+    await user.click(getAllByRole("button", { name: "md" })[0]);
+    expect(writeText).toHaveBeenLastCalledWith(
+      "[MkDocsにプレゼンテーション機能をつける](http://swfz.hatenablog.com/entry/2016/03/02/140827)",
+    );
+
+    await user.click(getAllByRole("button", { name: "raw" })[0]);
+    expect(writeText).toHaveBeenLastCalledWith(
+      "http://swfz.hatenablog.com/entry/2016/03/02/140827",
+    );
+  });
+
+  it("クリップボードへの書き込み失敗をエラーとして出力する", async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const { getByPlaceholderText, getAllByRole, findAllByTestId } = render(
+      <Search />,
+    );
+
+    await user.type(getByPlaceholderText("Search"), "m");
+    await findAllByTestId("hit-card");
+    await user.click(getAllByRole("button", { name: "md" })[0]);
+
+    expect(consoleError).toHaveBeenCalledWith("copy failed");
+  });
+
+  it("空クエリでは外部検索クライアントを呼ばない", async () => {
+    const search = vi.fn();
+    const searchClient = createSearchClient({
+      search,
+    } as unknown as SearchClient);
+
+    const response = await searchClient.search([
+      { indexName: "articles", params: { query: "" } },
+    ]);
+
+    expect(search).not.toHaveBeenCalled();
+    expect(response.results[0]).toMatchObject({ hits: [] });
   });
 });
