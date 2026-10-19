@@ -1,6 +1,7 @@
 name: ci
 
-on: [push]
+# push はデフォルトブランチの継続的な健全性確認、pull_request はマージ前の変更検証に使う。
+on: [push, pull_request]
 
 jobs:
   build:
