@@ -78,6 +78,33 @@ const PageHit = ({ hit }: PageHitProps) => {
   );
 };
 
+export const createSearchClient = (
+  algoliaClient: SearchClient,
+): SearchClient => ({
+  ...algoliaClient,
+  // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
+  // クエリ文字列が空の場合はリクエストを送らずダミーのレスポンスを返す実装を挟んでいる
+  search(requests) {
+    if (requests.every(({ params }) => !params?.query)) {
+      return Promise.resolve({
+        results: requests.map(() => ({
+          hits: [],
+          nbHits: 0,
+          nbPages: 0,
+          page: 0,
+          processingTimeMS: 0,
+          hitsPerPage: 0,
+          exhaustiveNbHits: true,
+          query: "",
+          params: "",
+        })),
+      });
+    }
+
+    return algoliaClient.search(requests);
+  },
+});
+
 const Search: NextPage = () => {
   const indices = (process.env.NEXT_PUBLIC_ALGOLIA_INDICES || "").split(",");
   const timerId = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,30 +114,7 @@ const Search: NextPage = () => {
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || "placeholder",
   );
 
-  const searchClient: SearchClient = {
-    ...algoliaClient,
-    // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/conditional-requests/react-hooks/
-    // クエリ文字列が空の場合はリクエストを送らずダミーのレスポンスを返す実装を挟んでいる
-    search(requests) {
-      if (requests.every(({ params }) => !params?.query)) {
-        return Promise.resolve({
-          results: requests.map(() => ({
-            hits: [],
-            nbHits: 0,
-            nbPages: 0,
-            page: 0,
-            processingTimeMS: 0,
-            hitsPerPage: 0,
-            exhaustiveNbHits: true,
-            query: "",
-            params: "",
-          })),
-        });
-      }
-
-      return algoliaClient.search(requests);
-    },
-  };
+  const searchClient = createSearchClient(algoliaClient);
 
   // NOTE: https://www.algolia.com/doc/guides/building-search-ui/going-further/improve-performance/react-hooks/#disabling-as-you-type
   // 入力確定判断まで1秒待つ
