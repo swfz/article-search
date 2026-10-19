@@ -29,8 +29,16 @@
 
 ## dev
 
+Node.js は `.node-version` に記載されたバージョンを使用する。
+
 ```shell
-yarn dev
+pnpm install --frozen-lockfile
+```
+
+`pnpm dev` は Algolia API のモックを有効にし、検索対象を `hatenablog,til` に設定して起動する。
+
+```shell
+pnpm dev
 ```
 
 ### Algolia APIのモック
