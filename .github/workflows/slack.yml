@@ -6,6 +6,12 @@ on:
       - ci
     types:
       - completed
+
+# slack-workflow-status は対象 run の job 一覧を Actions API から読むだけ。
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   main:
     name: main

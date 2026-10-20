@@ -3,6 +3,10 @@ name: ci
 # push はデフォルトブランチの継続的な健全性確認、pull_request はマージ前の変更検証に使う。
 on: [push, pull_request]
 
+# 全 job がチェックアウトとローカルでの検証のみで、書き込みは不要。
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
