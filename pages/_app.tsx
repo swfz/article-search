@@ -1,8 +1,9 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import { logger } from "../lib/logger";
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
-  console.log("msw enabled...");
+  logger.info("msw enabled");
   require("../mocks");
 }
 

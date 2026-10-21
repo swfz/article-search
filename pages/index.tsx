@@ -15,6 +15,7 @@ import {
 import type { UseSearchBoxProps } from "react-instantsearch";
 
 import type { Hit, SearchClient } from "instantsearch.js";
+import { logger } from "../lib/logger";
 
 type PageHitProps = {
   hit: Hit;
@@ -25,8 +26,8 @@ const PageHit = ({ hit }: PageHitProps) => {
     return () => {
       const text = format === "md" ? `[${hit.title}](${hit.url})` : hit.url;
       navigator.clipboard.writeText(text).then(
-        () => console.log("copied"),
-        () => console.error("copy failed"),
+        () => logger.info("copied", { format }),
+        (reason: unknown) => logger.error("copy failed", { format, reason }),
       );
     };
   };

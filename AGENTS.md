@@ -53,6 +53,8 @@ Algolia のインデックス名はビルド時の `NEXT_PUBLIC_ALGOLIA_INDICES`
 
 ### ローカル
 
+アプリのログは `lib/logger.ts` の `logger.debug/info/warn/error(msg, context?)` で `{"level","msg","ts","context"}` の 1 行 JSON として出る。新しいログは `console` を直接呼ばず logger を使う。
+
 `pnpm dev` と各検証コマンドの標準出力を最初に確認する。ブラウザー側の例外、MSW の未処理リクエスト、Algolia のレスポンスは DevTools の Console と Network で確認する。静的出力だけを切り分ける場合は `pnpm build` のログと `out/` の生成有無を確認する。
 
 ### GitHub Actions

@@ -218,7 +218,12 @@ describe("Search", () => {
     await findAllByTestId("hit-card");
     await user.click(getAllByRole("button", { name: "md" })[0]);
 
-    expect(consoleError).toHaveBeenCalledWith("copy failed");
+    expect(consoleError).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(consoleError.mock.calls[0][0] as string)).toMatchObject({
+      level: "error",
+      msg: "copy failed",
+      context: { format: "md", reason: { name: "Error", message: "denied" } },
+    });
   });
 
   it("空クエリでは外部検索クライアントを呼ばない", async () => {
