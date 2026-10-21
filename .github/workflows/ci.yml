@@ -90,4 +90,4 @@ jobs:
           NEXT_PUBLIC_ALGOLIA_INDICES: hatenablog,til
           NEXT_PUBLIC_API_MOCKING: enabled
         run: |
-          pnpm test
+          pnpm test:coverage
