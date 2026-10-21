@@ -6,5 +6,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    coverage: {
+      provider: "v8",
+      include: ["pages/**", "mocks/**"],
+      exclude: ["mocks/json/**", "__tests__/**"],
+      thresholds: { lines: 70 },
+    },
   },
 });

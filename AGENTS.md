@@ -30,6 +30,7 @@ pnpm lint         # ESLint
 pnpm lint:format  # Prettierの差分確認
 pnpm typecheck    # TypeScriptの型検査
 pnpm test         # MSWを使うVitest一式
+pnpm test:coverage # Vitest一式＋カバレッジ計測(lines 70%未満で失敗。閾値は vitest.config.ts)
 ```
 
 コミット前に `pnpm lint`、`pnpm lint:format`、`pnpm typecheck`、`pnpm test`、`pnpm build` を実行する。挙動を変えた場合は `__tests__/` に対応するテストを追加し、バグ修正では再現ケースをリグレッションテストとして残す。スナップショットは差分の意味を確認してから更新する。
