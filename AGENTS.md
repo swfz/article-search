@@ -31,9 +31,10 @@ pnpm lint:format  # Prettierの差分確認
 pnpm typecheck    # TypeScriptの型検査
 pnpm test         # MSWを使うVitest一式
 pnpm test:coverage # Vitest一式＋カバレッジ計測(lines 70%未満で失敗。閾値は vitest.config.ts)
+pnpm test:e2e     # Playwright の e2e。pnpm dev(MSW 有効)を起動して e2e/ を実行する。初回は pnpm exec playwright install chromium が必要
 ```
 
-コミット前に `pnpm lint`、`pnpm lint:format`、`pnpm typecheck`、`pnpm test`、`pnpm build` を実行する。挙動を変えた場合は `__tests__/` に対応するテストを追加し、バグ修正では再現ケースをリグレッションテストとして残す。スナップショットは差分の意味を確認してから更新する。
+コミット前に `pnpm lint`、`pnpm lint:format`、`pnpm typecheck`、`pnpm test`、`pnpm test:e2e`、`pnpm build` を実行する。挙動を変えた場合は `__tests__/` に対応するテストを追加し、バグ修正では再現ケースをリグレッションテストとして残す。スナップショットは差分の意味を確認してから更新する。
 
 `pnpm dev` は `NEXT_PUBLIC_API_MOCKING=enabled` を設定するため、Algolia の認証情報なしで動かせる。検索語 `m`、`ms`、`msw` に対して fixture が返る。実サービスを確認するときだけ、必要な `NEXT_PUBLIC_ALGOLIA_*` を明示してモックなしで起動する。
 
@@ -41,11 +42,12 @@ pnpm test:coverage # Vitest一式＋カバレッジ計測(lines 70%未満で失�
 
 - `pages/`: Next.js Pages Router の画面とアプリ初期化。`pages/index.tsx` が Algolia client と検索 UI を組み立て、`pages/_app.tsx` が必要に応じてブラウザー用 MSW を起動する。静的 export では API Routes を配信できないため、`pages/api/hello.ts` を本番 API として利用しない。
 - `mocks/`: 開発とテストで共有する Algolia API の MSW handlers、ブラウザー／Node の初期化、JSON fixture。
+- `e2e/`: Playwright の e2e。`pnpm dev` の MSW を使い、検索から結果表示・コピーまでを実ブラウザーで確認する。
 - `__tests__/`: Vitest、Testing Library、Node 用 MSW による handler と UI のテスト。`__snapshots__/` には UI のスナップショットがある。
 - `public/`: favicon と MSW の Service Worker。
 - `styles/`: グローバル CSS と画面用 CSS Modules。
 - `next.config.js`: `output: "export"` を指定する。`pnpm build` の成果物は追跡対象外の `out/` に出る。
-- `.github/workflows/ci.yml`: push と pull request で build、ESLint、Prettier、型検査、テストを別 job として実行する。
+- `.github/workflows/ci.yml`: push と pull request で build、ESLint、Prettier、型検査、テスト、e2e を別 job として実行する。
 - `.github/workflows/slack.yml`: CI 完了後の通知。アプリケーションの検証ロジックではない。
 
 Algolia のインデックス名はビルド時の `NEXT_PUBLIC_ALGOLIA_INDICES` から画面へ埋め込まれる。ブラウザーは検索時に Algolia へ直接リクエストする。開発とテストでは `mocks/handler.ts` が同じ API を横取りし、外部通信に依存しない。Cloudflare Pages は `pnpm build` で生成された静的な `out/` を配信する。
