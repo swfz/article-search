@@ -16,8 +16,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@algolia/client-search": "5.60.0",
-    "algoliasearch": "5.60.0",
+    "@algolia/client-search": "5.61.0",
+    "algoliasearch": "5.61.0",
     "instantsearch.js": "4.121.0",
     "next": "16.4.2",
     "react": "19.3.1",
