@@ -1,7 +1,15 @@
 import nextConfig from "eslint-config-next/core-web-vitals";
 
 const config = [
-  { ignores: ["public/mockServiceWorker.js"] },
+  {
+    // 生成物(カバレッジレポート・ビルド出力)は lint 対象から外す
+    ignores: [
+      "public/mockServiceWorker.js",
+      "coverage/**",
+      "out/**",
+      ".next/**",
+    ],
+  },
   ...nextConfig.map((entry) => {
     let patched = entry;
 
